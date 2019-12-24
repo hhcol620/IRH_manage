@@ -1,0 +1,170 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "336542",
+      "name": "居乐乐个人中心",
+      "font_class": "gerenzhongxin",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "433395",
+      "name": "个人中心",
+      "font_class": "gerenzhongxin1",
+      "unicode": "e68a",
+      "unicode_decimal": 59018
+    },
+    {
+      "icon_id": "633013",
+      "name": "姓名（收货地址）",
+      "font_class": "touxiang",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
+      "icon_id": "633019",
+      "name": "新增",
+      "font_class": "xinzeng",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "881806",
+      "name": "论坛",
+      "font_class": "luntan",
+      "unicode": "e6eb",
+      "unicode_decimal": 59115
+    },
+    {
+      "icon_id": "1278345",
+      "name": "xinzeng",
+      "font_class": "xinzeng1",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "1287712",
+      "name": "论坛",
+      "font_class": "luntan1",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "1288657",
+      "name": "xingming",
+      "font_class": "xingming",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "1311137",
+      "name": "个人中心",
+      "font_class": "icongerenzhongxin-01",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "2116297",
+      "name": "商城",
+      "font_class": "store_icon",
+      "unicode": "e663",
+      "unicode_decimal": 58979
+    },
+    {
+      "icon_id": "2305511",
+      "name": "收藏",
+      "font_class": "shoucang",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "2380679",
+      "name": "消息",
+      "font_class": "xiaoxi",
+      "unicode": "e621",
+      "unicode_decimal": 58913
+    },
+    {
+      "icon_id": "2569878",
+      "name": "消息",
+      "font_class": "xiaoxi1",
+      "unicode": "e67e",
+      "unicode_decimal": 59006
+    },
+    {
+      "icon_id": "2678600",
+      "name": "个人中心",
+      "font_class": "gerenzhongxin2",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
+      "icon_id": "4737939",
+      "name": "消息",
+      "font_class": "xiaoxi2",
+      "unicode": "e619",
+      "unicode_decimal": 58905
+    },
+    {
+      "icon_id": "5121502",
+      "name": "论坛",
+      "font_class": "luntan2",
+      "unicode": "e641",
+      "unicode_decimal": 58945
+    },
+    {
+      "icon_id": "5943385",
+      "name": "个人中心",
+      "font_class": "gerenzhongxin3",
+      "unicode": "e62a",
+      "unicode_decimal": 58922
+    },
+    {
+      "icon_id": "7550276",
+      "name": "商城",
+      "font_class": "shangcheng",
+      "unicode": "e699",
+      "unicode_decimal": 59033
+    },
+    {
+      "icon_id": "8441586",
+      "name": "系统管理",
+      "font_class": "ziyuanxhdpi",
+      "unicode": "e654",
+      "unicode_decimal": 58964
+    },
+    {
+      "icon_id": "8783192",
+      "name": "消息",
+      "font_class": "dibudaohanglan-",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "8802635",
+      "name": "系统管理",
+      "font_class": "xitongguanli",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "9509968",
+      "name": "消息",
+      "font_class": "xiaoxi3",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "9668363",
+      "name": "xingming",
+      "font_class": "xingming1",
+      "unicode": "e65c",
+      "unicode_decimal": 58972
+    }
+  ]
+}
