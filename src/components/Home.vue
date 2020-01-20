@@ -75,6 +75,11 @@ export default {
           authName: '系统管理',
           children: [
             {
+              authName: '管理员列表',
+              id: '00',
+              path: 'administrators'
+            },
+            {
               authName: '用户列表',
               id: '11',
               path: 'users'

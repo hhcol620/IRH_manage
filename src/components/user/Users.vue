@@ -14,8 +14,9 @@
       <el-row :gutter="20">
         <el-col :span="7">
           <!-- 搜索与添加区域 -->
-          <el-input placeholder="请输入内容"
-                    v-model="queryInfo.query"
+          <!-- clearable 表单可以快速清除  @clear 监听被清空的事件处理函数 -->
+          <el-input placeholder="请输入用户id名"
+                    v-model="queryInfo.id"
                     clearable
                     @clear="getUserList">
             <el-button slot="append"
@@ -194,14 +195,17 @@ export default {
       // 获取用户列表参数对象
       queryInfo: {
         // 搜索关键字
-        query: '',
+        id: '',
         // 当前的页数
         pagenum: 1,
         // 当前每页多少条数据
         pagesize: 2
       },
+      // 用户信息表
       userList: [],
+      // 总共的数据条数
       total: 0,
+      // 控制添加用户的Dialog对话框
       addDialogVisible: false,
       // 添加用户表单数据
       addForm: {
@@ -273,10 +277,11 @@ export default {
     this.getUserList()
   },
   methods: {
+    // 发起请求  获取用户信息并存到 userList
     async getUserList() {
       // 解构赋值  data重命名为res
-      const { data: res } = await this.$http.get('users', {
-        params: this.queryInfo
+      const { data: res } = await this.$http.get('user', {
+        params: this.queryInfo.id
       })
       if (res.meta.status != 200) return this.$message.error('获取用户列表失败')
       this.userList = res.data.users
@@ -318,7 +323,7 @@ export default {
       this.$refs.addFormRef.validate(async valid => {
         if (!valid) return
         // 可以发起用户的请求
-        const { data: res } = await this.$http.post('users', this.addForm)
+        const { data: res } = await this.$http.post('user', this.addForm)
         if (res.meta.status !== 201) {
           this.$Message.error('添加用户失败')
         } else {
@@ -350,13 +355,10 @@ export default {
         // console.log(valid)
         if (!valid) return
         // 发起修改用户信息的数据请求
-        const { data: res } = await this.$http.put(
-          'users/' + this.editForm.id,
-          {
-            email: this.editForm.email,
-            mobile: this.editForm.mobile
-          }
-        )
+        const { data: res } = await this.$http.put('user/' + this.editForm.id, {
+          email: this.editForm.email,
+          mobile: this.editForm.mobile
+        })
         if (res.meta.status !== 200) {
           return this.$Message.error('更新用户信息失败')
         } else {
@@ -387,7 +389,7 @@ export default {
       if (confirmResult !== 'confirm') {
         return this.$Message.info('已经取消删除')
       } else {
-        const { data: res } = await this.$http.delete('users/' + id)
+        const { data: res } = await this.$http.delete('user/' + id)
         if (res.meta.status != 200) {
           return this.$Message.error('删除用户失败')
         } else {
@@ -400,7 +402,7 @@ export default {
     async setRole(userInfo) {
       this.userInfo = userInfo
       // 在展示对话框之前获取所有的角色列表
-      const { data: res } = await this.$http.get('roles')
+      const { data: res } = await this.$http.get('role')
       if (res.meta.status !== 200) {
         return this.$Message.error('获取角色信息失败')
       }
@@ -413,7 +415,7 @@ export default {
         return this.$Message.error('请选择要分配的角色')
       }
       const { data: res } = await this.$http.put(
-        `users/${this.userInfo.id}/role`,
+        `user/${this.userInfo.id}/role`,
         {
           rid: this.selectedRoleId
         }

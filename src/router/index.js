@@ -7,6 +7,7 @@ import Users from '../components/user/Users.vue'
 import Rights from '../components/power/Rights.vue'
 import Roles from '../components/power/Roles.vue'
 import Cate from '../components/goods/Cate.vue'
+import Administrators from '../components/administrators/administrators.vue'
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -25,7 +26,11 @@ const router = new VueRouter({
    children: [{
      path: '/welcome',
      component: Welcome
-    },
+   },
+     {
+       path: '/administrators',
+       component:Administrators
+     },
     {
      path: '/users',
      component: Users
@@ -47,7 +52,7 @@ const router = new VueRouter({
  ]
 })
 
-
+// 连续多次点击同一个按钮 会导致错误 这里把捕获错误
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push (location) {
   return originalPush.call(this, location).catch(err => err)

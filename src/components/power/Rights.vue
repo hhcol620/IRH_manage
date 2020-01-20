@@ -50,7 +50,7 @@ export default {
   methods: {
     async getRightsList() {
       // 解构赋值
-      const { data: res } = await this.$http.get('rights/list')
+      const { data: res } = await this.$http.get('right/list')
       if (res.meta.status !== 200) {
         return this.$Message.error('获取权限列表失败!')
       } else {
