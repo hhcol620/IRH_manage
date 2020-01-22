@@ -13,7 +13,7 @@ import TreeTable from 'vue-table-with-tree-grid'
 
 import axios from 'axios'
 // axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
-axios.defaults.baseURL = 'http://127.0.0.1:3000/mock/20/admin'
+axios.defaults.baseURL = 'http://127.0.0.1:3000/mock/20/'
 
 // axios.defaults.baseURL = 'http://mock-api.com/ZgBBZVgB.mock/'
 

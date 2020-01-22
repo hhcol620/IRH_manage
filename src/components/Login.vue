@@ -49,7 +49,7 @@ export default {
       },
       loginFormRules: {
         name: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { required: true, message: '请输入用户名', trigger: 'blur' }
           // { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
         ],
         password: []
@@ -66,19 +66,21 @@ export default {
       // 表单预验证
       this.$refs.loginFormRef.validate(async valid => {
         // console.log(valid);
-        if (!valid) return;
+        if (!valid) return
         /* 解构赋值 把data设置一个别名 res*/
-        const {data: res} = await this.$http.post("login", this.loginForm)
-        console.log(res);
+        const { data: res } = await this.$http.post(
+          'admin/login',
+          this.loginForm
+        )
+        console.log(res)
         if (res.code !== 200) return this.$Message.error('登录失败')
-        // /* 
+        // /*
         // 将登陆成功之后的token,保存到客户端的sessionStorage中  基于会话的,  localStorage基于本地存储
         // 项目中出了登陆之外的其他api接口,必须在登陆之后才能访问
         // token只应在当前网站打开器件生效,所以将token保存在sessionStorage中
         // */
-         else
-          this.$Message.success('登陆成功')
-        console.log(res);
+        else this.$Message.success('登陆成功')
+        console.log(res)
         window.sessionStorage.setItem('token', res.text)
         // 编程式导航跳转到后台主页,路由地址是 /home
         this.$router.push('/home')
