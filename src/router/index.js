@@ -6,8 +6,15 @@ import Welcome from '../components/Welcome.vue'
 import Users from '../components/user/Users.vue'
 import Rights from '../components/power/Rights.vue'
 import Roles from '../components/power/Roles.vue'
-import Cate from '../components/goods/Cate.vue'
 import Administrators from '../components/administrators/administrators.vue'
+import Administrators_Detail from '../components/administrators/administrators_detail.vue'
+
+import Goods from '../components/mall_management/Goods.vue'
+import Order from '../components/mall_management/Order.vue'
+import Forum_post from '../components/forum/forum_post.vue'
+
+// 
+import Reports from '../components/report/report.vue'
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -42,10 +49,26 @@ const router = new VueRouter({
     {
      path: '/roles',
      component: Roles
+     },
+     {
+       path: '/admin_report',
+       component:Reports
+    },
+     {
+       path: '/administrators_Detail',
+       component:Administrators_Detail
+     },
+     {
+       path: '/forum_post',
+       component:Forum_post
+     },
+     {
+      path: '/Goods',
+      component:Goods
     },
     {
-      path:'/categories',
-      component:Cate
+      path: '/Order',
+      component:Order
     }
    ]
   }

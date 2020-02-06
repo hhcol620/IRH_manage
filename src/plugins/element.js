@@ -36,7 +36,11 @@ import {
     Tree,
     Select,
     Option,
-    Cascader
+    Cascader,
+    RadioGroup,
+    Radio,
+    Tabs,
+    TabPane
 } from 'element-ui'
 /* import {Form,FormItem} from 'element-ui'
 import {Input} from 'element-ui'
@@ -71,6 +75,10 @@ Vue.use(Tree)
 Vue.use(Select)
 Vue.use(Option)
 Vue.use(Cascader)
+Vue.use(RadioGroup)
+Vue.use(Radio)
+Vue.use(Tabs)
+Vue.use(TabPane)
 // 把Message挂载vue的原型对象上,都可以通过this访问$Message
 Vue.prototype.$Message = Message
 Vue.prototype.$confirm = MessageBox.confirm

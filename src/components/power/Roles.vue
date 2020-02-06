@@ -18,11 +18,46 @@
     <!-- 卡片视图 -->
     <el-card>
       <!-- 添加角色按钮 -->
-      <el-row>
-        <el-col>
-          <el-button type="primary"
-                     @click="addRole">添加角色</el-button>
+      <el-row :gutter="20">
+        <el-col :span="5">
+          <!--搜索框-->
+          <el-input placeholder="请输入角色名称"
+                    v-model="queryInfo.searchCondition.roleName"
+                    class="input-with-select"
+                    clearable
+                    @clear="getRolesList">
+          </el-input>
         </el-col>
+        <el-col :span="5">
+          <!--搜索框-->
+          <el-input placeholder="请输入角色ID"
+                    v-model="queryInfo.searchCondition.id"
+                    class="input-with-select"
+                    clearable
+                    @clear="getRolesList">
+          </el-input>
+        </el-col>
+        <el-col :span="5">
+          <!--搜索框-->
+          <el-input placeholder="请输入角色权限名称"
+                    v-model="queryInfo.searchCondition.authInfoList.authName"
+                    class="input-with-select"
+                    clearable
+                    @clear="getRolesList">
+          </el-input>
+        </el-col>
+        <el-col :span="4">
+          <el-button type="primary"
+                     @click="getRolesList">搜索</el-button>
+          <el-button class="primary"
+                     @click="inputReset_get">重置</el-button>
+        </el-col>
+        <el-col :span="5"
+                class="addRoles">
+          <el-button type="primary"
+                     @click="addRoles">添加角色</el-button>
+        </el-col>
+
       </el-row>
       <!-- 角色列表区域 -->
       <el-table :data="roleList"
@@ -31,35 +66,15 @@
         <!-- 展开列 -->
         <el-table-column type="expand">
           <template slot-scope="scope">
-            <el-row v-for="(item1, i1) in scope.row.children"
-                    :key="item1.id"
-                    :class="['bdbottom', i1 === 0 ? 'bdtop' : '','vcenter']">
-              <el-col :span="5">
-                <el-tag closable
-                        @close="removeRightByid(scope.row,item1.id)">{{ item1.authName }}</el-tag>
+            <el-row v-for="(item1) in scope.row.authInfoList"
+                    :key="item1.id">
+              <el-col :span="8">
+                <el-tag closable>{{ item1.authName }}</el-tag>
                 <i class="el-icon-caret-right"></i>
               </el-col>
 
-              <el-col :span="19">
-                <el-row v-for="(item2, i2) in item1.children"
-                        :key="item2.id"
-                        :class="[i2 === 0 ? '' : 'bdtop','vcenter']">
-                  <el-col :span="6">
-                    <el-tag type="success"
-                            closable
-                            @close="removeRightByid(scope.row,item2.id)">{{ item2.authName }}</el-tag>
-                    <i class="el-icon-caret-right"></i>
-                  </el-col>
-                  <el-col :span="18">
-                    <el-tag type="warning"
-                            v-for="item3 in item2.children"
-                            :key="item3.id"
-                            closable
-                            @close="removeRightByid(scope.row,item3.id)">
-                      {{item3.authName}}</el-tag>
-                    <!--  -->
-                  </el-col>
-                </el-row>
+              <el-col :span="6">
+                <p>描述: {{item1.authDesc}}</p>
               </el-col>
             </el-row>
             <!-- <pre>
@@ -69,6 +84,8 @@
         </el-table-column>
         <!-- 索引列 -->
         <el-table-column type="index"></el-table-column>
+        <el-table-column label="角色ID"
+                         prop="id"></el-table-column>
         <el-table-column label="角色名称"
                          prop="roleName"></el-table-column>
         <el-table-column label="角色描述"
@@ -91,6 +108,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 分页区域 -->
+      <el-pagination @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange"
+                     :current-page="queryInfo.currentPage"
+                     :page-sizes="[2, 10, 30, 100]"
+                     :page-size="2"
+                     layout="sizes, prev, pager, next, jumper, total"
+                     :total="totalCount">
+      </el-pagination>
     </el-card>
     <!-- 分配权限的对话框 -->
     <el-dialog title="分配权限"
@@ -124,7 +151,8 @@
                :rules="roleEditVerifyRul"
                label-width="80px">
         <!-- 内容主体区域 -->
-        <el-form-item label="角色名称">
+        <el-form-item label="角色名称"
+                      prop="roleName">
           <el-input v-model="roleEditorDialogform.roleName"></el-input>
         </el-form-item>
         <el-form-item label="角色描述"
@@ -176,9 +204,40 @@
 export default {
   data() {
     return {
-      //  存储搜索框中的id值
-      id: '',
-      //
+      queryInfo: {
+        //  搜索关键字
+        searchCondition: {
+          // 创建人姓名
+          createManagement: '',
+          // 角色id
+          id: '',
+          // 角色描述
+          roleDesc: '',
+          // 角色名称
+          roleName: '',
+          // 角色状态
+          state: '',
+          // 具有的权限的列表
+          authInfoList: {
+            // 权限名称
+            authName: '',
+            // 权限id
+            id: '',
+            // 父权限id
+            parentId: '',
+            // 权限状态
+            state: ''
+          }
+        },
+        // 当前的页数
+        currentPage: 1,
+        // 当前每页多少条数据
+        pageSize: 2
+      },
+
+      // 总条数
+      totalCount: 0,
+
       // 所有角色列表数据
       roleList: [],
       // 控制分配权限对话框的显示与隐藏
@@ -187,8 +246,7 @@ export default {
       rightsList: [],
       // 树形控件的绑定对象
       treeProps: {
-        label: 'authName',
-        children: 'children'
+        label: 'authName'
       },
       // 默认选中的id值数组
       defKeys: [],
@@ -201,12 +259,12 @@ export default {
       // 角色编辑对话框内容预验证对象
       roleEditVerifyRul: {
         roleName: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' },
-          { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }
+          { required: true, message: '请输入角色名称', trigger: 'blur' },
+          { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
         ],
         roleDesc: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' },
-          { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
+          { required: true, message: '请输入角色描述', trigger: 'blur' },
+          { min: 6, max: 15, message: '长度在至少 6 个字符', trigger: 'blur' }
         ]
       },
       // 控制添加角色对话框
@@ -235,12 +293,19 @@ export default {
   methods: {
     // 获取所有角色的列表
     async getRolesList() {
-      const { data: res } = await this.$http.get('role', this.id)
-      if (res.meta.status !== 200) {
-        return this.$Message.error('获取用户信息失败')
+      const { data: res } = await this.$http.post(
+        '/admin/role/list',
+        this.queryInfo
+      )
+      if (res.code !== 200) {
+        return this.$Message.error('获取用户列表失败')
       } else {
-        this.roleList = res.data
-        console.log(this.roleList)
+        this.$Message.success('获取用户列表成功')
+        console.log(res)
+        this.roleList = res.data.result
+        this.totalCount = res.data.totalCount
+        // console.log(this.totalCount)
+        // console.log(this.roleList)
       }
     },
     // 根据id删除对应的权限
@@ -271,45 +336,49 @@ export default {
     async showSetRightDialog(role) {
       this.roleId = role.id
       // 获取所有权限的数据
-      const { data: res } = await this.$http.get('right/tree')
-      if (res.meta.status !== 200) {
+      const { data: res } = await this.$http.get(
+        `/admin/role/ra/${this.roleId}`
+      )
+      if (res.code !== 200) {
         return this.$Message.error('获取列表失败')
       } else {
         // 把获取到的数据保存到data中的rightsList数组中
-        this.rightsList = res.data
-        console.log(this.rightsList)
+        this.rightsList = res.data.authInfoList
+        // console.log(this.rightsList)
+        console.log(res)
       }
       // 递归获取三级节点的id
-      this.getLeafKeys(role, this.defKeys)
+      // this.getLeafKeys(role, this.defKeys)
 
       this.setRightDialogVisible = true
     },
     // 通过递归的形式,获取所有角色下所有的三级权限的id,并保存到defKeys数组中
-    getLeafKeys(node, arr) {
-      // 如果node节点不包含children属性,则是三级节点
-      if (!node.children) {
-        return arr.push(node.id)
-      }
+    // getLeafKeys(node, arr) {
+    //   // 如果node节点不包含children属性,则是三级节点
+    //   if (!node.children) {
+    //     return arr.push(node.id)
+    //   }
 
-      node.children.forEach(item => this.getLeafKeys(item, arr))
-    },
-    // 监听分配权限对话框的事件
+    //   node.children.forEach(item => this.getLeafKeys(item, arr))
+    // },
+    // 监听分配权限对话框关闭的事件
     setDialogClosed() {
       this.defKeys = []
     },
-    // 点击为角色分配权限
+    // 点击提交角色分配权限
     async allotRights() {
       // 展开数组  ...
-      const keys = [
-        ...this.$refs.treeRef.getCheckedKeys(),
-        ...this.$refs.treeRef.getHalfCheckedKeys()
-      ]
+      const keys = [...this.$refs.treeRef.getCheckedKeys()]
       // console.log(keys)
       const idStr = keys.join(',')
-      const { data: res } = await this.$http.post(`role/${this.roleId}/right`, {
-        rids: idStr
+      const roleId = this.roleId
+      const { data: res } = await this.$http.put('/admin/role/editRoleAuth', {
+        authId: idStr,
+        // 分配权限的角色id
+        roleId: roleId
       })
-      if (res.meta.status !== 200) {
+      console.log(res)
+      if (res.code !== 200) {
         return this.$Message.error('分配权限失败')
       }
       this.$Message.success('分配用户成功')
@@ -319,8 +388,8 @@ export default {
     // 打开编辑对话框
     async editorRoleDialogVisible(id) {
       // console.log(id)
-      const { data: res } = await this.$http.get('role/' + id)
-      if (res.meta.status !== 200) {
+      const { data: res } = await this.$http.get(`/admin/role/${id}`)
+      if (res.code !== 200) {
         return this.$Message.error('获取数据失败')
       }
       this.roleEditorDialogform = res.data
@@ -338,8 +407,8 @@ export default {
         // console.log(valid)
         if (!valid) return
         // 校验通过,发起表单的提交请求
-        const { data: res } = await this.$http.put(
-          'role/' + this.roleEditorDialogform.id,
+        const { data: res } = await this.$http.post(
+          '/admin/role/edit' + this.roleEditorDialogform.id,
           {
             roleName: this.roleEditorDialogform.roleName,
             roleDesc: this.roleEditorDialogform.roleDesc
@@ -377,8 +446,8 @@ export default {
         return this.$Message.info('已经取消了删除')
       } else {
         // 确认了删除
-        const { data: res } = await this.$http.delete('users/' + id)
-        if (res.meta.status !== 200) {
+        const { data: res } = await this.$http.delete(`/admin/role/${id}`)
+        if (res.code !== 200) {
           return this.$Message.error('删除失败!')
         } else {
           this.$Message.success('删除角色成功!')
@@ -388,7 +457,7 @@ export default {
     },
 
     // 点击添加角色按钮
-    addRole() {
+    addRoles() {
       this.addRoleDialogVisable = true
     },
     // 监听添加角色对话框的关闭 关闭下面事件处理函数执行
@@ -401,9 +470,13 @@ export default {
         // console.log(valid)
         if (!valid) return
         //表单预校验通过 发起提交请求
-        const { data: res } = await this.$http.post('role', this.addRoleForm)
-        if (res.meta.status !== 201) {
-          return this.$Message.error('添加角色失败')
+        const { data: res } = await this.$http.post(
+          '/admin/role',
+          this.addRoleForm
+        )
+        console.log(res)
+        if (res.code !== 200) {
+          return this.$Message.error('添加角色失败,请稍后重试')
         }
         this.$Message.success('添加角色成功')
         // 隐藏添加用户对话框
@@ -411,6 +484,27 @@ export default {
         // 重新获取角色信息列表
         this.getRolesList()
       })
+    },
+    // 分页区域的事件
+    // 监听页面内多少条数据切换
+    handleSizeChange(newSize) {
+      // console.log(newSize)
+      this.pageSize = newSize
+      this.getRolesList()
+    },
+    // 监听当前页数的切换
+    handleCurrentChange(newCurrentPage) {
+      // console.log(currentPage)
+      this.currentPage = newCurrentPage
+      this.getRolesList()
+    },
+    // 搜索框重置清空   发起没有条件的请求，请求到没有条件的角色的列表
+    inputReset_get() {
+      this.queryInfo.searchCondition.roleName = ''
+      this.queryInfo.searchCondition.id = ''
+      this.queryInfo.searchCondition.authInfoList.authName = ''
+      // 清空完成后重新发起请求没有条件的列表
+      this.getRolesList()
     }
   }
 }
@@ -429,5 +523,11 @@ export default {
 .vcenter {
   display: flex;
   align-items: center;
+}
+
+// 添加角色按钮
+.addRoles {
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

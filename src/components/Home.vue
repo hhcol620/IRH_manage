@@ -95,8 +95,13 @@ export default {
               path: 'rights'
             },
             {
-              authName: '实名认证',
+              authName: '举报列表',
               id: '14',
+              path: 'admin_report'
+            },
+            {
+              authName: '实名认证',
+              id: '15',
               path: 'real_name'
             }
           ],
@@ -106,14 +111,31 @@ export default {
         },
         {
           authName: '商城管理',
-          children: [],
+          children: [
+            {
+              authName: '商品管理',
+              id: 1,
+              path: 'Goods'
+            },
+            {
+              authName: '订单管理',
+              id: 2,
+              path: 'Order'
+            }
+          ],
           id: 2,
           order: 2,
           path: 'mall_management'
         },
         {
           authName: '论坛管理',
-          children: [],
+          children: [
+            {
+              authName: '帖子管理',
+              id: 1,
+              path: 'forum_post'
+            }
+          ],
           id: 3,
           order: 3,
           path: 'forum_management'

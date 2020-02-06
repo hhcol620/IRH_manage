@@ -73,7 +73,8 @@ export default {
           this.loginForm
         )
         console.log(res)
-        if (res.code !== 200) return this.$Message.error('登录失败')
+        // 当状态码不是200  则证明请求失败，也就是登录失败   直接提示用户登录失败
+        if (res.code !== 200) this.$Message.error('登录失败')
         // /*
         // 将登陆成功之后的token,保存到客户端的sessionStorage中  基于会话的,  localStorage基于本地存储
         // 项目中出了登陆之外的其他api接口,必须在登陆之后才能访问

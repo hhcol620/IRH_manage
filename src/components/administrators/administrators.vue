@@ -49,7 +49,6 @@
         <el-col :span="5"
                 class="addAdminBox">
           <el-button type="primary"
-                     class="addAdminBtn"
                      @click="addAdmin">添加管理员</el-button>
         </el-col>
 
@@ -57,7 +56,8 @@
       <!-- 管理员列表区域 -->
       <el-table :data="adminList"
                 stripe
-                border>
+                border
+                @row-dblclick="clickToDetail">
         <!-- 展开列 -->
         <el-table-column type="expand">
           <template slot-scope="scope">
@@ -71,7 +71,7 @@
                             placement="top"
                             :enterable="false">
                   <el-tag closable
-                          @close="removeRoleById(item.id)">{{item.roleName}}</el-tag>
+                          @close="removeRoleById(scope.row.id,item.id)">{{item.roleName}}</el-tag>
                 </el-tooltip>
 
               </div>
@@ -81,17 +81,22 @@
         </el-table-column>
         <!-- 索引列 -->
         <el-table-column type="index"></el-table-column>
-        <el-table-column prop="name"
-                         label="姓名"></el-table-column>
         <el-table-column prop="id"
                          label="ID"></el-table-column>
-        <el-table-column prop="desc"
-                         label="描述"></el-table-column>
+        <el-table-column prop="nickname"
+                         label="姓名"></el-table-column>
+        <el-table-column prop="phoneNum"
+                         label="手机号"></el-table-column>
+        <el-table-column label="身份"
+                         prop="type">
+          <template scope="scope">
+            <!-- 使用过滤器将后端传过来的数字类型的数据转为对应的身份名 -->
+            <el-tag>{{scope.row.type | admin_type_Format}}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="createTime"
                          label="创建时间">
         </el-table-column>
-        <el-table-column prop="type"
-                         label="身份"></el-table-column>
         <el-table-column label="操作"
                          width="180px">
           <template slot-scope="scope">
@@ -153,16 +158,18 @@
                       prop="type">
           <el-select v-model="addForm.type"
                      placeholder="请选择身份">
+            <el-option label="普通会员"
+                       value="10"></el-option>
             <el-option label="服务人员"
-                       value="shanghai"></el-option>
+                       value="20"></el-option>
             <el-option label="校园组织"
-                       value="shanghai"></el-option>
+                       value="30"></el-option>
             <el-option label="公益组织"
-                       value="shanghai"></el-option>
+                       value="35"></el-option>
             <el-option label="校园社团"
-                       value="shanghai"></el-option>
+                       value="40"></el-option>
             <el-option label="管理员"
-                       value="shanghai"></el-option>
+                       value="50"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="描述"
@@ -184,12 +191,60 @@
     <el-dialog title="提示"
                :visible.sync="editDialogVisible"
                width="60%">
-      <span>这是一段信息</span>
+
+      <!-- 内容主体区域 -->
+      <el-form :model="editForm"
+               :rules="addFormRules"
+               ref="editFormRef"
+               label-width="100px">
+        <el-form-item label="管理员ID"
+                      prop="id">
+          <el-input v-model="editForm.id"
+                    disabled></el-input>
+        </el-form-item>
+        <el-form-item label="管理员名称"
+                      prop="name">
+          <el-input v-model="editForm.nickname"
+                    disabled></el-input>
+        </el-form-item>
+        <!-- <el-form-item label="管理员密码"
+                      prop="password">
+          <el-input v-model="editForm.password"></el-input>
+        </el-form-item> -->
+        <el-form-item label="身份"
+                      prop="type">
+          <el-radio-group v-model="editForm.type"
+                          disabled>
+            <el-radio :label="10">服务人员</el-radio>
+            <el-radio :label="20">校园组织</el-radio>
+            <el-radio :label="25">公益组织</el-radio>
+            <el-radio :label="30">校园社团</el-radio>
+            <el-radio :label="40">管理员</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <!-- 需要改变的状态10:注销 20:锁定 30:审核中 40:审核通过 -->
+        <el-form-item label="状态"
+                      prop="state">
+          <el-radio-group v-model="editForm.state">
+            <el-radio :label="10">注销</el-radio>
+            <el-radio :label="20">锁定</el-radio>
+            <el-radio :label="30">审核中</el-radio>
+            <el-radio :label="40">审核通过</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="描述"
+                      prop="desc">
+          <el-input type="textarea"
+                    v-model="editForm.desc"
+                    disabled></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
       <span slot="footer"
             class="dialog-footer">
         <el-button @click="editDialogVisible = false">取 消</el-button>
         <el-button type="primary"
-                   @click="editDialogVisible = false">确 定</el-button>
+                   @click="editDialogSubmit">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -262,7 +317,27 @@ export default {
         desc: []
       },
       // 编辑管理员信息的对话框
-      editDialogVisible: false
+      editDialogVisible: false,
+      // 编辑这个按钮打开对话框  存储一些信息  主要修改状态
+      editForm: {},
+      // 身份
+      admin_type: {
+        '10': '普通会员',
+        '20': '服务人员',
+        '30': '校园组织',
+        '35': '公益组织',
+        '40': '校园社团',
+        '50': '管理员'
+      }
+
+      // [
+      //   { '10': '普通会员' },
+      //   { '20': '服务人员' },
+      //   { '30': '校园组织' },
+      //   { '35': '公益组织' },
+      //   { '40': '校园社团' },
+      //   { '50': '管理员' }
+      // ]
     }
   },
   created() {
@@ -272,22 +347,21 @@ export default {
     // 发起请求  获取管理员信息并存到 adminList
     async getAdminList() {
       // 解构赋值  data重命名为res
-      const { data: res } = await this.$http.post(
-        'admin/list/1',
-        this.queryInfo
-      )
-      if (res.code != 200) return this.$Message.error('获取管理员列表失败')
+      const { data: res } = await this.$http.post('admin/list', this.queryInfo)
+      if (res.code !== 200) return this.$Message.error('获取管理员列表失败')
       console.log(res)
       // this.console.log(res.data.result)
       this.adminList = res.data.result
       this.totalCount = res.data.totalCount
+      this.$Message.success('加载管理员列表成功')
     },
     // 标签上面点击删除执行下面方法
     // 根据id删除管理员下角色
-    async removeRoleById(roleId) {
+    async removeRoleById(userId, roleId) {
+      // console.log(userId, roleId)
       // 弹框提示用户是否要删除
       const confimResult = await this.$confirm(
-        '此操作将永久删除该文件,是否继续',
+        '此操作将永久删除该角色,是否继续',
         '提示',
         {
           confirmButtonText: '确定',
@@ -299,26 +373,21 @@ export default {
         return this.$Message.info('取消了删除')
       }
       // console.log('确认了删除')
-      const { data: res } = await this.$http.delete(`/role/${roleId}`)
+      const { data: res } = await this.$http.delete(`admin/${userId}/${roleId}`)
       console.log(res)
       // 请求接口暂时不对, 后期需要修改######################
-      if (res.code !== 200) {
-        return console.log('no')
+      if (res.code != 200) {
+        return this.$Message.error('删除角色失败')
       }
+      // 删除成功
+      this.$Message.success('删除角色成功')
       // 删除之后重新发起请求,获取管理员列表
       this.getAdminList()
     },
     // 根据关键字查询管理员
-    async searchByquery(id) {
-      const { data: res } = await this.$http.get(`/admin/${id}`)
-      // console.log(res)
-      if (res.code !== 200) return this.$Message.error('查找失败')
-      else {
-        this.$Message.success('查找成功')
-        this.listObj.push(res.data)
-        this.adminList = this.listObj
-        console.log(this.adminList)
-      }
+    async searchByquery() {
+      // 调用获取管理员的方法就可以了
+      this.getAdminList()
     },
     // 管理员状态   监听switch按钮的变化
     adminStateChanged(adminInfo) {
@@ -343,10 +412,12 @@ export default {
       this.queryInfo.searchCondition.id = ''
       this.queryInfo.searchCondition.name = ''
       this.queryInfo.searchCondition.type = ''
+      // 重置之后然后再发起请求   获取所有的管理员
+      this.getAdminList()
     },
     // 添加管理员
     addAdmin() {
-      console.log('添加管理员')
+      // console.log('添加管理员')
       this.addDialogVisible = true
     },
     // 监听对话框关闭事件
@@ -365,8 +436,11 @@ export default {
           return
         } else {
           // 数据验证通过,可以发起请求
+          // console.log(this.addForm)
+          // debugger
           const { data: res } = await this.$http.post('admin', this.addForm)
           // console.log(res.code)
+          // debugger
           if (res.code !== 200) {
             return this.$Message.error('添加失败')
           }
@@ -384,8 +458,9 @@ export default {
       /* 
         在弹框之前首先发起请求,根据id查询管理员信息
       */
-      const { data: res } = await this.$http.put('admin', { id })
-      console.log(res)
+      const { data: res } = await this.$http.get(`/admin/${id}`)
+      console.log(res.data.state)
+      this.editForm = res.data
       // 请求成功,将请求过来的数据渲染到页面上也就是弹出的对话框里面
       this.editDialogVisible = true
     },
@@ -410,9 +485,31 @@ export default {
         const { data: res } = await this.$http.put('admin', { id })
         if (res.code !== 200) return this.$Message.error('删除失败,请稍后重试!')
         this.$Message.success(`删除ID为${id}管理员成功!`)
-        // 删除成功之,再次发情获取管理员列表的请求
+        // 删除成功之后,再次发情获取管理员列表的请求
         this.getAdminList()
       }
+    },
+    //当某一行被点击时会触发该事件  这个时候跳转到管理员信息的详情页中
+    clickToDetail(row) {
+      // console.log(row.id)
+      this.$router.push(`/Administrators_Detail?id=${row.id}`)
+    },
+    // 编辑管理员    修改用户的状态信息
+    async editDialogSubmit() {
+      // 这个就是管理员的id 等下有用
+      // console.log(this.editForm.id)
+      const { data: res } = await this.$http.delete(
+        `/admin/${this.editForm.id}/${this.editForm.state}`
+      )
+      // console.log(res)
+      if (res.code !== 200) {
+        // 则证明,修改管理员的状态失败
+        return this.$Message.error('修改管理员的状态失败')
+      }
+      // 证明修改管理员状态成功
+      this.$Message.success('修改管理员的状态成功')
+      // 关闭dialog对话框
+      this.editDialogVisible = false
     }
   }
 }

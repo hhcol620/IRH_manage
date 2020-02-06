@@ -188,7 +188,7 @@ export default {
   methods: {
     // 获取商品分类列表
     async getCateList() {
-      const { data: res } = await this.$http.get('categories', {
+      const { data: res } = await this.$http.post('/admin/goods/es', {
         params: this.querInfo
       })
       if (res.meta.status !== 200) {
