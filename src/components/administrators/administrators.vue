@@ -32,14 +32,16 @@
           </el-input>
         </el-col>
         <el-col :span="5">
-          <!--搜索框-->
-          <el-input placeholder="请输入管理员身份"
-                    v-model="queryInfo.searchCondition.type"
-                    class="input-with-select"
-                    clearable
-                    @clear="getAdminList">
-          </el-input>
+          <el-select v-model="queryInfo.searchCondition.type" clearable placeholder="管理员身份" @clear="getAdminList">
+            <el-option
+                    v-for="item in admin_type"
+                    :key="item"
+                    :label="item"
+                    :value="item | type_admin_Format">
+            </el-option>
+          </el-select>
         </el-col>
+
         <el-col :span="4">
           <el-button type="primary"
                      @click="searchByquery(queryInfo.query)">搜索</el-button>
@@ -94,8 +96,13 @@
             <el-tag>{{scope.row.type | admin_type_Format}}</el-tag>
           </template>
         </el-table-column>
+
+        <el-table-column prop="email"
+                         label="邮箱地址">
+        </el-table-column>
+
         <el-table-column prop="createTime"
-                         label="创建时间">
+                         label="注册时间">
         </el-table-column>
         <el-table-column label="操作"
                          width="180px">
@@ -142,18 +149,30 @@
                width="60%"
                @close="addDialogClosed">
       <!-- 内容主体区域 -->
-      <el-form :model="addForm"
+      <el-form  :model="addForm"
                :rules="addFormRules"
                ref="addFormRef"
                label-width="100px">
-        <el-form-item label="管理员名称"
-                      prop="name">
-          <el-input v-model="addForm.name"></el-input>
+        <el-form-item label="邮箱地址"
+                      prop="email">
+          <el-input v-model="addForm.email"  />
         </el-form-item>
         <el-form-item label="管理员密码"
                       prop="password">
           <el-input v-model="addForm.password"></el-input>
         </el-form-item>
+        <el-form-item label="昵称"
+                      prop="nickname">
+          <el-input v-model="addForm.nickname"></el-input>
+        </el-form-item>
+
+        <el-form-item>
+          <el-radio-group v-model="addForm.gender">
+            <el-radio :label="1">女</el-radio>
+            <el-radio :label="2">男</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
         <el-form-item label="身份"
                       prop="type">
           <el-select v-model="addForm.type"
@@ -171,11 +190,6 @@
             <el-option label="管理员"
                        value="50"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="描述"
-                      prop="desc">
-          <el-input type="textarea"
-                    v-model="addForm.desc"></el-input>
         </el-form-item>
       </el-form>
       <!-- 底部区域 -->
@@ -197,36 +211,65 @@
                :rules="addFormRules"
                ref="editFormRef"
                label-width="100px">
-        <el-form-item label="管理员ID"
+        <el-form-item hidden label="管理员ID"
                       prop="id">
           <el-input v-model="editForm.id"
                     disabled></el-input>
         </el-form-item>
-        <el-form-item label="管理员名称"
-                      prop="name">
-          <el-input v-model="editForm.nickname"
-                    disabled></el-input>
+
+        <el-form-item label="基本信息">
+          <el-row :gutter="15">
+            <el-col :span="8" ><el-form-item label="昵称" prop="nickname"><el-input v-model="editForm.nickname" disabled></el-input></el-form-item></el-col>
+            <el-col :span="7" ><el-form-item label="姓名" prop="realName"><el-input v-model="editForm.realName" disabled></el-input></el-form-item></el-col>
+            <el-col :span="7" ><el-form-item label="性别"
+                                             prop="gender">
+              <el-radio-group v-model="editForm.gender" disabled>
+                <el-radio :label="1">女</el-radio>
+                <el-radio :label="2">男</el-radio>
+              </el-radio-group>
+            </el-form-item></el-col>
+          </el-row>
         </el-form-item>
-        <!-- <el-form-item label="管理员密码"
-                      prop="password">
-          <el-input v-model="editForm.password"></el-input>
-        </el-form-item> -->
+
+        <el-form-item label="学校信息">
+          <el-row :gutter="15">
+            <el-col :span="8" ><el-form-item label="学校名称"><el-input v-model="editForm.schoolName" disabled></el-input></el-form-item></el-col>
+            <el-col :span="7" ><el-form-item label="学院名称"><el-input v-model="editForm.academyName" disabled></el-input></el-form-item></el-col>
+            <el-col :span="5" ><el-form-item label="专业"><el-input v-model="editForm.majorName" disabled></el-input></el-form-item></el-col>
+          </el-row>
+        </el-form-item>
+
+        <el-form-item label="寝室信息">
+          <el-row :gutter="20">
+            <el-col :span="4" ><el-form-item label="寝室楼号"><el-input v-model="editForm.buildingNum" disabled></el-input></el-form-item></el-col>
+            <el-col :span="5" ><el-form-item label="寝室号"><el-input v-model="editForm.dormNum" disabled></el-input></el-form-item></el-col>
+            </el-row>
+        </el-form-item>
+
+        <el-form-item label="电话">
+          <el-input v-model="editForm.phoneNum" disabled></el-input>
+        </el-form-item>
+
+         <el-form-item label="邮箱"
+                      prop="email">
+          <el-input v-model="editForm.email"></el-input>
+        </el-form-item>
+
         <el-form-item label="身份"
                       prop="type">
-          <el-radio-group v-model="editForm.type"
-                          disabled>
-            <el-radio :label="10">服务人员</el-radio>
-            <el-radio :label="20">校园组织</el-radio>
-            <el-radio :label="25">公益组织</el-radio>
-            <el-radio :label="30">校园社团</el-radio>
-            <el-radio :label="40">管理员</el-radio>
+          <el-radio-group v-model="editForm.type">
+            <el-radio :label="10">普通会员</el-radio>
+            <el-radio :label="20">服务人员</el-radio>
+            <el-radio :label="30">校园组织</el-radio>
+            <el-radio :label="35">公益组织</el-radio>
+            <el-radio :label="40">校园社团</el-radio>
+            <el-radio :label="50">管理员</el-radio>
           </el-radio-group>
         </el-form-item>
         <!-- 需要改变的状态10:注销 20:锁定 30:审核中 40:审核通过 -->
         <el-form-item label="状态"
                       prop="state">
           <el-radio-group v-model="editForm.state">
-            <el-radio :label="10">注销</el-radio>
             <el-radio :label="20">锁定</el-radio>
             <el-radio :label="30">审核中</el-radio>
             <el-radio :label="40">审核通过</el-radio>
@@ -236,7 +279,7 @@
                       prop="desc">
           <el-input type="textarea"
                     v-model="editForm.desc"
-                    disabled></el-input>
+                    ></el-input>
         </el-form-item>
       </el-form>
       <!-- 底部区域 -->
@@ -252,7 +295,7 @@
 
 <script>
 export default {
-  data() {
+  data: function() {
     /* 
       验证密码的校验规则
       cb回调函数
@@ -265,13 +308,33 @@ export default {
       }
       cb(new Error('至少包含一位大写字母和一位小写字母和数字'))
     }
+    var checkEmail = (rules, value, cb) => {
+      var res = this.checkValue(2)
+      if (res.code == 200) {
+        return cb()
+      }else {
+        cb(new Error("邮箱地址已经被注册"))
+      }
+    }
+
+    var checkNickname = (rules, value, cb) => {
+      var res = this.checkValue(2)
+      if (res.code == 200) {
+          return cb()
+        }else {
+        cb(new Error("用户昵称已经存在"))
+      }
+    }
+
     return {
+      //用来标识校验邮箱、昵称是否通过；只有通过了才能为true
+      available: '',
       // 获取管理员列表参数对象
       queryInfo: {
         // 搜索关键字
         searchCondition: {
           id: '',
-          name: '',
+          nickname: '',
           roleList: [],
           // 身份
           type: ''
@@ -279,7 +342,7 @@ export default {
         // 当前的页数
         currentPage: 1,
         // 当前每页多少条数据
-        pageSize: 2,
+        pageSize: 10,
         result: []
       },
       // 数据总条数
@@ -292,16 +355,29 @@ export default {
       // 添加管理员信息
       // 添加管理员的表单信息
       addForm: {
-        name: '',
+        buildingNum: '',
+        dormNum: '',
+        schoolName: '',
+        academyName: '',
+        majorName: '',
+        createTime: '',
+        realName: '',
+        nickname: '',
         password: '',
         type: '',
-        desc: ''
+        email: '',
+        phoneNum: '',
+        gender: ''
+      },
+      checkValueDto: {
+        type: '',
+        validValue: ''
       },
       // 添加管理员表单的规则验证对象
       addFormRules: {
-        name: [
-          { required: true, message: '请输入管理员名称', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        email: [
+          { required: true, message: '请输入管理员email', trigger: 'blur' },
+          { validator: checkEmail, trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
@@ -313,7 +389,11 @@ export default {
           },
           { validator: checkPassword, trigger: 'blur' }
         ],
+        nickname: [
+          { validator: checkNickname, trigger: 'blur' }
+        ],
         type: [{ required: true, message: '请选择身份', trigger: 'change' }],
+        gender: [{ required: this, message: '请选择性别', trigger: 'change' }],
         desc: []
       },
       // 编辑管理员信息的对话框
@@ -329,7 +409,6 @@ export default {
         '40': '校园社团',
         '50': '管理员'
       }
-
       // [
       //   { '10': '普通会员' },
       //   { '20': '服务人员' },
@@ -347,10 +426,9 @@ export default {
     // 发起请求  获取管理员信息并存到 adminList
     async getAdminList() {
       // 解构赋值  data重命名为res
-      const { data: res } = await this.$http.post('admin/list', this.queryInfo)
-      if (res.code !== 200) return this.$Message.error('获取管理员列表失败')
-      console.log(res)
-      // this.console.log(res.data.result)
+      console.log("查看管理员")
+      const { data: res } = await this.$http.post('user/admin/list', this.queryInfo)
+      if (res.code !== 200) return this.$Message.error(res.text)
       this.adminList = res.data.result
       this.totalCount = res.data.totalCount
       this.$Message.success('加载管理员列表成功')
@@ -373,7 +451,7 @@ export default {
         return this.$Message.info('取消了删除')
       }
       // console.log('确认了删除')
-      const { data: res } = await this.$http.delete(`admin/${userId}/${roleId}`)
+      const { data: res } = await this.$http.delete(`user/admin/${userId}/${roleId}`)
       console.log(res)
       // 请求接口暂时不对, 后期需要修改######################
       if (res.code != 200) {
@@ -388,6 +466,20 @@ export default {
     async searchByquery() {
       // 调用获取管理员的方法就可以了
       this.getAdminList()
+    },
+    //查看输入的值是否唯一   1-邮箱地址   2-昵称
+    async checkValue(type){
+      if(type == 1){
+        this.checkValueDto.type = "email";
+        this.checkValueDto.validValue = this.addForm.email;
+      }
+      else if(type == 2){
+        this.checkValueDto.type = "nickname";
+        this.checkValueDto.validValue = this.addForm.nickname;
+      }
+      const { data: check } = await this.$http.post("/user/user/check", this.checkValueDto);
+      console.log("返回值" + check.code)
+      return check.code;
     },
     // 管理员状态   监听switch按钮的变化
     adminStateChanged(adminInfo) {
@@ -410,7 +502,7 @@ export default {
     // 重置所有的输入框
     resetQuery() {
       this.queryInfo.searchCondition.id = ''
-      this.queryInfo.searchCondition.name = ''
+      this.queryInfo.searchCondition.nickname = ''
       this.queryInfo.searchCondition.type = ''
       // 重置之后然后再发起请求   获取所有的管理员
       this.getAdminList()
@@ -438,7 +530,7 @@ export default {
           // 数据验证通过,可以发起请求
           // console.log(this.addForm)
           // debugger
-          const { data: res } = await this.$http.post('admin', this.addForm)
+          const { data: res } = await this.$http.post('user/admin', this.addForm)
           // console.log(res.code)
           // debugger
           if (res.code !== 200) {
@@ -458,7 +550,7 @@ export default {
       /* 
         在弹框之前首先发起请求,根据id查询管理员信息
       */
-      const { data: res } = await this.$http.get(`/admin/${id}`)
+      const { data: res } = await this.$http.get(`user/admin/${id}`)
       console.log(res.data.state)
       this.editForm = res.data
       // 请求成功,将请求过来的数据渲染到页面上也就是弹出的对话框里面
@@ -482,8 +574,8 @@ export default {
         return this.$Message.info('取消了删除')
       } else {
         // 点击了确认,就可以发起了请求
-        const { data: res } = await this.$http.put('admin', { id })
-        if (res.code !== 200) return this.$Message.error('删除失败,请稍后重试!')
+        const { data: res } = await this.$http.put('user/admin', this.editForm)
+        if (res.code !== 200) return this.$Message.error(res.text)
         this.$Message.success(`删除ID为${id}管理员成功!`)
         // 删除成功之后,再次发情获取管理员列表的请求
         this.getAdminList()
@@ -497,9 +589,8 @@ export default {
     // 编辑管理员    修改用户的状态信息
     async editDialogSubmit() {
       // 这个就是管理员的id 等下有用
-      // console.log(this.editForm.id)
       const { data: res } = await this.$http.delete(
-        `/admin/${this.editForm.id}/${this.editForm.state}`
+        `user/admin/${this.editForm.id}/${this.editForm.state}`
       )
       // console.log(res)
       if (res.code !== 200) {
@@ -514,6 +605,8 @@ export default {
   }
 }
 </script>
+
+
 <style lang="less">
 .roleListTag {
   display: flex;

@@ -23,7 +23,7 @@
             </td>
             <td colspan="2">
               <el-form-item label="管理员名称 :">
-                <el-input v-model="ListObj.name"
+                <el-input v-model="ListObj.nickname"
                           class="width3"></el-input>
               </el-form-item>
             </td>
@@ -108,7 +108,7 @@ export default {
   data() {
     return {
       ListObj: {
-        name: '',
+        nickname: '',
         id: '',
         password: '',
         desc: '',

@@ -9,24 +9,26 @@ import './plugins/element.js'
 /* 导入全局样式表 */
 import './assets/css/global.css'
 import './assets/css/font_lcuwsu5jg6/iconfont.css'
+// 导入树形格
 import TreeTable from 'vue-table-with-tree-grid'
 
 import axios from 'axios'
-// axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
-axios.defaults.baseURL = 'http://127.0.0.1:3000/mock/20/'
 
-// axios.defaults.baseURL = 'http://mock-api.com/ZgBBZVgB.mock/'
-
+axios.defaults.baseURL = '/api'
 
 axios.interceptors.request.use(config=>{
  /* 给请求头里面添加一个属性 Authorization 并将其值设置为token令牌*/
-  // config.headers.Authorization = window.sessionStorage.getItem('token')
-  // console.log(config);
-  // 必须return config
+  config.headers.Authorization = window.sessionStorage.getItem('token')
  return config
 })
+
+
+// Vue.prototype.HOST='/api'
 // 配置axios
 Vue.prototype.$http = axios
+
+
+
 
 // 阻止启动生产消息
 Vue.config.productionTip = false
@@ -113,6 +115,8 @@ Vue.filter('orderTradeType', function(type) {
 })
 
 
+// 全局注册树形table表格
+Vue.component('tree-table',TreeTable)
 new Vue({
  router,
  store,

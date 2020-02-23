@@ -10,9 +10,12 @@ import Administrators from '../components/administrators/administrators.vue'
 import Administrators_Detail from '../components/administrators/administrators_detail.vue'
 
 import Goods from '../components/mall_management/Goods.vue'
+import Goods_Cate from '../components/mall_management/Goods_Cate.vue'
+import Demand from '../components/mall_management/Demand.vue'
 import Order from '../components/mall_management/Order.vue'
 import Forum_post from '../components/forum/forum_post.vue'
-
+import Forum_cate from '../components/forum/forum_cate.vue'
+import Interest_tag from '../components/interest_tag/interest_tag.vue'
 // 
 import Reports from '../components/report/report.vue'
 Vue.use(VueRouter)
@@ -51,6 +54,10 @@ const router = new VueRouter({
      component: Roles
      },
      {
+       path: '/interest',
+       component:Interest_tag
+     },
+     {
        path: '/admin_report',
        component:Reports
     },
@@ -63,9 +70,21 @@ const router = new VueRouter({
        component:Forum_post
      },
      {
+       path: '/forum_cate',
+       component:Forum_cate
+     },
+     {
       path: '/Goods',
       component:Goods
-    },
+     },
+     {
+      path: '/Goods_Cate',
+      component:Goods_Cate
+     },
+     {
+       path: '/Demand',
+       component:Demand
+     },
     {
       path: '/Order',
       component:Order

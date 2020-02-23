@@ -13,9 +13,9 @@
                  :model="loginForm"
                  :rules="loginFormRules">
           <!-- 用户名 -->
-          <el-form-item prop="name">
-            <el-input v-model="loginForm.name"
-                      placeholder="Username"
+          <el-form-item prop="email">
+            <el-input v-model="loginForm.email"
+                      placeholder="email"
                       type="text"></el-input>
           </el-form-item>
           <!-- 密码 -->
@@ -44,11 +44,11 @@ export default {
     return {
       // 这里是表单的数据绑定对象
       loginForm: {
-        name: '',
+        email: '',
         password: ''
       },
       loginFormRules: {
-        name: [
+        email: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
           // { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
         ],
@@ -69,22 +69,24 @@ export default {
         if (!valid) return
         /* 解构赋值 把data设置一个别名 res*/
         const { data: res } = await this.$http.post(
-          'admin/login',
+          'security/login',
           this.loginForm
         )
         console.log(res)
-        // 当状态码不是200  则证明请求失败，也就是登录失败   直接提示用户登录失败
-        if (res.code !== 200) this.$Message.error('登录失败')
+        if (res.code !== 200) this.$Message.error(res.text)
         // /*
         // 将登陆成功之后的token,保存到客户端的sessionStorage中  基于会话的,  localStorage基于本地存储
         // 项目中出了登陆之外的其他api接口,必须在登陆之后才能访问
         // token只应在当前网站打开器件生效,所以将token保存在sessionStorage中
         // */
-        else this.$Message.success('登陆成功')
-        console.log(res)
-        window.sessionStorage.setItem('token', res.text)
-        // 编程式导航跳转到后台主页,路由地址是 /home
-        this.$router.push('/home')
+        else{
+          this.$Message.success('登陆成功')
+          console.log(res.data.authToken.accessToken)
+          window.sessionStorage.setItem('token', res.data.authToken.accessToken)
+          // 编程式导航跳转到后台主页,路由地址是 /home
+          this.$router.push('/home')
+        }
+        // 当状态码不是200  则证明请求失败，也就是登录失败   直接提示用户登录失败
       })
     }
   }

@@ -113,7 +113,7 @@
       <el-pagination @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
                      :current-page="queryInfo.currentPage"
-                     :page-sizes="[2, 10, 30, 100]"
+                     :page-sizes="[10, 30, 100]"
                      :page-size="2"
                      layout="sizes, prev, pager, next, jumper, total"
                      :total="totalCount">
@@ -124,7 +124,7 @@
                :visible.sync="setRightDialogVisible"
                width="50%"
                @close="setDialogClosed">
-      <!-- 树形控件 -->
+      <!-- element-UI 的 树形控件 -->
       <el-tree :data="rightsList"
                :props="treeProps"
                show-checkbox
@@ -155,9 +155,15 @@
                       prop="roleName">
           <el-input v-model="roleEditorDialogform.roleName"></el-input>
         </el-form-item>
+
         <el-form-item label="角色描述"
                       prop="roleDesc">
           <el-input v-model="roleEditorDialogform.roleDesc"></el-input>
+        </el-form-item>
+
+        <el-form-item label="创建人"
+                      prop="createManagement">
+          <el-input v-model="roleEditorDialogform.createManagement" disabled></el-input>
         </el-form-item>
       </el-form>
       <!-- 底部区域 -->
@@ -185,8 +191,8 @@
         </el-form-item>
         <el-form-item label="角色描述"
                       label-width="80px"
-                      prop="roleDecription">
-          <el-input v-model="addRoleForm.roleDecription"
+                      prop="roleDesc">
+          <el-input v-model="addRoleForm.roleDesc"
                     autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -218,7 +224,7 @@ export default {
           // 角色状态
           state: '',
           // 具有的权限的列表
-          authInfoList: {
+          authInfoList: [{
             // 权限名称
             authName: '',
             // 权限id
@@ -227,12 +233,12 @@ export default {
             parentId: '',
             // 权限状态
             state: ''
-          }
+          }]
         },
         // 当前的页数
         currentPage: 1,
         // 当前每页多少条数据
-        pageSize: 2
+        pageSize: 10
       },
 
       // 总条数
@@ -246,9 +252,10 @@ export default {
       rightsList: [],
       // 树形控件的绑定对象
       treeProps: {
+        children: 'childs',
         label: 'authName'
       },
-      // 默认选中的id值数组
+      // 默认选中的id值数组   通过判断压入这个数组里面
       defKeys: [],
       roleId: '',
       // 角色编辑对话框
@@ -264,7 +271,7 @@ export default {
         ],
         roleDesc: [
           { required: true, message: '请输入角色描述', trigger: 'blur' },
-          { min: 6, max: 15, message: '长度在至少 6 个字符', trigger: 'blur' }
+          { min: 3, max: 10, message: '长度在至少 3 个字符', trigger: 'blur' }
         ]
       },
       // 控制添加角色对话框
@@ -272,7 +279,7 @@ export default {
       // 添加角色
       addRoleForm: {
         roleName: '',
-        roleDecription: ''
+        roleDesc: ''
       },
       // 添加角色表单的验证对象
       addRoleRules: {
@@ -280,9 +287,9 @@ export default {
           { required: true, message: '请输入角色名称', trigger: 'blur' },
           { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
         ],
-        roleDecription: [
+        roleDesc: [
           { required: true, message: '请输入角色描述', trigger: 'blur' },
-          { min: 6, message: '长度至少 6 个字符', trigger: 'blur' }
+          { min: 3, message: '长度至少 3 个字符', trigger: 'blur' }
         ]
       }
     }
@@ -294,18 +301,16 @@ export default {
     // 获取所有角色的列表
     async getRolesList() {
       const { data: res } = await this.$http.post(
-        '/admin/role/list',
+        'user/admin/role/list',
         this.queryInfo
       )
+      console.log(res)
       if (res.code !== 200) {
         return this.$Message.error('获取用户列表失败')
       } else {
-        this.$Message.success('获取用户列表成功')
-        console.log(res)
+        this.$Message.success(res.text)
         this.roleList = res.data.result
         this.totalCount = res.data.totalCount
-        // console.log(this.totalCount)
-        // console.log(this.roleList)
       }
     },
     // 根据id删除对应的权限
@@ -323,7 +328,7 @@ export default {
         return this.$Message.info('您取消了删除')
       } else {
         const { data: res } = await this.$http.delete(
-          `role/${role.id}/rights/${rightId}`
+          `user/role/${role.id}/rights/${rightId}`
         )
         if (res.meta.status !== 200) {
           return this.$Message.error('删除权限成功')
@@ -335,44 +340,56 @@ export default {
     // 展示分配权限的对话框
     async showSetRightDialog(role) {
       this.roleId = role.id
-      // 获取所有权限的数据
-      const { data: res } = await this.$http.get(
-        `/admin/role/ra/${this.roleId}`
-      )
+      // console.log(this.roleId)
+      // 获取树形权限的数据
+      const { data: res } = await this.$http.get(`user/admin/role/tree/${role.id}`)
+      console.log(res)
       if (res.code !== 200) {
         return this.$Message.error('获取列表失败')
       } else {
         // 把获取到的数据保存到data中的rightsList数组中
-        this.rightsList = res.data.authInfoList
-        // console.log(this.rightsList)
-        console.log(res)
+        this.rightsList = res.data
+        console.log(this.rightsList)
+        // console.log(res)
+        /* 
+        
+        获取到的内容里面hava属性表示有无这个权限,有这个权限,则hava值为2 否则为1
+        把所有的为2的hava值的角色id保存起来defKeys
+        
+        */
+        // 递归获取三级节点的id
+        this.getLeafKeys(this.rightsList, this.defKeys)
+        this.setRightDialogVisible = true
       }
-      // 递归获取三级节点的id
-      // this.getLeafKeys(role, this.defKeys)
-
-      this.setRightDialogVisible = true
     },
-    // 通过递归的形式,获取所有角色下所有的三级权限的id,并保存到defKeys数组中
-    // getLeafKeys(node, arr) {
-    //   // 如果node节点不包含children属性,则是三级节点
-    //   if (!node.children) {
-    //     return arr.push(node.id)
-    //   }
-
-    //   node.children.forEach(item => this.getLeafKeys(item, arr))
-    // },
+    // 通过递归的形式,获取所有角色下所有的权限的id,并保存到defKeys数组中
+    getLeafKeys(node, arr) {
+      //
+      node.forEach(item => {
+        // console.log(item.have)
+        if (item.childs.length === 0) {
+          arr.push(item.have === 2 ? item.id : '')
+        } else {
+          this.getLeafKeys(item.childs, arr)
+        }
+      })
+    },
     // 监听分配权限对话框关闭的事件
     setDialogClosed() {
+      // 清空勾选的数组
       this.defKeys = []
     },
     // 点击提交角色分配权限
     async allotRights() {
       // 展开数组  ...
-      const keys = [...this.$refs.treeRef.getCheckedKeys()]
+      const keys = [
+        ...this.$refs.treeRef.getCheckedKeys(),
+        ...this.$refs.treeRef.getHalfCheckedKeys()
+      ]
       // console.log(keys)
       const idStr = keys.join(',')
       const roleId = this.roleId
-      const { data: res } = await this.$http.put('/admin/role/editRoleAuth', {
+      const { data: res } = await this.$http.put('user/admin/role/editRoleAuth', {
         authId: idStr,
         // 分配权限的角色id
         roleId: roleId
@@ -381,19 +398,24 @@ export default {
       if (res.code !== 200) {
         return this.$Message.error('分配权限失败')
       }
-      this.$Message.success('分配用户成功')
+      this.$Message.success('分配权限成功')
       this.getRolesList()
       this.setRightDialogVisible = false
     },
     // 打开编辑对话框
     async editorRoleDialogVisible(id) {
       // console.log(id)
-      const { data: res } = await this.$http.get(`/admin/role/${id}`)
+      const { data: res } = await this.$http.get(`user/admin/role/${id}`)
       if (res.code !== 200) {
         return this.$Message.error('获取数据失败')
       }
       this.roleEditorDialogform = res.data
       console.log(this.roleEditorDialogform)
+      if(this.roleEditorDialogform.createManagement !== null){
+        const { data : name } = await this.$http.get(`user/user/${this.roleEditorDialogform.createManagement}`);
+        console.log("得到的用户名" + name.text)
+        this.roleEditorDialogform.createManagement = name.text;
+      }
       this.roleEditorDialogVisible = true
     },
     // 监听角色编辑对话框的关闭事件
@@ -408,7 +430,7 @@ export default {
         if (!valid) return
         // 校验通过,发起表单的提交请求
         const { data: res } = await this.$http.post(
-          '/admin/role/edit' + this.roleEditorDialogform.id,
+          'user/admin/role/edit' + this.roleEditorDialogform.id,
           {
             roleName: this.roleEditorDialogform.roleName,
             roleDesc: this.roleEditorDialogform.roleDesc
@@ -446,7 +468,8 @@ export default {
         return this.$Message.info('已经取消了删除')
       } else {
         // 确认了删除
-        const { data: res } = await this.$http.delete(`/admin/role/${id}`)
+        const { data: res } = await this.$http.delete(`user/admin/role/${id}`)
+        console.log(res)
         if (res.code !== 200) {
           return this.$Message.error('删除失败!')
         } else {
@@ -470,13 +493,13 @@ export default {
         // console.log(valid)
         if (!valid) return
         //表单预校验通过 发起提交请求
-        const { data: res } = await this.$http.post(
-          '/admin/role',
+        const { data: res } = await this.$http.put(
+          'user/admin/role',
           this.addRoleForm
         )
         console.log(res)
         if (res.code !== 200) {
-          return this.$Message.error('添加角色失败,请稍后重试')
+          return this.$Message.error(res.text)
         }
         this.$Message.success('添加角色成功')
         // 隐藏添加用户对话框

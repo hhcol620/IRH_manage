@@ -40,7 +40,10 @@ import {
     RadioGroup,
     Radio,
     Tabs,
-    TabPane
+    TabPane,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu
 } from 'element-ui'
 /* import {Form,FormItem} from 'element-ui'
 import {Input} from 'element-ui'
@@ -79,6 +82,9 @@ Vue.use(RadioGroup)
 Vue.use(Radio)
 Vue.use(Tabs)
 Vue.use(TabPane)
+Vue.use(Dropdown)
+Vue.use(DropdownItem)
+Vue.use(DropdownMenu)
 // 把Message挂载vue的原型对象上,都可以通过this访问$Message
 Vue.prototype.$Message = Message
 Vue.prototype.$confirm = MessageBox.confirm

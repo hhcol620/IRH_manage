@@ -95,13 +95,18 @@ export default {
               path: 'rights'
             },
             {
-              authName: '举报列表',
+              authName: '兴趣标签',
               id: '14',
+              path: 'interest'
+            },
+            {
+              authName: '举报列表',
+              id: '15',
               path: 'admin_report'
             },
             {
               authName: '实名认证',
-              id: '15',
+              id: '16',
               path: 'real_name'
             }
           ],
@@ -118,8 +123,18 @@ export default {
               path: 'Goods'
             },
             {
-              authName: '订单管理',
+              authName: '商品分类',
               id: 2,
+              path: 'Goods_Cate'
+            },
+            {
+              authName: '需求管理',
+              id: 3,
+              path: 'Demand'
+            },
+            {
+              authName: '订单管理',
+              id: 4,
               path: 'Order'
             }
           ],
@@ -134,6 +149,11 @@ export default {
               authName: '帖子管理',
               id: 1,
               path: 'forum_post'
+            },
+            {
+              authName:'帖子分类',
+              id: 2,
+              path:'forum_cate'
             }
           ],
           id: 3,
