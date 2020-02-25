@@ -32,6 +32,8 @@ Vue.prototype.$http = axios
 
 // 阻止启动生产消息
 Vue.config.productionTip = false
+
+
 Vue.component('tree-table',TreeTable)
 
 // 定义一个全局过滤器start   将后台传过来的身份数字转为对应的身份

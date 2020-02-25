@@ -28,7 +28,7 @@
           <el-form-item class="btns">
             <el-form-item>
               <el-button type="primary"
-                         @click="login">登陆</el-button>
+                         @click="logintest">登陆</el-button>
               <el-button @click="resetLoginForm">重置</el-button>
             </el-form-item>
           </el-form-item>
@@ -62,6 +62,12 @@ export default {
       // console.log(this);
       this.$refs.loginFormRef.resetFields()
     },
+    logintest() {
+      // **************************最后删除
+      // console.log('ok')
+      this.$router.push('/home')
+      console.log('ok')
+    },
     login() {
       // 表单预验证
       this.$refs.loginFormRef.validate(async valid => {
@@ -73,19 +79,21 @@ export default {
           this.loginForm
         )
         console.log(res)
+
         if (res.code !== 200) this.$Message.error(res.text)
         // /*
         // 将登陆成功之后的token,保存到客户端的sessionStorage中  基于会话的,  localStorage基于本地存储
         // 项目中出了登陆之外的其他api接口,必须在登陆之后才能访问
         // token只应在当前网站打开器件生效,所以将token保存在sessionStorage中
         // */
-        else{
+        else {
           this.$Message.success('登陆成功')
           console.log(res.data.authToken.accessToken)
           window.sessionStorage.setItem('token', res.data.authToken.accessToken)
           // 编程式导航跳转到后台主页,路由地址是 /home
           this.$router.push('/home')
         }
+
         // 当状态码不是200  则证明请求失败，也就是登录失败   直接提示用户登录失败
       })
     }

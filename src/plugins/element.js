@@ -43,7 +43,10 @@ import {
     TabPane,
     Dropdown,
     DropdownItem,
-    DropdownMenu
+    DropdownMenu,
+    Collapse,
+    CollapseItem,
+    DatePicker
 } from 'element-ui'
 /* import {Form,FormItem} from 'element-ui'
 import {Input} from 'element-ui'
@@ -85,6 +88,9 @@ Vue.use(TabPane)
 Vue.use(Dropdown)
 Vue.use(DropdownItem)
 Vue.use(DropdownMenu)
+Vue.use(Collapse)
+Vue.use(CollapseItem)
+Vue.use(DatePicker)
 // 把Message挂载vue的原型对象上,都可以通过this访问$Message
 Vue.prototype.$Message = Message
 Vue.prototype.$confirm = MessageBox.confirm

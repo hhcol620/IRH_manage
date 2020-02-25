@@ -151,9 +151,9 @@ export default {
               path: 'forum_post'
             },
             {
-              authName:'帖子分类',
+              authName: '帖子分类',
               id: 2,
-              path:'forum_cate'
+              path: 'forum_cate'
             }
           ],
           id: 3,
