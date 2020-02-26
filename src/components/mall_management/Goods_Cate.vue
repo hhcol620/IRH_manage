@@ -30,23 +30,9 @@
                   children-prop="childs"
                   class="treeTable">
 
-        <!-- 排序 -->
         <template slot="order"
                   slot-scope="scope">
-          <el-tag size="mini"
-                  v-if='scope.row.parentId===0'>一级</el-tag>
-          <el-tag type="success"
-                  size="mini"
-                  v-if='scope.row.parentId===1'>二级</el-tag>
-          <el-tag type="warning"
-                  size="mini"
-                  v-if='scope.row.parentId===2'>三级</el-tag>
-          <el-tag type="warning"
-                  size="mini"
-                  v-if='scope.row.parentId===3'>四级</el-tag>
-          <el-tag type="warning"
-                  size="mini"
-                  v-if='scope.row.parentId===4'>五级</el-tag>
+          <p>{{scope.row.desc}}</p>
         </template>
 
         <!-- 操作 -->
@@ -84,9 +70,15 @@
                ref="addCatFormRef"
                label-width="100px">
         <el-form-item label="分类名称"
-                      prop="cat_name">
-          <el-input v-model="addCatForm.cat_name"></el-input>
+                      prop="name">
+          <el-input v-model="addCatForm.name"></el-input>
         </el-form-item>
+
+        <el-form-item label="描述"
+                      prop="desc">
+          <el-input v-model="addCatForm.desc"></el-input>
+        </el-form-item>
+
         <el-form-item label="父级分类">
           <!-- options 指定数据源   props 用来指定配置的对象 -->
           <el-cascader v-model="selectedKeys"
@@ -129,7 +121,7 @@ export default {
           prop: 'name'
         },
         {
-          label: '排序',
+          label: '描述',
           type: 'template',
           template: 'order'
         },
@@ -144,15 +136,14 @@ export default {
       // 添加分类的表单数据对象
       addCatForm: {
         // 将要添加分类的名称
-        cat_name: '',
+        name: '',
         // 父级分类的id 不能为空 默认设置为0
-        cat_pid: 0,
-        // 分类等级默认为1级分类  值默认为0
-        cat_level: 0
+        parentId: 0,
+        desc: ''
       },
       // 添加分类的表单的验证规则对象
       addCatFormRules: {
-        cat_name: [
+        name: [
           { required: true, message: '请输入分类名称', trigger: 'blur' },
           {
             min: 3,
@@ -184,9 +175,8 @@ export default {
   methods: {
     // 获取商品分类列表
     async getCateList() {
-      const { data: res } = await this.$http.post('/admin/goods/category', {
-        params: this.querInfo
-      })
+      console.log("查看分类信息")
+      const { data: res } = await this.$http.get('user/admin/goods/category')
       console.log(res)
       if (res.code !== 200) {
         return this.$Message.error('获取商品分类失败')
@@ -214,7 +204,7 @@ export default {
     },
     // 获取父级分类的数据类表    在添加分类的对话框打开之后,立刻获取父级分类数据列表,在添加分类的时候,可以选择父级分类
     async getParentCateList() {
-      const { data: res } = await this.$http.get('/admin/goods/category')
+      const { data: res } = await this.$http.get('user/admin/goods/category')
       if (res.code !== 200) {
         return this.$Message.error('获取父级分类数据失败')
       }
@@ -246,7 +236,7 @@ export default {
       this.$refs.addCatFormRef.validate(async valid => {
         if (!valid) return
         const { data: res } = await this.$http.post(
-          '/admin/goods/category',
+          'user/admin/goods/category',
           this.addCatForm
         )
         if (res.code !== 200) {
@@ -262,14 +252,14 @@ export default {
       this.$refs.addCatFormRef.resetFields()
       this.selectedKeys = []
       this.addCatForm.cat_level = 0
-      this.addCatForm.cat_pid = 0
+      this.addCatForm.parentId = 0
     },
     //监听编辑按钮
     async click_edit_cate_by_id(id) {
       // 根据传过来的id值请求数据,做下一步的渲染
       console.log(id)
       // 立刻发起请求,根据id获取商品分类的信息
-      const { data: res } = await this.$http.get(`/admin/goods/category/{id}`)
+      const { data: res } = await this.$http.get(`user/admin/goods/category/{id}`)
       console.log(res)
     },
     // 监听分类的删除按钮
@@ -295,7 +285,7 @@ export default {
         // 先发起删除请求
         // id要使用传进来的id值
         const { data: res } = await this.$http.delete(
-          `/admin/goods/category/${id}`
+          `user/admin/goods/category/${id}`
         )
         // console.log(res)
         if (res.code !== 200) {

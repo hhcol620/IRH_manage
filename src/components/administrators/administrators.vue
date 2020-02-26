@@ -343,7 +343,7 @@ export default {
         currentPage: 1,
         // 当前每页多少条数据
         pageSize: 10,
-        result: []
+        data: []
       },
       // 数据总条数
       totalCount: 0,
@@ -429,7 +429,7 @@ export default {
       console.log("查看管理员")
       const { data: res } = await this.$http.post('user/admin/list', this.queryInfo)
       if (res.code !== 200) return this.$Message.error(res.text)
-      this.adminList = res.data.result
+      this.adminList = res.data.data
       this.totalCount = res.data.totalCount
       this.$Message.success('加载管理员列表成功')
     },

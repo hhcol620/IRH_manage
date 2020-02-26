@@ -172,7 +172,7 @@ export default {
       } else {
         // 请求成功
         // 将响应的数据存入权限列表 rightsList
-        this.rightsList = res.data.result
+        this.rightsList = res.data.data
         this.totalCount = res.data.totalCount
         this.$Message.success('加载权限列表成功')
         // console.log(this.rightsList)

@@ -54,9 +54,9 @@
                     class="goods_message_box">
               <!-- 商品信息 -->
               <el-row :gutter="20">
-                <el-col :span="19"><span class="demand">需求: <i>{{item.topic}}</i></span></el-col>
+                <el-col :span="19"><span class="demand"><h2>{{item.topic}}</h2></span></el-col>
                 <el-col :span="5"
-                        class="time"><span>发布时间: <i>{{item.create_time}}</i></span></el-col>
+                        class="time"><span>发布时间: <i>{{item.createTime}}</i></span></el-col>
               </el-row>
 
               <el-row class="delete_btn">
@@ -145,12 +145,10 @@ export default {
           categoryId: '',
           // 商品的id
           id: '',
-          // 新旧程度   1 - 10  数值越大,越新
-          oldDegree: '',
-          // 商品名称
-          productName: '',
-          // 交易类型    10 正常交易 20 公益捐赠
-          tradeType: ''
+          //标题
+          topic: '',
+          //发布者id
+          consumerId: '',
         }
       },
       // 需求的记录数
@@ -188,13 +186,13 @@ export default {
     },
     // 请求服务器 得到列表数据
     async getDemands() {
-      const { data: res } = await this.$http.post('/admin/goods/demand')
+      const { data: res } = await this.$http.post('user/admin/goods/demand', this.queryInfo)
       console.log(res)
       if (res.code !== 200) {
         // 获取商品数据失败
         return this.$Message.error('加载需求列表失败')
       } else {
-        this.demand_List_Obj = res.data.result
+        this.demand_List_Obj = res.data.data
         console.log(this.demand_List_Obj)
         this.totalCount = res.data.totalCount
         this.$Message.success('加载需求列表成功')
@@ -217,7 +215,7 @@ export default {
         return this.$Message.info('取消')
       }
       // console.log('确认了')
-      const { data: res } = await this.$http.delete(`/admin/goods/${id}`)
+      const { data: res } = await this.$http.delete(`user/admin/goods/${id}`)
       if (res.code !== 200) {
         // 失败
         return this.$Message.error('删除失败,请稍后重试')
