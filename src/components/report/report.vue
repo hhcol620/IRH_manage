@@ -30,7 +30,7 @@
         </el-col>
         <el-col :span="5">
           <!--搜索框-->
-          <el-select v-model="queryInfo.searchCondition.result"
+          <el-select v-model="queryInfo.searchCondition.data"
                      placeholder="请选择处理结果"
                      @change="selectChange">
             <el-option v-for="item in opt"
@@ -60,8 +60,7 @@
               <el-row :gutter="10">
                 <el-col :span="3"
                         :class="['time',item.result === 1 ?'timefailColor':(item.result === 2?'timeprocessColor':(item.result === 3? 'timewarningColor':(item.result === 4?'timefreezeColor':'timedeleteColor')))] ">
-                  <p>16:41</p>
-                  <p>2020/09/12</p>
+                  <span>{{item.createTime}}</span>
                 </el-col>
                 <el-col :span="20"
                         class="list_content">
@@ -75,7 +74,7 @@
                     <el-col class="box_btn"
                             :span="10">
                       <span>举报人ID: <i>{{item.customerId}}</i></span>
-                      <span>处理结果: <i>{{item.result|report_result_format}}</i></span>
+                      <span>处理状态: <i>{{item.result|report_result_format}}</i></span>
                     </el-col>
                   </el-row>
                 </el-col>
@@ -89,7 +88,7 @@
       <el-pagination @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
                      :current-page="queryInfo.currentPage"
-                     :page-sizes="[2, 10, 30, 100]"
+                     :page-sizes="[10, 30, 100]"
                      :page-size="queryInfo.pageSize"
                      layout="sizes, prev, pager, next, jumper, total"
                      :total="totalCount">
@@ -163,6 +162,7 @@ export default {
         // result: [{ type: 1 }],
         // 查询条件
         searchCondition: {
+          //todo consumerId报错
           // 举报人 id
           customerId: '',
           // 举报反馈表的id
@@ -214,16 +214,14 @@ export default {
     },
     // 分页查询所有的举报
     async getReportsBySearchCondition() {
-      const { data: res } = await this.$http.post('/admin/report', {
-        params: this.queryInfo.searchCondition
-      })
+      const { data: res } = await this.$http.post('user/admin/report/statisic', this.queryInfo.searchCondition)
       // console.log(res)
       if (res.code !== 200) {
         // 获取失败
         return this.$Message.error('获取举报列表信息失败')
       } else {
         // 获取成功
-        this.reportList = res.data.result
+        this.reportList = res.data.data
         this.totalCount = res.data.totalCount
         // res.console.log(this.reportList)
       }
@@ -236,7 +234,7 @@ export default {
       // tab栏的重置
       this.value_type = 1 + ''
       // 下拉框的内容重置
-      this.queryInfo.searchCondition.result = ''
+      this.queryInfo.searchCondition.data = ''
       // 重置之后，重新获取列表
       this.getReportsBySearchCondition()
     }

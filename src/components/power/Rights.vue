@@ -20,6 +20,21 @@
                        @click="searchByName"></el-button>
           </el-input>
         </el-col>
+
+        <el-col :span="6">
+          <div class="block">
+            <el-date-picker
+                    v-model="searchEndTime"
+                    type="daterange"
+                    align="right"
+                    unlink-panels
+                    range-separator="至"
+                    start-placeholder="注册开始日期"
+                    end-placeholder="结束日期"
+                    :picker-options="pickerOptions">
+            </el-date-picker>
+          </div>
+        </el-col>
       </el-row>
       <!-- 权限列表 -->
       <el-table :data="rightsList"
@@ -143,7 +158,7 @@ export default {
         // 当前页码
         currentPage: 1,
         // 页面大小
-        pageSize: 2
+        pageSize: 10
       },
       totalCount: 0,
       // 所有的权限列表
@@ -151,7 +166,36 @@ export default {
       editFormData: {},
       editDialogVisible: false,
       // 存储dialog对话框的数据内容
-      editList: {}
+      editList: {},
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
+      },
+      searchStartTime: '',
+      searchEndTime: ''
     }
   },
   // 声明周期函数  发起数据请求
