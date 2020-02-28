@@ -53,7 +53,7 @@
         <el-col :span="6">
           <div class="block">
             <el-date-picker
-                    v-model="queryInfo.searchCondition.searchEndTime"
+                    v-model="this.searchTime"
                     type="daterange"
                     align="right"
                     unlink-panels
@@ -356,6 +356,7 @@ export default {
       //用来标识校验邮箱、昵称是否通过；只有通过了才能为true
       available: '',
       // 获取用户列表参数对象
+      searchTime: '',
       queryInfo: {
         // 搜索关键字
         searchCondition: {
@@ -366,7 +367,7 @@ export default {
           // 身份
           type: '',
           searchStartTime: '',
-          searchEndTime: ''
+
         },
         // 当前的页数
         currentPage: 1,
@@ -473,13 +474,13 @@ export default {
   methods: {
     // 发起请求  获取用户信息并存到 adminList
     async getAdminList() {
-      if(this.queryInfo.searchCondition.searchEndTime != null){
-        let newDate = this.queryInfo.searchCondition.searchEndTime.toString();
+      console.log("搜索时间为:" + this.searchTime)
+      /*if(this.searchTime != null){
+        let newDate = this.searchTime.toString();
         const ss = newDate.split(",");
         this.queryInfo.searchCondition.searchStartTime = ss[0];
         this.queryInfo.searchCondition.searchEndTime = ss[1];
-      }
-
+      }*/
       const { data: res } = await this.$http.post('user/admin/list', this.queryInfo)
       if (res.code !== 200) return this.$Message.error(res.text)
       this.adminList = res.data.data
@@ -557,8 +558,7 @@ export default {
       this.queryInfo.searchCondition.id = ''
       this.queryInfo.searchCondition.realName = ''
       this.queryInfo.searchCondition.type = ''
-      this.queryInfo.searchCondition.searchStartTime = ''
-      this.queryInfo.searchCondition.searchEndTime = ''
+      this.searchTime = ''
       this.queryInfo.searchCondition.nickname = ''
       // 重置之后然后再发起请求   获取所有用户
       this.getAdminList()
