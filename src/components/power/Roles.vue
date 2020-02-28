@@ -309,7 +309,7 @@ export default {
         return this.$Message.error('获取用户列表失败')
       } else {
         this.$Message.success(res.text)
-        this.roleList = res.data.result
+        this.roleList = res.data.data
         this.totalCount = res.data.totalCount
       }
     },

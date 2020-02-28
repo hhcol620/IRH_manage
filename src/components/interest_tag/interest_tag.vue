@@ -12,17 +12,29 @@
 
       <!-- 主体区域 -->
       <!-- 查找搜索  search -->
-      <el-row :gutter="20">
-        <el-col :span="4">
+      <el-row :gutter="24">
+        <el-col :span="5">
           <el-input v-model="queryInfo.searchCondition.id"
                     clearable
                     placeholder="标签ID"></el-input>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="5">
 
           <el-input v-model="queryInfo.searchCondition.tagName"
                     clearable
                     placeholder="标签名"></el-input>
+        </el-col>
+
+        <el-col :span="8">
+          <el-date-picker v-model="aLongTime"
+                          type="daterange"
+                          align="right"
+                          unlink-panels
+                          range-separator="至"
+                          start-placeholder="开始日期"
+                          end-placeholder="结束日期"
+                          :picker-options="pickerOptions">
+          </el-date-picker>
         </el-col>
         <el-col :span="4">
           <el-button type="primary"
@@ -39,6 +51,12 @@
         </el-table-column>
         <el-table-column prop="tagName"
                          label="标签名">
+        </el-table-column>
+        <el-table-column prop="total"
+                         label="使用总数">
+        </el-table-column>
+        <el-table-column prop="createTime"
+                         label="创建时间">
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
@@ -57,7 +75,7 @@
       <el-pagination @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
                      :current-page="queryInfo.currentPage"
-                     :page-sizes="[2, 10, 30, 100]"
+                     :page-sizes="[10, 30, 100]"
                      :page-size="queryInfo.pageSize"
                      layout="sizes, prev, pager, next, jumper, total"
                      :total="totalCount">
@@ -80,11 +98,6 @@
                         prop="tagName">
             <el-input v-model="edit_list.tagName"></el-input>
           </el-form-item>
-          <el-form-item label="被标记总数"
-                        prop="total">
-            <el-input v-model="edit_list.total"
-                      disabled></el-input>
-          </el-form-item>
         </el-form>
         <span slot="footer"
               class="dialog-footer">
@@ -103,13 +116,17 @@ export default {
     return {
       // 查询内容
       queryInfo: {
-        pageSize: 2,
+        pageSize: 10,
         currentPage: 1,
         searchCondition: {
           id: '',
-          tagName: ''
+          tagName: '',
+          searchStartTime: '',
+          searchEndTime: ''
         }
       },
+      // 时间段
+      aLongTime: '', //这个不要修改  需要按照这个显示  (回显)
       // 总条数
       totalCount: 0,
       // 标签列表
@@ -127,10 +144,37 @@ export default {
         tagName: [
           { required: true, message: '请输入标签名称', trigger: 'blur' },
           { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }
-        ],
-        total: [
-          { required: true, message: 'id不能为空' },
-          { type: 'number', message: 'id值必须为数字值' }
+        ]
+      },
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
         ]
       }
     }
@@ -152,17 +196,24 @@ export default {
     // 分页获取兴趣列表
     async get_Interest_tag_by_searchCondition() {
       // 发起请求
+
+      if (this.aLongTime != null) {
+        let newDate = this.aLongTime.toString()
+        const ss = newDate.split(',')
+        this.queryInfo.searchCondition.searchStartTime = ss[0]
+        this.queryInfo.searchCondition.searchEndTime = ss[1]
+      }
+
       const { data: res } = await this.$http.post(
-        `/interest/admin`,
+        `user/interest/admin`,
         this.queryInfo
       )
-      console.log(res)
       if (res.code !== 200) {
         // 获取失败
         return this.$Message.error('获取列表信息失败')
       } else {
         // 成功
-        this.interest_tag = res.data.result
+        this.interest_tag = res.data.data
         this.totalCount = res.data.totalCount
         this.$Message.success('获取列表信息成功')
       }
@@ -195,7 +246,9 @@ export default {
         // 成功
         // console.log('ok')
         // 发起请求
-        const { data: res } = await this.$http.delete(`/interest/admin/${id}`)
+        const { data: res } = await this.$http.delete(
+          `user/interest/admin/${id}`
+        )
         // console.log(res)
         if (res.code !== 200) {
           // 失败
@@ -211,7 +264,7 @@ export default {
     async edit_btn(id) {
       // console.log(id)
       // 先进行网络请求 ，将请求到的数据保存起来，渲染到将要打开的对话框的里面
-      const { data: res } = await this.$http.get(`/interest/admin/${id}`)
+      const { data: res } = await this.$http.get(`user/interest/admin/${id}`)
       if (res.code !== 200) {
         // 失败
         return this.$Message.error('获取标签信息失败')
@@ -228,7 +281,7 @@ export default {
         /* 解构赋值 */
         // 预验证成功
         const { data: res } = await this.$http.put(
-          `/interest/admin`,
+          `user/interest/admin`,
           this.edit_list
         )
         // console.log(res)

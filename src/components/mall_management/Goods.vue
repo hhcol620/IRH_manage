@@ -210,13 +210,13 @@ export default {
     },
     // 请求服务器 得到列表数据
     async getGoods() {
-      const { data: res } = await this.$http.post('admin/goods/es')
+      const { data: res } = await this.$http.post('user/admin/goods/es', this.queryInfo)
       console.log(res)
       if (res.code !== 200) {
         // 获取商品数据失败
         return this.$Message.error('加载商品列表失败')
       } else {
-        this.goods_List_Obj = res.data.result
+        this.goods_List_Obj = res.data.data
         console.log(this.goods_List_Obj)
         this.totalCount = res.data.totalCount
         this.$Message.success('加载商品列表成功')
@@ -239,7 +239,7 @@ export default {
         return this.$Message.info('取消')
       }
       // console.log('确认了')
-      const { data: res } = await this.$http.delete(`/admin/goods/${id}`)
+      const { data: res } = await this.$http.delete(`user/admin/goods/${id}`)
       if (res.code !== 200) {
         // 失败
         return this.$Message.error('下架失败,请稍后重试')

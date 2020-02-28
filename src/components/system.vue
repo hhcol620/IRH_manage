@@ -91,12 +91,10 @@
                              value="1"></el-option>
                   <el-option label="最近一个月"
                              value="2"></el-option>
-                  <el-option label="最近三个个月"
-                             value="3"></el-option>
                   <el-option label="最近半年"
-                             value="4"></el-option>
+                             value="3"></el-option>
                   <el-option label="最近一年"
-                             value="5"></el-option>
+                             value="4"></el-option>
 
                 </el-select>
               </div>
@@ -120,6 +118,8 @@ import 'echarts-liquidfill/src/liquidFill.js'
 export default {
   data() {
     return {
+      userTrend: {},
+
       // 1号服务器信息
       first: {
         cpuscore: 0.3,
@@ -189,7 +189,7 @@ export default {
   },
   created() {
     // 页面加载   默认请求一周
-    this.changeReq()
+    this.changeReq(1)
   },
   // dom渲染完毕   执行下面的生命周期函数
   mounted() {
@@ -342,20 +342,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: [
-              '1月',
-              '2月',
-              '3月',
-              '4月',
-              '5月',
-              '6月',
-              '7月',
-              '8月',
-              '9月',
-              '10月',
-              '11月',
-              '12月'
-            ],
+            data: this.userTrend.abscissaUnit,
             axisPointer: {
               type: 'shadow'
             }
@@ -366,8 +353,8 @@ export default {
             type: 'value',
             name: '总人数',
             min: 0,
-            max: 2500,
-            interval: 200,
+            max: this.userTrend.max,
+            interval: this.userTrend.interval,
             axisLabel: {
               formatter: '{value} 人'
             }
@@ -391,47 +378,26 @@ export default {
             areaStyle: {
               color: 'rgba(5,140,255, 0.2)'
             },
-            data: [
-              100,
-              234,
-              453,
-              465,
-              566,
-              788,
-              899,
-              1000,
-              1220,
-              1345,
-              1567,
-              2000
-            ]
+            data: this.userTrend.userTotals
           },
           {
             name: '新增人数',
             type: 'bar',
-            data: [
-              100,
-              134,
-              200,
-              11,
-              100,
-              200,
-              100,
-              110,
-              200,
-              134,
-              120,
-              200,
-              500
-            ]
+            data: this.userTrend.increments
           }
         ]
       }
       userEchart.setOption(option)
     },
     // 监听选择时间段的事件   在这里发起请求
-    changeReq() {
-      console.log(this.time)
+    async changeReq(type) {
+      const { data: res } = await this.$http.get(`user/system/userTrend/${type}`)
+      if(res.code != 200){
+        return this.$Message.error('查询失败')
+      }else {
+        this.userTrend = res.data;
+        this.initUserMessage()
+      }
     }
   }
 }
