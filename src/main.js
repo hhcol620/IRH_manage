@@ -115,6 +115,11 @@ Vue.filter('orderTradeType', function(type) {
       return '公益捐赠'
   }
 })
+// 定义一个全局过滤器  切割时间   动态的添加一个p标签 
+Vue.filter('timeSplit', function(time) {
+  let t1 = time.replace(' ','</p><p>')
+  return t1
+})
 
 
 // 全局注册树形table表格

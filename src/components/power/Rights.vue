@@ -10,28 +10,24 @@
     <el-card>
       <!-- 根据关键字搜索 添加权限 -->
       <el-row :gutter='20'>
-        <el-col :span="6">
+        <el-col :span="5">
           <el-input placeholder="请输入权限名"
                     v-model="queryInfo.searchCondition.authName"
                     class="input-with-select"
                     clearable>
-            <el-button slot="append"
-                       icon="el-icon-search"
-                       @click="searchByName"></el-button>
           </el-input>
         </el-col>
 
-        <el-col :span="6">
+        <el-col :span="8">
           <div class="block">
-            <el-date-picker
-                    v-model="searchEndTime"
-                    type="daterange"
-                    align="right"
-                    unlink-panels
-                    range-separator="至"
-                    start-placeholder="注册开始日期"
-                    end-placeholder="结束日期"
-                    :picker-options="pickerOptions">
+            <el-date-picker v-model="aLongTime"
+                            type="daterange"
+                            align="right"
+                            unlink-panels
+                            range-separator="至"
+                            start-placeholder="注册开始日期"
+                            end-placeholder="结束日期"
+                            :picker-options="pickerOptions">
             </el-date-picker>
           </div>
         </el-col>
@@ -95,7 +91,8 @@
                :visible.sync="editDialogVisible"
                width="60%">
       <el-form :model="editList">
-        <el-form-item hidden label="权限id"
+        <el-form-item hidden
+                      label="权限id"
                       prop="id">
           <el-input v-model="editList.id"
                     disabled></el-input>
@@ -109,14 +106,13 @@
 
         <el-form-item label="权限名称"
                       prop="id">
-          <el-input v-model="editList.authName"
-                    ></el-input>
+          <el-input v-model="editList.authName"></el-input>
         </el-form-item>
 
         <el-form-item label="请求方式"
                       prop="id">
           <el-input v-model="editList.httpMethod"
-          disabled></el-input>
+                    disabled></el-input>
         </el-form-item>
 
         <el-form-item label="权限描述"
@@ -127,8 +123,18 @@
 
         <el-form-item prop="id">
           <el-row :gutter="20">
-            <el-col :span="4" ><el-form-item label="创建时间"><el-input v-model="editList.createTime" disabled></el-input></el-form-item></el-col>
-            <el-col :span="4" ><el-form-item label="最后一次更新时间"><el-input v-model="editList.updateTime" disabled></el-input></el-form-item></el-col>
+            <el-col :span="4">
+              <el-form-item label="创建时间">
+                <el-input v-model="editList.createTime"
+                          disabled></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-form-item label="最后一次更新时间">
+                <el-input v-model="editList.updateTime"
+                          disabled></el-input>
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-form-item>
 
@@ -160,6 +166,8 @@ export default {
         // 页面大小
         pageSize: 10
       },
+      // 这个是时间段   不能修改  影响回显   将这个时间段 在提交的时间里面赋值给提交的参数内部,然后将参数提交
+      aLongTime: '',
       totalCount: 0,
       // 所有的权限列表
       rightsList: [],
@@ -168,31 +176,35 @@ export default {
       // 存储dialog对话框的数据内容
       editList: {},
       pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
           }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
+        ]
       },
       searchStartTime: '',
       searchEndTime: ''
@@ -205,6 +217,12 @@ export default {
   },
   methods: {
     async getRightsList() {
+      if (this.alongtime != null) {
+        let newDate = this.alongtime.toString()
+        const ss = newDate.split(',')
+        this.queryInfo.searchCondition.searchStartTime = ss[0]
+        this.queryInfo.searchCondition.searchEndTime = ss[1]
+      }
       // 解构赋值
       const { data: res } = await this.$http.post('user/admin/auth/list', {
         params: this.queryInfo
@@ -270,15 +288,16 @@ export default {
         return this.$Message.error('加载权限信息失败')
       } else {
         // 加载信息成功,然后打开dialog对话框
-        this.editList = res.data;
-        this.editDialogVisible = true;
+        this.editList = res.data
+        this.editDialogVisible = true
         console.log(res)
       }
     },
     // 提交修改后的权限信息
     async editDialogSubmit() {
       const { data: res } = await this.$http.put(
-              `user/admin/auth`, this.editList
+        `user/admin/auth`,
+        this.editList
       )
       // console.log(res)
       if (res.code !== 200) {
@@ -289,7 +308,7 @@ export default {
       this.$Message.success('修改成功')
       // 关闭dialog对话框
       this.editDialogVisible = false
-      this.getRightsList();
+      this.getRightsList()
     }
   }
 }

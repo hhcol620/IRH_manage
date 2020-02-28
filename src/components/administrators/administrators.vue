@@ -9,8 +9,9 @@
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
-      <el-row :gutter="20">
-        <el-col :span="3">
+      <el-row :gutter="20"
+              class="searchC">
+        <el-col :span="5">
           <!--搜索框-->
           <el-input placeholder="请输入用户id"
                     v-model="queryInfo.searchCondition.id"
@@ -19,7 +20,7 @@
                     @clear="getAdminList">
           </el-input>
         </el-col>
-        <el-col :span="3">
+        <el-col :span="5">
           <!--搜索框-->
           <el-input placeholder="请输入用户姓名"
                     v-model="queryInfo.searchCondition.realName"
@@ -28,8 +29,7 @@
                     @clear="getAdminList">
           </el-input>
         </el-col>
-
-        <el-col :span="3">
+        <el-col :span="5">
           <!--搜索框-->
           <el-input placeholder="请输入用户昵称"
                     v-model="queryInfo.searchCondition.nickname"
@@ -38,35 +38,36 @@
                     @clear="getAdminList">
           </el-input>
         </el-col>
-        
-        <el-col :span="3">
-          <el-select v-model="queryInfo.searchCondition.type" clearable placeholder="用户身份" @clear="getAdminList">
-            <el-option
-                    v-for="item in admin_type"
-                    :key="item"
-                    :label="item"
-                    :value="item | type_admin_Format">
+
+        <el-col :span="5">
+          <el-select v-model="queryInfo.searchCondition.type"
+                     clearable
+                     placeholder="用户身份"
+                     @clear="getAdminList">
+            <el-option v-for="item in opt"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
             </el-option>
           </el-select>
         </el-col>
 
-        <el-col :span="6">
+        <el-col :span="8">
           <div class="block">
-            <el-date-picker
-                    v-model="this.searchTime"
-                    type="daterange"
-                    align="right"
-                    unlink-panels
-                    range-separator="至"
-                    start-placeholder="注册开始日期"
-                    end-placeholder="结束日期"
-                    value-format="yyyy-MM-dd"
-                    :picker-options="pickerOptions">
+            <!-- queryInfo.searchCondition.searchEndTime -->
+            <el-date-picker v-model="Alongtime"
+                            type="daterange"
+                            align="right"
+                            unlink-panels
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            :picker-options="pickerOptions">
             </el-date-picker>
           </div>
         </el-col>
 
-        <el-col :span="3">
+        <el-col :span="6">
           <el-button type="primary"
                      @click="searchByquery(queryInfo.query)">搜索</el-button>
           <el-button class="primary"
@@ -237,7 +238,8 @@
                :rules="addFormRules"
                ref="editFormRef"
                label-width="100px">
-        <el-form-item hidden label="用户ID"
+        <el-form-item hidden
+                      label="用户ID"
                       prop="id">
           <el-input v-model="editForm.id"
                     disabled></el-input>
@@ -245,38 +247,79 @@
 
         <el-form-item label="基本信息">
           <el-row :gutter="15">
-            <el-col :span="8" ><el-form-item label="昵称" prop="nickname"><el-input v-model="editForm.nickname" disabled></el-input></el-form-item></el-col>
-            <el-col :span="7" ><el-form-item label="姓名" prop="realName"><el-input v-model="editForm.realName" disabled></el-input></el-form-item></el-col>
-            <el-col :span="7" ><el-form-item label="性别"
-                                             prop="gender">
-              <el-radio-group v-model="editForm.gender" disabled>
-                <el-radio :label="1">女</el-radio>
-                <el-radio :label="2">男</el-radio>
-              </el-radio-group>
-            </el-form-item></el-col>
+            <el-col :span="8">
+              <el-form-item label="昵称"
+                            prop="nickname">
+                <el-input v-model="editForm.nickname"
+                          disabled></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="7">
+              <el-form-item label="姓名"
+                            prop="realName">
+                <el-input v-model="editForm.realName"
+                          disabled></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="7">
+              <el-form-item label="性别"
+                            prop="gender">
+                <el-radio-group v-model="editForm.gender"
+                                disabled>
+                  <el-radio :label="1">女</el-radio>
+                  <el-radio :label="2">男</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-form-item>
 
         <el-form-item label="学校信息">
           <el-row :gutter="15">
-            <el-col :span="8" ><el-form-item label="学校名称"><el-input v-model="editForm.schoolName" disabled></el-input></el-form-item></el-col>
-            <el-col :span="7" ><el-form-item label="学院名称"><el-input v-model="editForm.academyName" disabled></el-input></el-form-item></el-col>
-            <el-col :span="5" ><el-form-item label="专业"><el-input v-model="editForm.majorName" disabled></el-input></el-form-item></el-col>
+            <el-col :span="8">
+              <el-form-item label="学校名称">
+                <el-input v-model="editForm.schoolName"
+                          disabled></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="7">
+              <el-form-item label="学院名称">
+                <el-input v-model="editForm.academyName"
+                          disabled></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="专业">
+                <el-input v-model="editForm.majorName"
+                          disabled></el-input>
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-form-item>
 
         <el-form-item label="寝室信息">
           <el-row :gutter="20">
-            <el-col :span="4" ><el-form-item label="寝室楼号"><el-input v-model="editForm.buildingNum" disabled></el-input></el-form-item></el-col>
-            <el-col :span="5" ><el-form-item label="寝室号"><el-input v-model="editForm.dormNum" disabled></el-input></el-form-item></el-col>
-            </el-row>
+            <el-col :span="4">
+              <el-form-item label="寝室楼号">
+                <el-input v-model="editForm.buildingNum"
+                          disabled></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="寝室号">
+                <el-input v-model="editForm.dormNum"
+                          disabled></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form-item>
 
         <el-form-item label="电话">
-          <el-input v-model="editForm.phoneNum" disabled></el-input>
+          <el-input v-model="editForm.phoneNum"
+                    disabled></el-input>
         </el-form-item>
 
-         <el-form-item label="邮箱"
+        <el-form-item label="邮箱"
                       prop="email">
           <el-input v-model="editForm.email"></el-input>
         </el-form-item>
@@ -304,8 +347,7 @@
         <el-form-item label="描述"
                       prop="desc">
           <el-input type="textarea"
-                    v-model="editForm.desc"
-                    ></el-input>
+                    v-model="editForm.desc"></el-input>
         </el-form-item>
       </el-form>
       <!-- 底部区域 -->
@@ -346,9 +388,9 @@ export default {
     var checkNickname = (rules, value, cb) => {
       var res = this.checkValue(2)
       if (res.code == 200) {
-          return cb()
-        }else {
-        cb(new Error("用户昵称已经存在"))
+        return cb()
+      } else {
+        cb(new Error('用户昵称已经存在'))
       }
     }
 
@@ -356,7 +398,6 @@ export default {
       //用来标识校验邮箱、昵称是否通过；只有通过了才能为true
       available: '',
       // 获取用户列表参数对象
-      searchTime: '',
       queryInfo: {
         // 搜索关键字
         searchCondition: {
@@ -367,7 +408,7 @@ export default {
           // 身份
           type: '',
           searchStartTime: '',
-
+          searchEndTime: ''
         },
         // 当前的页数
         currentPage: 1,
@@ -431,41 +472,65 @@ export default {
       // 编辑这个按钮打开对话框  存储一些信息  主要修改状态
       editForm: {},
       // 身份
-      admin_type: {
-        '10': '普通会员',
-        '20': '服务人员',
-        '30': '校园组织',
-        '35': '公益组织',
-        '40': '校园社团',
-        '50': '用户'
-      },
+      opt: [
+        {
+          value: '10',
+          label: '普通会员'
+        },
+        {
+          value: '20',
+          label: '服务人员'
+        },
+        {
+          value: '30',
+          label: '校园组织'
+        },
+        {
+          value: '35',
+          label: '公益组织'
+        },
+        {
+          value: '40',
+          label: '校园社团'
+        },
+        {
+          value: '50',
+          label: '用户'
+        }
+      ],
       pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
           }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
-      }
+        ]
+      },
+      // 选择时间段   在事件里面不对这个进行修改
+      Alongtime: ''
     }
   },
   created() {
@@ -474,15 +539,20 @@ export default {
   methods: {
     // 发起请求  获取用户信息并存到 adminList
     async getAdminList() {
-      console.log("搜索时间为:" + this.searchTime)
-      /*if(this.searchTime != null){
-        let newDate = this.searchTime.toString();
-        const ss = newDate.split(",");
-        this.queryInfo.searchCondition.searchStartTime = ss[0];
-        this.queryInfo.searchCondition.searchEndTime = ss[1];
-      }*/
-      const { data: res } = await this.$http.post('user/admin/list', this.queryInfo)
-      if (res.code !== 200) return this.$Message.error(res.text)
+      if (this.Alongtime != null) {
+        let newDate = this.Alongtime.toString()
+        const ss = newDate.split(',')
+        this.queryInfo.searchCondition.searchStartTime = ss[0]
+        this.queryInfo.searchCondition.searchEndTime = ss[1]
+      }
+
+      const { data: res } = await this.$http.post(
+        'user/admin/list',
+        this.queryInfo
+      )
+      if (res.code !== 200) {
+        return this.$Message.error('获取列表失败')
+      }
       this.adminList = res.data.data
       this.totalCount = res.data.totalCount
       this.$Message.success('加载用户列表成功')
@@ -505,7 +575,9 @@ export default {
         return this.$Message.info('取消了删除')
       }
       // console.log('确认了删除')
-      const { data: res } = await this.$http.delete(`user/admin/${userId}/${roleId}`)
+      const { data: res } = await this.$http.delete(
+        `user/admin/${userId}/${roleId}`
+      )
       console.log(res)
       // 请求接口暂时不对, 后期需要修改######################
       if (res.code != 200) {
@@ -522,18 +594,20 @@ export default {
       this.getAdminList()
     },
     //查看输入的值是否唯一   1-邮箱地址   2-昵称
-    async checkValue(type){
-      if(type == 1){
-        this.checkValueDto.type = "email";
-        this.checkValueDto.validValue = this.addForm.email;
+    async checkValue(type) {
+      if (type == 1) {
+        this.checkValueDto.type = 'email'
+        this.checkValueDto.validValue = this.addForm.email
+      } else if (type == 2) {
+        this.checkValueDto.type = 'nickname'
+        this.checkValueDto.validValue = this.addForm.nickname
       }
-      else if(type == 2){
-        this.checkValueDto.type = "nickname";
-        this.checkValueDto.validValue = this.addForm.nickname;
-      }
-      const { data: check } = await this.$http.post("/user/user/check", this.checkValueDto);
-      console.log("返回值" + check.code)
-      return check.code;
+      const { data: check } = await this.$http.post(
+        '/user/user/check',
+        this.checkValueDto
+      )
+      console.log('返回值' + check.code)
+      return check.code
     },
     // 用户状态   监听switch按钮的变化
     adminStateChanged(adminInfo) {
@@ -558,7 +632,8 @@ export default {
       this.queryInfo.searchCondition.id = ''
       this.queryInfo.searchCondition.realName = ''
       this.queryInfo.searchCondition.type = ''
-      this.searchTime = ''
+      this.queryInfo.searchCondition.searchStartTime = ''
+      this.queryInfo.searchCondition.searchEndTime = ''
       this.queryInfo.searchCondition.nickname = ''
       // 重置之后然后再发起请求   获取所有用户
       this.getAdminList()
@@ -586,7 +661,10 @@ export default {
           // 数据验证通过,可以发起请求
           // console.log(this.addForm)
           // debugger
-          const { data: res } = await this.$http.post('user/admin', this.addForm)
+          const { data: res } = await this.$http.post(
+            'user/admin',
+            this.addForm
+          )
           // console.log(res.code)
           // debugger
           if (res.code !== 200) {
@@ -681,5 +759,10 @@ export default {
   // float: right;
   display: flex;
   justify-content: flex-end;
+}
+.searchC {
+  > .el-col {
+    padding: 3px 0;
+  }
 }
 </style>

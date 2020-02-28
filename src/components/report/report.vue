@@ -60,7 +60,7 @@
               <el-row :gutter="10">
                 <el-col :span="3"
                         :class="['time',item.result === 1 ?'timefailColor':(item.result === 2?'timeprocessColor':(item.result === 3? 'timewarningColor':(item.result === 4?'timefreezeColor':'timedeleteColor')))] ">
-                  <span>{{item.createTime}}</span>
+                  <p>{{item.createTime|timeSplit}}</p>
                 </el-col>
                 <el-col :span="20"
                         class="list_content">
@@ -172,8 +172,7 @@ export default {
           // 举报的类型     1-商品举报 2-留言举报 3-评价举报 4-帖子举报
           type: 1,
           // 处理结果    1-举报失败 2-处理中 3-警告 4-冻结账号 5-删除相关内容
-          result: '',
-          targetId: -1
+          result: ''
         }
       },
       // 分页查询返回的数据
@@ -215,7 +214,10 @@ export default {
     },
     // 分页查询所有的举报
     async getReportsBySearchCondition() {
-      const { data: res } = await this.$http.post('user/admin/report/statisic', this.queryInfo)
+      const { data: res } = await this.$http.post(
+        'user/admin/report/statisic',
+        this.queryInfo.searchCondition
+      )
       // console.log(res)
       if (res.code !== 200) {
         // 获取失败

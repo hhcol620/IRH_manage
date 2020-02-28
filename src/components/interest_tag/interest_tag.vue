@@ -13,31 +13,28 @@
       <!-- 主体区域 -->
       <!-- 查找搜索  search -->
       <el-row :gutter="24">
-        <el-col :span="4">
+        <el-col :span="5">
           <el-input v-model="queryInfo.searchCondition.id"
                     clearable
                     placeholder="标签ID"></el-input>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="5">
 
           <el-input v-model="queryInfo.searchCondition.tagName"
                     clearable
                     placeholder="标签名"></el-input>
         </el-col>
 
-        <el-col :span="4">
-          <div class="block">
-            <el-date-picker
-                    v-model="this.queryInfo.searchCondition.searchEndTime"
-                    type="daterange"
-                    align="right"
-                    unlink-panels
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    :picker-options="pickerOptions">
-            </el-date-picker>
-          </div>
+        <el-col :span="8">
+          <el-date-picker v-model="aLongTime"
+                          type="daterange"
+                          align="right"
+                          unlink-panels
+                          range-separator="至"
+                          start-placeholder="开始日期"
+                          end-placeholder="结束日期"
+                          :picker-options="pickerOptions">
+          </el-date-picker>
         </el-col>
         <el-col :span="4">
           <el-button type="primary"
@@ -124,10 +121,12 @@ export default {
         searchCondition: {
           id: '',
           tagName: '',
-          searchStartTime:'',
-          searchEndTime:''
+          searchStartTime: '',
+          searchEndTime: ''
         }
       },
+      // 时间段
+      aLongTime: '', //这个不要修改  需要按照这个显示  (回显)
       // 总条数
       totalCount: 0,
       // 标签列表
@@ -148,32 +147,36 @@ export default {
         ]
       },
       pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
           }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
-      },
+        ]
+      }
     }
   },
   created() {
@@ -194,11 +197,11 @@ export default {
     async get_Interest_tag_by_searchCondition() {
       // 发起请求
 
-      if(this.queryInfo.searchCondition.searchEndTime != null){
-        let newDate = this.queryInfo.searchCondition.searchEndTime.toString();
-        const ss = newDate.split(",");
-        this.queryInfo.searchCondition.searchStartTime = ss[0];
-        this.queryInfo.searchCondition.searchEndTime = ss[1];
+      if (this.aLongTime != null) {
+        let newDate = this.aLongTime.toString()
+        const ss = newDate.split(',')
+        this.queryInfo.searchCondition.searchStartTime = ss[0]
+        this.queryInfo.searchCondition.searchEndTime = ss[1]
       }
 
       const { data: res } = await this.$http.post(
@@ -243,7 +246,7 @@ export default {
         // 成功
         // console.log('ok')
         // 发起请求
-        const { data: res } = await this.$http.delete(`user/interest/admin/${id}`)
+        const { data: res } = await this.$http.delete(`/interest/admin/${id}`)
         // console.log(res)
         if (res.code !== 200) {
           // 失败
