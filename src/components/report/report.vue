@@ -30,7 +30,7 @@
         </el-col>
         <el-col :span="5">
           <!--搜索框-->
-          <el-select v-model="queryInfo.searchCondition.data"
+          <el-select v-model="queryInfo.searchCondition.result"
                      placeholder="请选择处理结果"
                      @change="selectChange">
             <el-option v-for="item in opt"
@@ -61,8 +61,8 @@
                 <el-col :span="3"
                         :class="['time',item.result === 1 ?'timefailColor':(item.result === 2?'timeprocessColor':(item.result === 3? 'timewarningColor':(item.result === 4?'timefreezeColor':'timedeleteColor')))] ">
                   <!-- item.createTime -->
-                  <p>{{ item.createTime|timeSplit('day')}}</p>
                   <p>{{ item.createTime|timeSplit('second')}}</p>
+                  <p>{{ item.createTime|timeSplit('day')}}</p>
                 </el-col>
                 <el-col :span="20"
                         class="list_content">
@@ -155,7 +155,7 @@ export default {
         // 当前页
         currentPage: 1,
         // 页面大小
-        pageSize: 2,
+        pageSize: 10,
         // result[0].type   1-商品举报 2-留言举报 3-评价举报 4-帖子举报
         // result: [{ type: 1 }],
         // 查询条件
@@ -211,6 +211,7 @@ export default {
     },
     // 分页查询所有的举报
     async getReportsBySearchCondition() {
+      console.log(this.queryInfo)
       const { data: res } = await this.$http.post(
         'user/admin/report', this.queryInfo
       )
@@ -233,7 +234,7 @@ export default {
       // tab栏的重置
       this.value_type = 1 + ''
       // 下拉框的内容重置
-      this.queryInfo.searchCondition.data = ''
+      this.queryInfo.searchCondition.result = ''
       // 重置之后，重新获取列表
       this.getReportsBySearchCondition()
     }

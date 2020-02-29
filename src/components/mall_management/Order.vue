@@ -45,28 +45,59 @@
         </el-col>
       </el-row>
       <!-- 主体内容列表区域 -->
-      <div class="container">
-        <el-row class="list_box"
-                v-for="item in listObjs"
-                :key="item.id">
-          <div class="orderCode">
-            <p>订单编号: <span>{{item.orderCode}}</span></p>
-          </div>
-          <el-row class="message">
-            <el-col :span="16">
-              <p>ID为 {{item.productId}} 的商品在 <span class="time">{{item.finishTime}}</span> 交易完成</p>
-              <p>交易方式:
-                <el-tag>{{item.tradeType|orderTradeType}}</el-tag>
-              </p>
-            </el-col>
-            <el-col :span="6"
-                    class="more_btn">
-              <el-button size="mini"
-                         @click="moreOpenDialog(item.id)">更多&gt;&gt;</el-button>
-            </el-col>
-          </el-row>
-        </el-row>
-      </div>
+      <el-table :data="listObjs"
+                stripe
+                border>
+        <!-- 展开列 -->
+        <!--<el-table-column type="expand">
+          <template slot-scope="scope">
+            <div class="roleListTag">
+              <div class="tag"
+                   v-for="(item,index) in scope.row.listObjs"
+                   :key="index">
+                <el-tooltip class="item"
+                            effect="dark"
+                            :content="item.roleDesc"
+                            placement="top"
+                            :enterable="false">
+                  <el-tag>{{item.orderCode}}</el-tag>
+                </el-tooltip>
+
+              </div>
+            </div>
+            &lt;!&ndash; <pre>{{scope.row}}</pre> &ndash;&gt;
+          </template>
+        </el-table-column>-->
+        <!-- 索引列 -->
+        <el-table-column type="index" hidden></el-table-column>
+        <el-table-column prop="id"
+                         label="ID"></el-table-column>
+        <el-table-column prop="orderCode"
+                         label="订单编号"></el-table-column>
+        <el-table-column prop="salerId"
+                         label="卖家id"></el-table-column>
+        <el-table-column prop="buyerId"
+                         label="买家id"></el-table-column>
+        <el-table-column prop="productId"
+                         label="商品id"></el-table-column>
+        <el-table-column label="交易方式及订单状态"
+                         prop="tradeType">
+          <template scope="scope">
+            <!-- 使用过滤器将后端传过来的数字类型的数据转为对应的身份名 -->
+            <el-tag>{{scope.row.tradeType | orderTradeType}}</el-tag>&nbsp;&nbsp;
+            <el-tag>{{scope.row.state | orderState}}</el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="createTime"
+                         label="创建时间">
+        </el-table-column>
+
+        <el-table-column prop="updateTime"
+                         label="最近更新时间">
+        </el-table-column>
+      </el-table>
+
       <!-- 分页区域 -->
       <el-pagination @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
@@ -203,7 +234,7 @@ export default {
     // 页面加载发起的数据请求  分页列表请求
     async getOrderList() {
       const { data: res } = await this.$http.post(
-        '/admin/order',
+        'user/admin/order',
         this.queryInfo
       )
       // console.log(res)
@@ -212,7 +243,7 @@ export default {
         return this.$Message.error('获取订单信息失败')
       } else {
         // 成功
-        this.listObjs = res.data.result
+        this.listObjs = res.data.data
         this.totalCount = res.data.totalCount
         // 提示成功
         this.$Message.success('获取订单信息成功')
@@ -221,7 +252,7 @@ export default {
     // 监听打开更多的按钮
     async moreOpenDialog(id) {
       // 先发起请求,然后再去打开对话框
-      const { data: res } = await this.$http.get(`/admin/order/${id}`)
+      const { data: res } = await this.$http.get(`user/admin/order/${id}`)
       // console.log(res)
       if (res.code !== 200) {
         return this.$Message.error('获取订单信息失败')

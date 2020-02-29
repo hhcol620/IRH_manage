@@ -685,7 +685,7 @@ export default {
         在弹框之前首先发起请求,根据id查询用户信息
       */
       const { data: res } = await this.$http.get(`user/admin/${id}`)
-      console.log(res.data.state)
+      console.log(res.data)
       this.editForm = res.data
       // 请求成功,将请求过来的数据渲染到页面上也就是弹出的对话框里面
       this.editDialogVisible = true

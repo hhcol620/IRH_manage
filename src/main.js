@@ -113,6 +113,22 @@ Vue.filter('orderTradeType', function(type) {
       return '公益捐赠'
   }
 })
+/*10:订单超时 20:取消订单 30:删除订单 40:等待支付 50:交易成功 */
+Vue.filter('orderState', function(state) {
+  const temp = state
+  switch(temp){
+    case 10:
+      return '订单超时'
+    case 20:
+      return '取消订单'
+    case 30:
+      return '删除订单'
+    case 40:
+      return '等待支付'
+    case 50:
+      return '交易成功';
+  }
+})
 // 定义一个全局过滤器  切割时间   动态的添加一个p标签 
 Vue.filter('timeSplit', function(time,i) {
   let t1 = time.split(' ')
