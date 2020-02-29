@@ -246,7 +246,9 @@ export default {
         // 成功
         // console.log('ok')
         // 发起请求
-        const { data: res } = await this.$http.delete(`/interest/admin/${id}`)
+        const { data: res } = await this.$http.delete(
+          `user/interest/admin/${id}`
+        )
         // console.log(res)
         if (res.code !== 200) {
           // 失败

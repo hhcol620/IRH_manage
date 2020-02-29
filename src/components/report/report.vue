@@ -60,7 +60,9 @@
               <el-row :gutter="10">
                 <el-col :span="3"
                         :class="['time',item.result === 1 ?'timefailColor':(item.result === 2?'timeprocessColor':(item.result === 3? 'timewarningColor':(item.result === 4?'timefreezeColor':'timedeleteColor')))] ">
-                  <p>{{item.createTime|timeSplit}}</p>
+                  <!-- item.createTime -->
+                  <p>{{ item.createTime|timeSplit('day')}}</p>
+                  <p>{{ item.createTime|timeSplit('second')}}</p>
                 </el-col>
                 <el-col :span="20"
                         class="list_content">

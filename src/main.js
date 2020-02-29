@@ -114,9 +114,14 @@ Vue.filter('orderTradeType', function(type) {
   }
 })
 // 定义一个全局过滤器  切割时间   动态的添加一个p标签 
-Vue.filter('timeSplit', function(time) {
-  let t1 = time.replace(' ','</p><p>')
-  return t1
+Vue.filter('timeSplit', function(time,i) {
+  let t1 = time.split(' ')
+  if (i === 'day') {
+    return t1[0]
+  }
+  if (i === 'second') {
+    return t1[1]
+  }
 })
 
 
