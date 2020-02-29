@@ -124,7 +124,7 @@ export default {
       ],
 
       //
-      // 处理结果    1-举报失败 2-处理中 3-警告 4-冻结账号 5-删除相关内容
+      // 处理结果    1-举报失败 2-处理中 3-警告并删除相关内容 4-冻结账号
       opt: [
         {
           value: '1',
@@ -141,10 +141,6 @@ export default {
         {
           value: '4',
           label: '冻结账号'
-        },
-        {
-          value: '5',
-          label: '删除相关内容'
         }
       ],
 
@@ -162,7 +158,6 @@ export default {
         // result: [{ type: 1 }],
         // 查询条件
         searchCondition: {
-          //todo consumerId报错
           // 举报人 id
           customerId: '',
           // 举报反馈表的id
@@ -171,7 +166,7 @@ export default {
           remark: '',
           // 举报的类型     1-商品举报 2-留言举报 3-评价举报 4-帖子举报
           type: 1,
-          // 处理结果    1-举报失败 2-处理中 3-警告 4-冻结账号 5-删除相关内容
+          // 处理结果    1-举报失败 2-处理中 3-警告并删除相关内容 4-冻结账号
           result: ''
         }
       },
@@ -215,8 +210,7 @@ export default {
     // 分页查询所有的举报
     async getReportsBySearchCondition() {
       const { data: res } = await this.$http.post(
-        'user/admin/report/statisic',
-        this.queryInfo.searchCondition
+        'user/admin/report', this.queryInfo
       )
       // console.log(res)
       if (res.code !== 200) {

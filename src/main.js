@@ -85,11 +85,9 @@ Vue.filter('report_result_format', function(result) {
     case 2:
       return '处理中'
     case 3:
-      return '警告'
+      return '警告并删除相关内容'
     case 4:
       return '冻结账号'
-    case 5:
-      return '删除相关内容'
   }
 })
 
