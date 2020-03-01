@@ -42,7 +42,7 @@
         </el-col>
         <el-col :span="4">
           <el-button type="primary"
-                     @click="getReportsBySearchCondition">搜索</el-button>
+                     @click="getReportsBySearch_num">搜索</el-button>
           <el-button class="primary"
                      @click="resetSearch">重置</el-button>
         </el-col>
@@ -56,26 +56,21 @@
                        :name="item.value+''">
             <!-- 循环显示数据，点击可以弹框显示具体的内容 -->
             <div v-for="item in reportList"
-                 :key="item.id">
+                 :key="item.id"
+                 @click="jumpPage(item.id)">
               <el-row :gutter="10">
-                <el-col :span="3"
-                        :class="['time',item.result === 1 ?'timefailColor':(item.result === 2?'timeprocessColor':(item.result === 3? 'timewarningColor':(item.result === 4?'timefreezeColor':'timedeleteColor')))] ">
-                  <!-- item.createTime -->
-                  <p>{{ item.createTime|timeSplit('second')}}</p>
-                  <p>{{ item.createTime|timeSplit('day')}}</p>
-                </el-col>
                 <el-col :span="20"
                         class="list_content">
                   <el-row class="content_box">
                     <p>ID为{{item.id}}的
-                      <span>{{item.type|report_type_format}} </span>举报:
-                      <i>{{item.remark}}</i>
+                      <span>{{item.type|report_type_format}} </span>举报信息:
+                      <i>{{item.remark}}可能涉嫌某种违规</i>
                     </p>
                   </el-row>
                   <el-row class="stateBtn">
                     <el-col class="box_btn"
                             :span="10">
-                      <span>举报人ID: <i>{{item.customerId}}</i></span>
+                      <span v-if="item.total">被举报次数: <i>{{item.total}}</i></span>
                       <span>处理状态: <i>{{item.result|report_result_format}}</i></span>
                     </el-col>
                   </el-row>
@@ -213,7 +208,8 @@ export default {
     async getReportsBySearchCondition() {
       console.log(this.queryInfo)
       const { data: res } = await this.$http.post(
-        'user/admin/report', this.queryInfo
+        'user/admin/report',
+        this.queryInfo
       )
       // console.log(res)
       if (res.code !== 200) {
@@ -226,6 +222,16 @@ export default {
         // res.console.log(this.reportList)
       }
     },
+    // 搜索框 点击搜索  使用高级搜索
+    async getReportsBySearch_num() {
+      const res = await this.$http.post('/admin/report/statisic')
+      console.log(res)
+      if (res.data.code !== 200) {
+        return this.$Message.error('搜索失败')
+      }
+      this.reportList = res.data.data.result
+      this.totalCount = res.data.data.totalCount
+    },
     // 搜索重置
     resetSearch() {
       // 搜索框的重置
@@ -237,6 +243,11 @@ export default {
       this.queryInfo.searchCondition.result = ''
       // 重置之后，重新获取列表
       this.getReportsBySearchCondition()
+    },
+    // 跳转到举报的详情页面 把id传过来
+    jumpPage(id) {
+      //
+      this.$router.push(`/report_detail?id=${id}`)
     }
   }
 }
@@ -289,11 +300,10 @@ export default {
 }
 .list_content {
   height: 100px;
-  margin: 10px 0 10px 0;
+  margin: 10px;
   background-color: #fff;
   border: 1px solid #ccc;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-radius: 10px;
   .content_box {
     p {
       margin: 10px;

@@ -1,0 +1,212 @@
+<template>
+  <div>
+    <!-- <h1>这是举报详情的页面</h1> -->
+    <!-- 面包屑导航区域 -->
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>
+        系统管理
+      </el-breadcrumb-item>
+      <el-breadcrumb-item>举报列表</el-breadcrumb-item>
+      <el-breadcrumb-item>举报详情</el-breadcrumb-item>
+    </el-breadcrumb>
+    <el-row class="header">
+      <el-col class="container">
+        <div class="container_box">这里放从服务器传过来的代码 文章商品详情 模板 v-html="" </div>
+      </el-col>
+    </el-row>
+    <!-- 主体区域   举报内容 -->
+    <el-row class="main">
+      <el-col class="main_list_left"
+              :span="14">
+        <ul>
+          <!-- 循环这个li -->
+          <li>
+            <div>
+              <div class="main_head">
+                <div class="author">举报人: <span>举报人昵称</span></div>
+                <div class="time">2020-12-09 20:18</div>
+              </div>
+              <div class="report_content">举报内容:备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注</div>
+            </div>
+          </li>
+        </ul>
+      </el-col>
+      <el-col :span="10"
+              class="right">
+        <!-- 这是右边区域   管理员处理区域 -->
+        <el-row class="main_right">
+          <div class="main_right_box">
+            <p>请管理员做出处理:</p>
+            <div class="select">
+              <template>
+                <el-select v-model="result"
+                           placeholder="请选择">
+                  <el-option v-for="item in results_options"
+                             :key="item.value"
+                             :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </template>
+            </div>
+          </div>
+          <div class="remark_box">
+            <!-- 这里是备注区域 -->
+            <div class="description">请输入备注: </div>
+            <el-input type="textarea"
+                      placeholder="请输入备注"
+                      v-model="remark_input"
+                      clearable
+                      resize="none">
+            </el-input>
+          </div>
+        </el-row>
+        <el-row class="main_right_footer">
+          <div class="submit_btn">
+            <el-button plain>提交</el-button>
+          </div>
+        </el-row>
+      </el-col>
+    </el-row>
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      results_options: [
+        { value: 1, label: '举报失败' },
+        { value: 2, label: '处理中' },
+        { value: 3, label: '警告并删除' },
+        { value: 4, label: '冻结账号' }
+      ],
+      // result
+      result: '',
+      // 备注
+      remark_input: ''
+    }
+  }
+}
+</script>
+<style lang="less" scoped>
+// 头部区域
+.header,
+.container {
+  height: 300px;
+  background-color: #fff;
+  border-radius: 2px;
+}
+.container_box {
+  overflow-y: scroll;
+}
+.main {
+  margin-top: 10px;
+  background-color: #fff;
+}
+.main,
+.main_list_left {
+  height: 300px;
+  font-size: 13px;
+  color: #4d4d4d;
+  line-height: 20px;
+}
+.main_list_left {
+  > ul {
+    margin: 0;
+    padding: 0;
+    height: 300px;
+    overflow-y: scroll;
+  }
+}
+.main_list_left > ul > li {
+  list-style: none;
+  > div {
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+    .main_head {
+      height: 25px;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 5px;
+      // 作者
+      .author {
+        > span {
+          font-size: 13px;
+          font-weight: 600;
+          font-style: normal;
+        }
+      }
+      .time {
+        font-size: 12px;
+        color: #555;
+      }
+    }
+    .report_content {
+    }
+  }
+}
+.container_box,
+.main_list_left > ul {
+  /*滚动条样式*/
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 3px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 3px;
+  }
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 0 5px rgba(197, 197, 197, 0.6);
+    background: rgba(0, 0, 0, 0.2);
+  }
+  &::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 0 5px rgba(223, 223, 223, 0.4);
+    border-radius: 0;
+    background: rgba(1, 1, 1, 0.2);
+  }
+}
+// 右部区域
+.main_right {
+  padding: 10px 20px;
+  .main_right_box {
+    font-size: 14px;
+    font-weight: 500;
+    font-style: normal;
+    line-height: 20px;
+    color: #4d4d4d;
+    display: flex;
+    align-items: center;
+    > p,
+    > div {
+      margin: 6px;
+    }
+  }
+  // 处理备注区域
+  .remark_box {
+    margin-top: 10px;
+    width: 90%;
+    height: 60px;
+    padding-left: 10px;
+    > div.description {
+      padding: 10px 0;
+    }
+  }
+}
+.right {
+  height: 300px;
+  position: relative;
+}
+
+// 右底部区域
+.main_right_footer {
+  position: absolute;
+  bottom: 50px;
+  right: 60px;
+  .submit_btn {
+  }
+}
+</style>
