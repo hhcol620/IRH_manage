@@ -14,8 +14,7 @@
         <!-- 服务器信息 -->
         <el-collapse-item title="服务器信息"
                           name="system">
-          <el-collapse accordion
-                       v-model="activeName">
+          <el-collapse v-model="activeName">
             <el-collapse-item name="first">
               <template slot="title">
                 <div class="title"> 1号服务器信息<i class="header-icon el-icon-info"></i></div>
@@ -113,6 +112,7 @@
 <script>
 // 导入echarts
 import echarts from 'echarts'
+import _ from 'lodash'
 // 水球
 import 'echarts-liquidfill/src/liquidFill.js'
 export default {
@@ -184,7 +184,143 @@ export default {
 
       */
       // 时间范围   字符类型的   后台如果需要数字类型提交数据之前也就是发起请求之前先转换一下数字
-      time: '1'
+      time: '1',
+      // userOption: {
+      //   tooltip: {
+      //     trigger: 'axis'
+      //   },
+      //   legend: {
+      //     data: ['总人数', '新增人数']
+      //   },
+      //   xAxis: [
+      //     {
+      //       type: 'category',
+      //       data: this.userTrend.abscissaUnit,
+      //       axisPointer: {
+      //         type: 'shadow'
+      //       }
+      //     }
+      //   ],
+      //   yAxis: [
+      //     {
+      //       type: 'value',
+      //       name: '总人数',
+      //       min: 0,
+      //       max: this.userTrend.max,
+      //       interval: this.userTrend.interval,
+      //       axisLabel: {
+      //         formatter: '{value} 人'
+      //       }
+      //     }
+      //   ],
+      //   series: [
+      //     {
+      //       name: '总人数',
+      //       type: 'line',
+      //       smooth: true, //平滑曲线显示
+      //       showAllSymbol: true, //显示所有图形。
+      //       symbol: 'circle', //标记的图形为实心圆
+      //       symbolSize: 10, //标记的大小
+      //       itemStyle: {
+      //         //折线拐点标志的样式
+      //         color: '#058cff'
+      //       },
+      //       lineStyle: {
+      //         color: '#058cff'
+      //       },
+      //       areaStyle: {
+      //         color: 'rgba(5,140,255, 0.2)'
+      //       },
+      //       data: this.userTrend.userTotals
+      //     },
+      //     {
+      //       name: '新增人数',
+      //       type: 'bar',
+      //       data: this.userTrend.increments
+      //     }
+      //   ]
+      // }
+      userOption: {
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['总人数', '新增人数']
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: [
+              '1月',
+              '2月',
+              '3月',
+              '4月',
+              '5月',
+              '6月',
+              '7月',
+              '8月',
+              '9月',
+              '10月',
+              '11月',
+              '12月'
+            ],
+            axisPointer: {
+              type: 'shadow'
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: '总人数',
+            min: 0,
+            max: 2500,
+            interval: 200,
+            axisLabel: {
+              formatter: '{value} 人'
+            }
+          }
+        ],
+        series: [
+          {
+            name: '总人数',
+            type: 'line',
+            data: [
+              100,
+              234,
+              453,
+              465,
+              566,
+              788,
+              899,
+              1000,
+              1220,
+              1345,
+              1567,
+              2000
+            ]
+          },
+          {
+            name: '新增人数',
+            type: 'bar',
+            data: [
+              100,
+              134,
+              200,
+              11,
+              100,
+              200,
+              100,
+              110,
+              200,
+              134,
+              120,
+              200,
+              500
+            ]
+          }
+        ]
+      }
     }
   },
   created() {
@@ -323,79 +459,19 @@ export default {
     // 用户信息
     initUserMessage() {
       let userEchart = echarts.init(document.getElementById('userMessage'))
-      let option = {
-        tooltip: {
-          trigger: 'axis'
-        },
-        toolbox: {
-          feature: {
-            // saveAsImage: { show: true }
-            // 这个就是右上角几个功能   只保留一个保存为图片
-            // dataView: { show: true, readOnly: false },
-            // magicType: { show: true, type: ['line', 'bar'] },
-            // restore: { show: true },
-          }
-        },
-        legend: {
-          data: ['总人数', '新增人数']
-        },
-        xAxis: [
-          {
-            type: 'category',
-            data: this.userTrend.abscissaUnit,
-            axisPointer: {
-              type: 'shadow'
-            }
-          }
-        ],
-        yAxis: [
-          {
-            type: 'value',
-            name: '总人数',
-            min: 0,
-            max: this.userTrend.max,
-            interval: this.userTrend.interval,
-            axisLabel: {
-              formatter: '{value} 人'
-            }
-          }
-        ],
-        series: [
-          {
-            name: '总人数',
-            type: 'line',
-            smooth: true, //平滑曲线显示
-            showAllSymbol: true, //显示所有图形。
-            symbol: 'circle', //标记的图形为实心圆
-            symbolSize: 10, //标记的大小
-            itemStyle: {
-              //折线拐点标志的样式
-              color: '#058cff'
-            },
-            lineStyle: {
-              color: '#058cff'
-            },
-            areaStyle: {
-              color: 'rgba(5,140,255, 0.2)'
-            },
-            data: this.userTrend.userTotals
-          },
-          {
-            name: '新增人数',
-            type: 'bar',
-            data: this.userTrend.increments
-          }
-        ]
-      }
-      userEchart.setOption(option)
+      // 准备数据和配置项
+      const result = _.merge(this.userTrend, this.userOption)
+      userEchart.setOption(result)
     },
     // 监听选择时间段的事件   在这里发起请求
     async changeReq(type) {
-      const { data: res } = await this.$http.get(`user/system/userTrend/${type}`)
-      if(res.code != 200){
+      const { data: res } = await this.$http.get(
+        `user/system/userTrend/${type}`
+      )
+      if (res.code != 200) {
         return this.$Message.error('查询失败')
-      }else {
-        this.userTrend = res.data;
+      } else {
+        this.userTrend = res.data
         this.initUserMessage()
       }
     }

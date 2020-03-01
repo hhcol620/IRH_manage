@@ -17,65 +17,67 @@
     </el-row>
     <!-- 主体区域   举报内容 -->
 
-      <el-row class="main">
-        <el-col class="main_list_left"
-                :span="14">
-          <ul>
-            <!-- 循环这个li -->
-              <li v-for="item in reportList" :key="item.id">
-                <div>
-                  <div class="main_head">
-                    <div class="author">举报人:{{item.customerId}}</div>
-                    <div class="time">{{item.createTime}}</div>
-                  </div>
-                  <div class="report_content">{{item.reason}}</div>
-                </div>
-              </li>
-          </ul>
-        </el-col>
-        <el-col :span="10"
-                class="right">
-          <!-- 这是右边区域   管理员处理区域 -->
-          <el-row class="main_right">
-            <div class="main_right_box">
-              <p>审核:</p>
-              <div class="select">
-                <template>
-                  <el-select v-model="result"
-                             placeholder="请选择">
-                    <el-option v-for="item in results_options"
-                               :key="item.value"
-                               :label="item.label"
-                               :value="item.value">
-                    </el-option>
-                  </el-select>
-                </template>
+    <el-row class="main">
+      <el-col class="main_list_left"
+              :span="14">
+        <ul>
+          <!-- 循环这个li -->
+          <li v-for="item in reportList"
+              :key="item.id">
+            <div>
+              <div class="main_head">
+                <div class="author">举报人:{{item.customerId}}</div>
+                <div class="time">{{item.createTime}}</div>
               </div>
+              <div class="report_content">{{item.reason}}</div>
             </div>
-            <div class="remark_box">
-              <!-- 这里是备注区域 -->
-              <div class="description">请输入备注: </div>
-              <el-input type="textarea"
-                        placeholder="请输入备注"
-                        v-model="remark_input"
-                        clearable
-                        resize="none">
-              </el-input>
+          </li>
+        </ul>
+      </el-col>
+      <el-col :span="10"
+              class="right">
+        <!-- 这是右边区域   管理员处理区域 -->
+        <el-row class="main_right">
+          <div class="main_right_box">
+            <p>审核:</p>
+            <div class="select">
+              <template>
+                <el-select v-model="result"
+                           placeholder="请选择">
+                  <el-option v-for="item in results_options"
+                             :key="item.value"
+                             :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </template>
             </div>
-          </el-row>
-          <el-row class="main_right_footer">
-            <div class="submit_btn">
-              <el-button plain @click="processReport">提交</el-button>
-            </div>
-          </el-row>
-        </el-col>
-      </el-row>
-    </div>
+          </div>
+          <div class="remark_box">
+            <!-- 这里是备注区域 -->
+            <div class="description">请输入备注: </div>
+            <el-input type="textarea"
+                      placeholder="请输入备注"
+                      v-model="remark_input"
+                      clearable
+                      resize="none">
+            </el-input>
+          </div>
+        </el-row>
+        <el-row class="main_right_footer">
+          <div class="submit_btn">
+            <el-button plain
+                       @click="processReport">提交</el-button>
+          </div>
+        </el-row>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 <script>
 export default {
   created() {
-    this.getReportDetails();
+    this.getReportDetails()
   },
   data() {
     return {
@@ -96,32 +98,39 @@ export default {
     async getReportDetails() {
       // js的slice方法
       var id = location.href.slice(location.href.indexOf('?id=') + 4)
-      const { data: res } = await this.$http.get(`user/admin/report/detail/${id}`)
+      const { data: res } = await this.$http.get(
+        `user/admin/report/detail/${id}`
+      )
       console.log(res)
       if (res.code !== 200) {
         return this.$Message.error('加载举报信息失败,请稍后重试')
       } else {
         // 请求数据成功
         this.$Message.success('加载成功')
-        var list = res.data;
-        console.log("list---" + list)
+        var list = res.data
+        console.log('list---' + list)
         list.forEach(async item => {
-            item.customerId = await this.getUserName(item.customerId)
+          item.customerId = await this.getUserName(item.customerId)
           this.reportList.push(item)
         })
-        this.reportList = list;
+        this.reportList = list
         console.log(this.reportList)
       }
     },
-    async processReport(){
-      var targetId = location.href.slice(location.href.indexOf('?id=') + 4, location.href.indexOf('&type='))
-      const { data: res } = await this.$http.get(`user/admin/report/process/${targetId}/${this.result}/${this.remark_input}`)
+    async processReport() {
+      var targetId = location.href.slice(
+        location.href.indexOf('?id=') + 4,
+        location.href.indexOf('&type=')
+      )
+      const { data: res } = await this.$http.get(
+        `user/admin/report/process/${targetId}/${this.result}/${this.remark_input}`
+      )
       console.log(res)
     },
-    async getUserName(userId){
+    async getUserName(userId) {
       const { data: res } = await this.$http.get(`user/user/${userId}`)
-      if(res.code != 200) return;
-      return res.text;
+      if (res.code != 200) return
+      return res.text
     }
   }
 }
@@ -130,7 +139,7 @@ export default {
 // 头部区域
 .header,
 .container {
-  height: 300px;
+  height: 350px;
   background-color: #fff;
   border-radius: 2px;
 }
@@ -143,7 +152,7 @@ export default {
 }
 .main,
 .main_list_left {
-  height: 300px;
+  height: 350px;
   font-size: 13px;
   color: #4d4d4d;
   line-height: 20px;
@@ -152,7 +161,7 @@ export default {
   > ul {
     margin: 0;
     padding: 0;
-    height: 300px;
+    height: 350px;
     overflow-y: scroll;
   }
 }
