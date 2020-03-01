@@ -255,7 +255,7 @@ export default {
         return this.$Message.error('获取商品分类失败')
       }
       // 把数据列表,赋值给catelist
-      this.catelist = res.data.result
+      this.catelist = res.data.data
       // 为总数据条数赋值
       this.total = res.data.totalCount
     },
@@ -277,11 +277,11 @@ export default {
     },
     // 获取父级分类的数据类表    在添加分类的对话框打开之后,立刻获取父级分类数据列表,在添加分类的时候,可以选择父级分类
     async getParentCateList() {
-      const { data: res } = await this.$http.post('/admin/forum/category/list')
+      const { data: res } = await this.$http.post('user/admin/forum/category/list')
       if (res.code !== 200) {
         return this.$Message.error('获取父级分类数据失败')
       }
-      this.parentCateList = res.data.result
+      this.parentCateList = res.data.data
     },
     // 选择项发生变化触发这个函数
     parentCateChanged() {
@@ -308,7 +308,7 @@ export default {
       this.$refs.addCatFormRef.validate(async valid => {
         if (!valid) return
         const { data: res } = await this.$http.post(
-          '/admin/forum/category',
+          'user/admin/forum/category',
           this.addCatForm
         )
         if (res.code !== 200) {
@@ -331,7 +331,7 @@ export default {
       // 根据传过来的id值请求数据,做下一步的渲染
       // console.log(id)
       // 立刻发起请求,根据id获取分类的信息
-      const { data: res } = await this.$http.get(`/admin/forum/category/${id}`)
+      const { data: res } = await this.$http.get(`user/admin/forum/category/${id}`)
       if (res.code !== 200) {
         // 失败
         return this.$Message.error('获取分类信息失败')
@@ -368,7 +368,7 @@ export default {
         // 先发起删除请求
         // id要使用传进来的id值
         const { data: res } = await this.$http.delete(
-          `/admin/forum/category/${id}`
+          `user/admin/forum/category/${id}`
         )
         // console.log(res)
         if (res.code !== 200) {

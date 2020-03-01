@@ -126,7 +126,6 @@
           </tr>
           <tr>
             <td>卖家ID: {{orderbyId.salerId}}</td>
-            <td>买家用户名: {{orderbyId.salerNickname}}</td>
           </tr>
           <tr>
             <td>买家ID: {{orderbyId.buyerId}}</td>
@@ -187,7 +186,6 @@ export default {
           // 订单编号
           orderCode: '',
           // 买家用户名
-          salerNickname: '',
           // 付款方式
           tradeType: ''
         }

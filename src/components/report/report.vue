@@ -57,7 +57,7 @@
             <!-- 循环显示数据，点击可以弹框显示具体的内容 -->
             <div v-for="item in reportList"
                  :key="item.id"
-                 @click="jumpPage(item.id)">
+                 @click="jumpPage(item.targetId)">
               <el-row :gutter="10">
                 <el-col :span="20"
                         class="list_content">

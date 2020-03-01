@@ -16,75 +16,112 @@
       </el-col>
     </el-row>
     <!-- 主体区域   举报内容 -->
-    <el-row class="main">
-      <el-col class="main_list_left"
-              :span="14">
-        <ul>
-          <!-- 循环这个li -->
-          <li>
-            <div>
-              <div class="main_head">
-                <div class="author">举报人: <span>举报人昵称</span></div>
-                <div class="time">2020-12-09 20:18</div>
+
+      <el-row class="main">
+        <el-col class="main_list_left"
+                :span="14">
+          <ul>
+            <!-- 循环这个li -->
+              <li v-for="item in reportList" :key="item.id">
+                <div>
+                  <div class="main_head">
+                    <div class="author">举报人:{{item.customerId}}</div>
+                    <div class="time">{{item.createTime}}</div>
+                  </div>
+                  <div class="report_content">{{item.reason}}</div>
+                </div>
+              </li>
+          </ul>
+        </el-col>
+        <el-col :span="10"
+                class="right">
+          <!-- 这是右边区域   管理员处理区域 -->
+          <el-row class="main_right">
+            <div class="main_right_box">
+              <p>审核:</p>
+              <div class="select">
+                <template>
+                  <el-select v-model="result"
+                             placeholder="请选择">
+                    <el-option v-for="item in results_options"
+                               :key="item.value"
+                               :label="item.label"
+                               :value="item.value">
+                    </el-option>
+                  </el-select>
+                </template>
               </div>
-              <div class="report_content">举报内容:备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注</div>
             </div>
-          </li>
-        </ul>
-      </el-col>
-      <el-col :span="10"
-              class="right">
-        <!-- 这是右边区域   管理员处理区域 -->
-        <el-row class="main_right">
-          <div class="main_right_box">
-            <p>请管理员做出处理:</p>
-            <div class="select">
-              <template>
-                <el-select v-model="result"
-                           placeholder="请选择">
-                  <el-option v-for="item in results_options"
-                             :key="item.value"
-                             :label="item.label"
-                             :value="item.value">
-                  </el-option>
-                </el-select>
-              </template>
+            <div class="remark_box">
+              <!-- 这里是备注区域 -->
+              <div class="description">请输入备注: </div>
+              <el-input type="textarea"
+                        placeholder="请输入备注"
+                        v-model="remark_input"
+                        clearable
+                        resize="none">
+              </el-input>
             </div>
-          </div>
-          <div class="remark_box">
-            <!-- 这里是备注区域 -->
-            <div class="description">请输入备注: </div>
-            <el-input type="textarea"
-                      placeholder="请输入备注"
-                      v-model="remark_input"
-                      clearable
-                      resize="none">
-            </el-input>
-          </div>
-        </el-row>
-        <el-row class="main_right_footer">
-          <div class="submit_btn">
-            <el-button plain>提交</el-button>
-          </div>
-        </el-row>
-      </el-col>
-    </el-row>
-  </div>
+          </el-row>
+          <el-row class="main_right_footer">
+            <div class="submit_btn">
+              <el-button plain @click="processReport">提交</el-button>
+            </div>
+          </el-row>
+        </el-col>
+      </el-row>
+    </div>
 </template>
 <script>
 export default {
+  created() {
+    this.getReportDetails();
+  },
   data() {
     return {
       results_options: [
-        { value: 1, label: '举报失败' },
-        { value: 2, label: '处理中' },
+        { value: 1, label: '未发现异常' },
         { value: 3, label: '警告并删除' },
         { value: 4, label: '冻结账号' }
       ],
       // result
       result: '',
       // 备注
-      remark_input: ''
+      remark_input: '',
+      reportList: []
+    }
+  },
+  methods: {
+    // 获取管理员的id值
+    async getReportDetails() {
+      // js的slice方法
+      var id = location.href.slice(location.href.indexOf('?id=') + 4)
+      const { data: res } = await this.$http.get(`user/admin/report/detail/${id}`)
+      console.log(res)
+      if (res.code !== 200) {
+        return this.$Message.error('加载举报信息失败,请稍后重试')
+      } else {
+        // 请求数据成功
+        this.$Message.success('加载成功')
+        var list = res.data;
+        console.log("list---" + list)
+        list.forEach(async item => {
+            item.customerId = await this.getUserName(item.customerId)
+          this.reportList.push(item)
+        })
+        this.reportList = list;
+        console.log(this.reportList)
+      }
+    },
+    async processReport(){
+      var targetId = location.href.slice(location.href.indexOf('?id=') + 4, location.href.indexOf('&type='))
+      const { data: res } = await this.$http.get(`user/admin/report/process/${targetId}/${this.result}/${this.remark_input}`)
+      console.log(res)
+    },
+    async getUserName(userId){
+      const { data: res } = await this.$http.get(`user/user/${userId}`)
+      if(res.code != 200) return;
+      return res.text;
     }
   }
 }

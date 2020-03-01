@@ -79,9 +79,9 @@
       <!-- 分页区域 -->
       <el-pagination @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
-                     :current-page="queryInfo.pagenum"
+                     :current-page="queryInfo.currentPage"
                      :page-sizes="[10, 30, 50, 100]"
-                     :page-size="queryInfo.pagesize"
+                     :page-size="queryInfo.pageSize"
                      layout="total, sizes, prev, pager, next, jumper"
                      :total="total">
       </el-pagination>
@@ -95,8 +95,8 @@ export default {
   data() {
     return {
       queryInfo: {
-        pagenum: 1,
-        pagesize: 10,
+        currentPage: 1,
+        pageSize: 10,
         searchCondition: {
           // 帖子的id
           id: '',
@@ -116,11 +116,11 @@ export default {
         },
         {
           label: '作者',
-          prop: 'authName'
+          prop: 'customerId'
         },
         {
           label: '发帖时间',
-          prop: 'time'
+          prop: 'createTime'
         },
         {
           label: '热度',
@@ -144,7 +144,7 @@ export default {
     // 获取帖子列表
     async getArticleList() {
       const { data: res } = await this.$http.post(
-        '/admin/forum/category/list',
+        'user/admin/forum/category/list',
         this.queryInfo
       )
       console.log(res)
@@ -152,18 +152,24 @@ export default {
         return this.$Message.error('获取文章信息失败')
       }
       // 把数据列表,赋值给catelist
-      this.articleList = res.data.result
+      var list = res.data.data
+      list.forEach( item => {
+        item.customerId = this.getUserName(item.customerId)
+        this.articleList.push(item)
+      })
+      // this.articleList = res.data.data
+      console.log( "------" + this.articleList)
       // 为总数据条数赋值
       this.total = res.data.totalCount
     },
     // 监听pagesize改变
     handleSizeChange(newSize) {
-      this.queryInfo.pagesize = newSize
+      this.queryInfo.pageSize = newSize
       this.getCateList()
     },
-    // 监听pagenum改变
+    // 监听currentPage改变
     handleCurrentChange(newPage) {
-      this.queryInfo.pagenum = newPage
+      this.queryInfo.currentPage = newPage
       this.getCateList()
     },
     // 监听搜索框重置
@@ -180,6 +186,11 @@ export default {
     // 监听更多按钮
     click_more_article_by_id(id) {
       console.log(id)
+    },
+    async getUserName(userId){
+      const { data: res } = await this.$http.get(`user/user/${userId}`)
+      if(res.code != 200) return;
+      return res.text;
     }
   }
 }

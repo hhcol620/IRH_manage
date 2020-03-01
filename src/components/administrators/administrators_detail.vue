@@ -137,7 +137,7 @@ export default {
       var id = location.href.slice(location.href.indexOf('?id=') + 4)
       console.log(id)
       // 这个id也就是传过来的管理员的id 然后就是发起请求 请求这个id值的用户详细信息
-      const { data: res } = await this.$http.get(`/admin/${id}`)
+      const { data: res } = await this.$http.get(`user/admin/${id}`)
       // console.log(res)
       if (res.code !== 200) {
         return this.$Message.error('加载管理员信息失败,请稍后重试')
