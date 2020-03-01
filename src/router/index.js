@@ -18,6 +18,7 @@ import Forum_cate from '../components/forum/forum_cate.vue'
 import Interest_tag from '../components/interest_tag/interest_tag.vue'
 // 
 import Reports from '../components/report/report.vue'
+import Report_detail from '../components/report/report_detail.vue'
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -60,7 +61,11 @@ const router = new VueRouter({
      {
        path: '/admin_report',
        component:Reports
-    },
+     },
+     {
+      path: '/report_detail',
+      component:Report_detail
+     },
      {
        path: '/administrators_Detail',
        component:Administrators_Detail

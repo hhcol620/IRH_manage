@@ -176,13 +176,13 @@
                width="60%"
                @close="addDialogClosed">
       <!-- 内容主体区域 -->
-      <el-form :model="addForm"
+      <el-form  :model="addForm"
                :rules="addFormRules"
                ref="addFormRef"
                label-width="100px">
         <el-form-item label="邮箱地址"
                       prop="email">
-          <el-input v-model="addForm.email" />
+          <el-input v-model="addForm.email"  />
         </el-form-item>
         <el-form-item label="用户密码"
                       prop="password">
@@ -380,8 +380,8 @@ export default {
       var res = this.checkValue(2)
       if (res.code == 200) {
         return cb()
-      } else {
-        cb(new Error('邮箱地址已经被注册'))
+      }else {
+        cb(new Error("邮箱地址已经被注册"))
       }
     }
 
@@ -460,7 +460,9 @@ export default {
           },
           { validator: checkPassword, trigger: 'blur' }
         ],
-        nickname: [{ validator: checkNickname, trigger: 'blur' }],
+        nickname: [
+          { validator: checkNickname, trigger: 'blur' }
+        ],
         type: [{ required: true, message: '请选择身份', trigger: 'change' }],
         gender: [{ required: this, message: '请选择性别', trigger: 'change' }],
         desc: []
@@ -683,7 +685,7 @@ export default {
         在弹框之前首先发起请求,根据id查询用户信息
       */
       const { data: res } = await this.$http.get(`user/admin/${id}`)
-      console.log(res.data.state)
+      console.log(res.data)
       this.editForm = res.data
       // 请求成功,将请求过来的数据渲染到页面上也就是弹出的对话框里面
       this.editDialogVisible = true
