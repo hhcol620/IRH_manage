@@ -8,6 +8,81 @@
       <el-breadcrumb-item>订单管理</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
+      <!-- 图表区域 -->
+      <el-row class="chart"
+              :gutter="20">
+        <!-- 左半部分 -->
+        <el-col :span="12">
+          <!-- 上半部 -->
+          <el-row class="left_head">
+            <!-- 订单总量 -->
+            <div class="circle">
+              <span class="circleTitle">订单总量</span>
+              <div class="wrapper left_circle">
+                <div class="circleProgress rightcircle">
+                </div>
+              </div>
+              <div class="wrapper right_circle">
+                <div class="circleProgress leftcircle">
+                </div>
+              </div>
+            </div>
+            <!-- 今日成交 -->
+            <div class="circle">
+              <span class="circleTitle">今日成交</span>
+              <div class="wrapper left_circle">
+                <div class="circleProgress rightcircle">
+                </div>
+              </div>
+              <div class="wrapper right_circle">
+                <div class="circleProgress leftcircle">
+                </div>
+              </div>
+            </div>
+          </el-row>
+          <!-- 下半部 -->
+          <el-row class="left_footer">
+            <el-col>
+              <div id="transactionMessage"
+                   :style="{width: '100%', height: '280px',}"
+                   class="transactionechart"></div>
+            </el-col>
+          </el-row>
+        </el-col>
+        <!-- 右半部分  交易金额和增长趋势 -->
+        <el-col :span="12"
+                class="right">
+          <div class="echartsTitle">
+            <span>近期平台交易总金额和增长趋势数据统计</span>
+          </div>
+
+          <el-row class="right_head">
+            <el-col>
+              <!-- 日期选择器 -->
+              <div class="time_select">
+
+                <el-select v-model="time"
+                           placeholder="请选择时间段"
+                           size="mini"
+                           @change="changeReq">
+                  <el-option label="最近一周"
+                             value="1"></el-option>
+                  <el-option label="最近一个月"
+                             value="2"></el-option>
+                  <el-option label="最近半年"
+                             value="3"></el-option>
+                  <el-option label="最近一年"
+                             value="4"></el-option>
+
+                </el-select>
+              </div>
+              <div id="transMessage"
+                   :style="{width: '100%', height: '400px',}"
+                   class="transactionechart"></div>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
       <!-- 搜索区域 -->
       <el-row :gutter="20">
         <el-col :span="5">
@@ -69,7 +144,8 @@
           </template>
         </el-table-column>-->
         <!-- 索引列 -->
-        <el-table-column type="index" hidden></el-table-column>
+        <el-table-column type="index"
+                         hidden></el-table-column>
         <el-table-column prop="id"
                          label="ID"></el-table-column>
         <el-table-column prop="orderCode"
@@ -167,6 +243,8 @@
   </div>
 </template>
 <script>
+import echarts from 'echarts'
+import _ from 'lodash'
 export default {
   data() {
     return {
@@ -197,11 +275,162 @@ export default {
       // 控制查看更多的对话框  默认是关闭的状态
       moreDialogVisible: false,
       // 对话框的表格存储的数据
-      orderbyId: {}
+      orderbyId: {},
+      // 交易总量折线  数据
+      transactionOption: {
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['交易总量']
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: [
+              '1月',
+              '2月',
+              '3月',
+              '4月',
+              '5月',
+              '6月',
+              '7月',
+              '8月',
+              '9月',
+              '10月',
+              '11月',
+              '12月'
+            ],
+            axisPointer: {
+              type: 'shadow'
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: '交易总量',
+            min: 0,
+            max: 2500,
+            interval: 200,
+            axisLabel: {
+              formatter: '{value} k'
+            }
+          }
+        ],
+        series: [
+          {
+            name: '交易总量',
+            type: 'line',
+            data: [
+              100,
+              234,
+              453,
+              465,
+              566,
+              788,
+              899,
+              1000,
+              1220,
+              1345,
+              1567,
+              2000
+            ]
+          }
+        ]
+      },
+      // 交易金额和增长趋势
+      transMessOption: {
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['交易金额', '增长趋势']
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: [
+              '1月',
+              '2月',
+              '3月',
+              '4月',
+              '5月',
+              '6月',
+              '7月',
+              '8月',
+              '9月',
+              '10月',
+              '11月',
+              '12月'
+            ],
+            axisPointer: {
+              type: 'shadow'
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: '交易金额',
+            min: 0,
+            max: 2500,
+            interval: 200,
+            axisLabel: {
+              formatter: '{value} k'
+            }
+          }
+        ],
+        series: [
+          {
+            name: '增长趋势',
+            type: 'line',
+            data: [
+              100,
+              234,
+              453,
+              465,
+              566,
+              788,
+              899,
+              1000,
+              1220,
+              1345,
+              1567,
+              2000
+            ]
+          },
+          {
+            name: '交易金额',
+            type: 'bar',
+            data: [
+              100,
+              134,
+              200,
+              11,
+              100,
+              200,
+              100,
+              110,
+              200,
+              134,
+              120,
+              200,
+              500
+            ]
+          }
+        ]
+      },
+      // 时间段
+      time: ''
     }
   },
   created() {
     this.getOrderList()
+  },
+  mounted() {
+    this.inittransaction()
+    this.inittransMessage()
   },
   methods: {
     // 监听页面大小的变化
@@ -261,11 +490,52 @@ export default {
         this.$Message.success('获取订单信息成功')
         this.moreDialogVisible = true
       }
+    },
+    // 渲染交易信息事件
+    inittransaction() {
+      let transEchart = echarts.init(
+        document.getElementById('transactionMessage')
+      )
+      // 准备数据和配置项
+      const result = _.merge('这里放请求回来的数据', this.transactionOption)
+      transEchart.setOption(result)
+    },
+    // 渲染交易金额和增长趋势信息
+    inittransMessage() {
+      let transEchart = echarts.init(document.getElementById('transMessage'))
+      // 准备数据和配置项
+      const result = _.merge('这里放请求回来的数据', this.transMessOption)
+      transEchart.setOption(result)
+    },
+    // 时间选择器   这里发起请求
+    async changeReq(type) {
+      const { data: res } = await this.$http.get(
+        `user/system/userTrend/${type}`
+      )
+      if (res.code != 200) {
+        return this.$Message.error('查询失败')
+      } else {
+        this.userTrend = res.data
+        this.initUserMessage()
+      }
     }
   }
 }
 </script>
 <style lang="less" scoped>
+// 圆的宽和高
+@circlewidth: 160px;
+@circleheight: 160px;
+// 半圆的宽
+@circlewidth_half: 80px;
+// 圆的radius   应该和半圆的宽值一样
+@border-radius: 80px;
+// 边框的宽度
+@border-width: 12px;
+// 边框的颜色
+@border-color: #2ecc71;
+// 边框的底色
+@border-bgc: #9ffcc6;
 .container {
   margin: 20px 0;
 }
@@ -342,5 +612,145 @@ export default {
 // 弹框主体
 /deep/.el-dialog__body {
   padding: 20px 30px;
+}
+
+//图标区域
+.chart {
+  height: 500px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+}
+
+// 页面头部区域
+.left_head {
+  display: flex;
+  justify-content: space-between;
+  // position: relative;
+  height: 200px;
+  // border-bottom: 1px solid #ccc;
+  box-shadow: 1px 1px 8px #ddd;
+}
+div.circle {
+  position: relative;
+  margin: 10px 50px;
+  .wrapper {
+    width: @circlewidth_half;
+    height: @circleheight;
+    position: absolute;
+    top: 0;
+    overflow: hidden;
+    // border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  .right_circle {
+    right: 0;
+  }
+  .left_circle {
+    left: 0;
+  }
+}
+.circleProgress {
+  box-sizing: border-box;
+  width: @circlewidth_half;
+  height: @circleheight;
+  position: absolute;
+  top: 0;
+}
+.rightcircle {
+  border-radius: 0 @border-radius @border-radius 0;
+  border: solid @border-color;
+  border-width: @border-width @border-width @border-width 0;
+  right: 0;
+  animation: circleProgressLoad_right 1s linear;
+  animation-iteration-count: 1;
+  animation-iteration-count: 1;
+}
+.leftcircle {
+  border-radius: 0 @border-radius @border-radius 0;
+  border: solid @border-color;
+  border-width: @border-width @border-width @border-width 0;
+  left: 100%;
+  transform: rotate(90deg);
+  transform-origin: 0;
+  animation: circleProgressLoad_left 1s linear;
+  animation-iteration-count: 1;
+  animation-iteration-count: 1;
+}
+// 动画
+
+@keyframes circleProgressLoad_right {
+  0% {
+    transform: rotate(180deg);
+    transform-origin: 0;
+  }
+  50%,
+  100% {
+    transform: rotate(360deg);
+    transform-origin: 0;
+  }
+}
+@keyframes circleProgressLoad_left {
+  0%,
+  50% {
+    transform: rotate(0deg);
+    transform-origin: 0;
+  }
+  100% {
+    transform: rotate(90deg);
+    transform-origin: 0;
+  }
+}
+
+.circleTitle {
+  width: @circlewidth;
+  height: @circleheight;
+  font-size: 14px;
+  color: #4d4d4d;
+  font-weight: 500;
+  font-style: normal;
+  position: absolute;
+  transform: translate(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: @border-width solid @border-bgc;
+  > span {
+  }
+}
+// 左下部
+.left_footer {
+  height: 280px;
+  width: 100%;
+  margin: 10px 0;
+  padding-top: 10px;
+  box-shadow: 1px 1px 8px #ddd;
+  #transactionMessage {
+  }
+}
+
+// 右部
+.right {
+  position: relative;
+  .echartsTitle {
+    margin-top: 20px;
+    height: 60px;
+    line-height: 30px;
+    font-size: 20px;
+    text-align: center;
+  }
+  .time_select {
+    position: absolute;
+    top: 0;
+    left: 70%;
+    z-index: 999;
+    .el-select {
+      width: 120px;
+    }
+  }
+}
+.right_head {
 }
 </style>
