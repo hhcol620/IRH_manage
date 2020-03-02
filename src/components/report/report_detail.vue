@@ -81,6 +81,13 @@ export default {
   },
   data() {
     return {
+      processResult: {
+        result: '',
+        remark: '',
+        targetId:'',
+        id:'',
+        type: ''
+      },
       results_options: [
         { value: 1, label: '未发现异常' },
         { value: 3, label: '警告并删除' },
@@ -97,9 +104,13 @@ export default {
     // 获取管理员的id值
     async getReportDetails() {
       // js的slice方法
-      var id = location.href.slice(location.href.indexOf('?id=') + 4)
+      var id = location.href.slice(location.href.indexOf('?targetId=') + 10, location.href.indexOf('&type='))
+      var targetIdType = location.href.slice(location.href.indexOf('&type=') + 6)
+
+      console.log("id----" + id)
+      console.log("type----" + targetIdType)
       const { data: res } = await this.$http.get(
-        `user/admin/report/detail/${id}`
+        `user/admin/report/detail/${id}/${targetIdType}`
       )
       console.log(res)
       if (res.code !== 200) {
@@ -119,13 +130,25 @@ export default {
     },
     async processReport() {
       var targetId = location.href.slice(
-        location.href.indexOf('?id=') + 4,
-        location.href.indexOf('&type=')
+              location.href.indexOf('?id=') + 4,
+              location.href.indexOf('&type=')
       )
+
+      var targetIdType = location.href.slice('&type=' + 6);
       const { data: res } = await this.$http.get(
-        `user/admin/report/process/${targetId}/${this.result}/${this.remark_input}`
+              `user/admin/report/detail/${targetId}/${targetIdType}`
       )
-      console.log(res)
+      this.processResult.targetId = targetId;
+      this.processResult.remark = this.remark_input;
+      this.processResult.result = this.result;
+      this.processResult.type = targetIdType;
+
+      const { data: processRes } = await this.$http.post(
+              `user/admin/report/process`, this.processResult
+      )
+      if (processRes.code !== 200) {
+        return this.$Message.error('处理失败,请稍后重试')
+      }
     },
     async getUserName(userId) {
       const { data: res } = await this.$http.get(`user/user/${userId}`)

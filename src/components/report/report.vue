@@ -247,7 +247,7 @@ export default {
     // 跳转到举报的详情页面 把id传过来
     jumpPage(id) {
       //
-      this.$router.push(`/report_detail?id=${id}`)
+      this.$router.push(`/report_detail?targetId=${id}&type=${this.queryInfo.searchCondition.type}`)
     }
   }
 }

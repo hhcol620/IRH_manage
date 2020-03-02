@@ -248,6 +248,8 @@ import _ from 'lodash'
 export default {
   data() {
     return {
+      orderTrend: {},    //订单趋势
+      orderAmountTrend: {},  //订单总金额趋势
       // 交易方式  下拉选择
       opt: [
         { value: 10, label: '线上交易' },
@@ -277,150 +279,84 @@ export default {
       // 对话框的表格存储的数据
       orderbyId: {},
       // 交易总量折线  数据
-      transactionOption: {
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          data: ['交易总量']
-        },
-        xAxis: [
-          {
-            type: 'category',
-            data: [
-              '1月',
-              '2月',
-              '3月',
-              '4月',
-              '5月',
-              '6月',
-              '7月',
-              '8月',
-              '9月',
-              '10月',
-              '11月',
-              '12月'
-            ],
-            axisPointer: {
-              type: 'shadow'
-            }
-          }
-        ],
-        yAxis: [
-          {
-            type: 'value',
-            name: '交易总量',
-            min: 0,
-            max: 2500,
-            interval: 200,
-            axisLabel: {
-              formatter: '{value} k'
-            }
-          }
-        ],
-        series: [
-          {
-            name: '交易总量',
-            type: 'line',
-            data: [
-              100,
-              234,
-              453,
-              465,
-              566,
-              788,
-              899,
-              1000,
-              1220,
-              1345,
-              1567,
-              2000
-            ]
-          }
-        ]
-      },
+      // transactionOption: {
+      //   tooltip: {
+      //     trigger: 'axis'
+      //   },
+      //   legend: {
+      //     data: ['交易总量']
+      //   },
+      //   xAxis: [
+      //     {
+      //       type: 'category',
+      //       data: this.orderTrend.abscissaUnit,
+      //       axisPointer: {
+      //         type: 'shadow'
+      //       }
+      //     }
+      //   ],
+      //   yAxis: [
+      //     {
+      //       type: 'value',
+      //       name: '交易总量',
+      //       min: 0,
+      //       max: this.orderAmountTrend.max,
+      //       interval: this.orderAmountTrend.interval,
+      //       axisLabel: {
+      //         formatter: '{value} k'
+      //       }
+      //     }
+      //   ],
+      //   series: [
+      //     {
+      //       name: '交易总量',
+      //       type: 'line',
+      //       data: this.orderAmountTrend.max
+      //     }
+      //   ]
+      // },
       // 交易金额和增长趋势
-      transMessOption: {
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          data: ['交易金额', '增长趋势']
-        },
-        xAxis: [
-          {
-            type: 'category',
-            data: [
-              '1月',
-              '2月',
-              '3月',
-              '4月',
-              '5月',
-              '6月',
-              '7月',
-              '8月',
-              '9月',
-              '10月',
-              '11月',
-              '12月'
-            ],
-            axisPointer: {
-              type: 'shadow'
-            }
-          }
-        ],
-        yAxis: [
-          {
-            type: 'value',
-            name: '交易金额',
-            min: 0,
-            max: 2500,
-            interval: 200,
-            axisLabel: {
-              formatter: '{value} k'
-            }
-          }
-        ],
-        series: [
-          {
-            name: '增长趋势',
-            type: 'line',
-            data: [
-              100,
-              234,
-              453,
-              465,
-              566,
-              788,
-              899,
-              1000,
-              1220,
-              1345,
-              1567,
-              2000
-            ]
-          },
-          {
-            name: '交易金额',
-            type: 'bar',
-            data: [
-              100,
-              134,
-              200,
-              11,
-              100,
-              200,
-              100,
-              110,
-              200,
-              134,
-              120,
-              200,
-              500
-            ]
-          }
-        ]
-      },
+      // transMessOption: {
+      //   tooltip: {
+      //     trigger: 'axis'
+      //   },
+      //   legend: {
+      //     data: ['交易金额', '增长趋势']
+      //   },
+      //   xAxis: [
+      //     {
+      //       type: 'category',
+      //       data: this.orderTrend.abscissaUnit,
+      //       axisPointer: {
+      //         type: 'shadow'
+      //       }
+      //     }
+      //   ],
+      //   yAxis: [
+      //     {
+      //       type: 'value',
+      //       name: '交易金额',
+      //       min: 0,
+      //       max: 2500,
+      //       interval: 200,
+      //       axisLabel: {
+      //         formatter: '{value} k'
+      //       }
+      //     }
+      //   ],
+      //   series: [
+      //     {
+      //       name: '增长趋势',
+      //       type: 'line',
+      //       data: this.orderTrend.totals
+      //     },
+      //     {
+      //       name: '交易金额',
+      //       type: 'bar',
+      //       data: this.orderTrend.increments
+      //     }
+      //   ]
+      // },
       // 时间段
       time: ''
     }
@@ -429,8 +365,9 @@ export default {
     this.getOrderList()
   },
   mounted() {
-    this.inittransaction()
-    this.inittransMessage()
+    this.inittransaction(4)
+    this.time = "最近一周"
+    this.changeReq(1)
   },
   methods: {
     // 监听页面大小的变化
@@ -460,10 +397,8 @@ export default {
     },
     // 页面加载发起的数据请求  分页列表请求
     async getOrderList() {
-      const { data: res } = await this.$http.post(
-        'user/admin/order',
-        this.queryInfo
-      )
+      console.log("查看list", this.queryInfo)
+      const { data: res } = await this.$http.post('user/admin/order', this.queryInfo)
       // console.log(res)
       if (res.code !== 200) {
         // 失败
@@ -492,31 +427,109 @@ export default {
       }
     },
     // 渲染交易信息事件
-    inittransaction() {
-      let transEchart = echarts.init(
-        document.getElementById('transactionMessage')
-      )
-      // 准备数据和配置项
-      const result = _.merge('这里放请求回来的数据', this.transactionOption)
-      transEchart.setOption(result)
-    },
-    // 渲染交易金额和增长趋势信息
-    inittransMessage() {
-      let transEchart = echarts.init(document.getElementById('transMessage'))
-      // 准备数据和配置项
-      const result = _.merge('这里放请求回来的数据', this.transMessOption)
-      transEchart.setOption(result)
-    },
-    // 时间选择器   这里发起请求
-    async changeReq(type) {
-      const { data: res } = await this.$http.get(
-        `user/system/userTrend/${type}`
-      )
+    async inittransaction(type) {
+      let transEchart = echarts.init(document.getElementById('transactionMessage'))
+      const { data: res } = await this.$http.get(`user/admin/order/total/trend/${type}`)
       if (res.code != 200) {
         return this.$Message.error('查询失败')
       } else {
-        this.userTrend = res.data
-        this.initUserMessage()
+        this.orderAmountTrend = res.data
+        console.log("最大值" + this.orderTrend.max)
+      }
+
+      let option = {
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['交易总量']
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: this.orderAmountTrend.abscissaUnit,
+            axisPointer: {
+              type: 'shadow'
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: '交易总量',
+            min: 0,
+            max: this.orderAmountTrend.max,
+            interval: this.orderAmountTrend.interval,
+            axisLabel: {
+              formatter: '{value} k'
+            }
+          }
+        ],
+        series: [
+          {
+            name: '交易总量',
+            type: 'line',
+            data: this.orderAmountTrend.increments
+          }
+        ]
+      }
+      transEchart.setOption(option)
+    },
+    // 渲染交易金额和增长趋势信息
+    async inittransMessage(type) {
+      let transEchart = echarts.init(document.getElementById('transMessage'))
+      let option = {
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['交易金额', '增长趋势']
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: this.orderTrend.abscissaUnit,
+            axisPointer: {
+              type: 'shadow'
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: '交易金额',
+            min: 0,
+            max: this.orderTrend.max,
+            interval: this.orderTrend.interval,
+            axisLabel: {
+              formatter: '{value} k'
+            }
+          }
+        ],
+        series: [
+          {
+            name: '增长趋势',
+            type: 'line',
+            data: this.orderTrend.orderTotals
+          },
+          {
+            name: '交易金额',
+            type: 'bar',
+            data: this.orderTrend.increments
+          }
+        ]
+      }
+      transEchart.setOption(option)
+    },
+    // 时间选择器   这里发起请求
+    async changeReq(type) {
+      const { data: res } = await this.$http.get(`user/admin/order/amount/trend/${type}`)
+      if (res.code != 200) {
+        return this.$Message.error('查询失败')
+      } else {
+        this.orderTrend = res.data
+        console.log("最大值" + this.orderTrend.max)
+        this.inittransMessage(type)
       }
     }
   }
