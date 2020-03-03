@@ -151,7 +151,7 @@
 
       <span slot="footer"
             class="dialog-footer">
-        <el-button @click="addCatDialogVisable = false">取 消</el-button>
+        <el-button @click="addCatDialogVisable=false">取 消</el-button>
         <el-button type="primary"
                    @click="addCate">确 定</el-button>
       </span>
@@ -165,8 +165,8 @@ export default {
   data() {
     return {
       queryInfo: {
-        pagenum: 1,
-        pagesize: 10,
+        currentPage: 1,
+        pageSize: 10,
         searchCondition: {
           // 帖子分类的id
           id: '',
@@ -247,7 +247,7 @@ export default {
     // 获取商品分类列表
     async getCateList() {
       const { data: res } = await this.$http.post(
-        '/admin/forum/category/list',
+        'user/admin/forum/category/list',
         this.queryInfo
       )
       console.log(res)
@@ -277,7 +277,7 @@ export default {
     },
     // 获取父级分类的数据类表    在添加分类的对话框打开之后,立刻获取父级分类数据列表,在添加分类的时候,可以选择父级分类
     async getParentCateList() {
-      const { data: res } = await this.$http.post('user/admin/forum/category/list')
+      const { data: res } = await this.$http.post('user/admin/forum/category/list', this.queryInfo)
       if (res.code !== 200) {
         return this.$Message.error('获取父级分类数据失败')
       }

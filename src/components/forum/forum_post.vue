@@ -43,23 +43,23 @@
 
         <!-- 更多 -->
         <template slot="more"
-                  slot-scope="">
+                  slot-scope="scope">
           <ul class="more_icon">
             <!-- 浏览 -->
             <li>
-              <i class="iconfont icon-liulan"></i>998
+              <i class="iconfont icon-liulan">{{scope.row.browserTimes}}</i>
             </li>
             <!-- 转发 -->
             <li>
-              <i class="iconfont icon-zhuanfa1"></i>998
+              <i class="iconfont icon-zhuanfa1"></i>{{scope.row.forwardTimes}}
             </li>
             <!-- 点赞 -->
             <li>
-              <i class="iconfont icon-zan1"></i>998
+              <i class="iconfont icon-zan1"></i>{{scope.row.upTotal}}
             </li>
             <!-- 回复 -->
             <li>
-              <i class="iconfont icon-icon_huifu-mian"></i>998
+              <i class="iconfont icon-icon_huifu-mian"></i>{{scope.row.browserTimes}}
             </li>
           </ul>
         </template>
@@ -69,7 +69,7 @@
           <el-button type="danger"
                      plain
                      size="mini"
-                     @click="click_delete_cate_by_id(scope.row.id)">删除</el-button>
+                     @click="click_delete_article_by_id(scope.row.id)">删除</el-button>
           <el-button type="primary"
                      plain
                      size="mini"
@@ -101,7 +101,7 @@ export default {
           // 帖子的id
           id: '',
           // 帖子的名称
-          name: ''
+          title: ''
         }
       },
       // 文章信息的数据列表, 默认为空
@@ -112,11 +112,11 @@ export default {
       columns: [
         {
           label: '文章标题',
-          prop: 'name'
+          prop: 'title'
         },
         {
           label: '作者',
-          prop: 'customerId'
+          prop: 'userId'
         },
         {
           label: '发帖时间',
@@ -126,7 +126,7 @@ export default {
           label: '热度',
           type: 'template',
           template: 'more',
-          minWidth: '200px'
+          minWidth: '200px',
         },
         {
           label: '操作',
@@ -144,7 +144,7 @@ export default {
     // 获取帖子列表
     async getArticleList() {
       const { data: res } = await this.$http.post(
-        'user/admin/forum/category/list',
+        'user/admin/forum/article',
         this.queryInfo
       )
       console.log(res)
@@ -153,31 +153,29 @@ export default {
       }
       // 把数据列表,赋值给catelist
       var list = res.data.data
-      list.forEach( item => {
-        item.customerId = this.getUserName(item.customerId)
+      list.forEach( async item => {
+        item.userId = await this.getUserName(item.userId)
         this.articleList.push(item)
       })
-      // this.articleList = res.data.data
-      console.log( "------" + this.articleList)
       // 为总数据条数赋值
       this.total = res.data.totalCount
     },
     // 监听pagesize改变
     handleSizeChange(newSize) {
       this.queryInfo.pageSize = newSize
-      this.getCateList()
+      this.getArticleList()
     },
     // 监听currentPage改变
     handleCurrentChange(newPage) {
       this.queryInfo.currentPage = newPage
-      this.getCateList()
+      this.getArticleList()
     },
     // 监听搜索框重置
     reset_Search() {
       //  先重置输入框  再发起数据请求,获取最新的列表
       this.queryInfo.searchCondition.id = ''
       this.queryInfo.searchCondition.name = ''
-      this.getCateList()
+      this.getArticleList()
     },
     // 监听删除文章
     click_delete_article_by_id(id) {
@@ -186,6 +184,13 @@ export default {
     // 监听更多按钮
     click_more_article_by_id(id) {
       console.log(id)
+    },
+    async click_delete_article_by_id(id){
+      const { data: res } = await this.$http.delete(`user/admin/forum/${id}`)
+      if (res.code !== 200) {
+        return this.$Message.error('删除失败')
+      }
+      this.getArticleList()
     },
     async getUserName(userId){
       const { data: res } = await this.$http.get(`user/user/${userId}`)
