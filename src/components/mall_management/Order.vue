@@ -123,26 +123,6 @@
       <el-table :data="listObjs"
                 stripe
                 border>
-        <!-- 展开列 -->
-        <!--<el-table-column type="expand">
-          <template slot-scope="scope">
-            <div class="roleListTag">
-              <div class="tag"
-                   v-for="(item,index) in scope.row.listObjs"
-                   :key="index">
-                <el-tooltip class="item"
-                            effect="dark"
-                            :content="item.roleDesc"
-                            placement="top"
-                            :enterable="false">
-                  <el-tag>{{item.orderCode}}</el-tag>
-                </el-tooltip>
-
-              </div>
-            </div>
-            &lt;!&ndash; <pre>{{scope.row}}</pre> &ndash;&gt;
-          </template>
-        </el-table-column>-->
         <!-- 索引列 -->
         <el-table-column type="index"
                          hidden></el-table-column>
@@ -248,8 +228,8 @@ import _ from 'lodash'
 export default {
   data() {
     return {
-      orderTrend: {},    //订单趋势
-      orderAmountTrend: {},  //订单总金额趋势
+      orderTrend: {}, //订单趋势
+      orderAmountTrend: {}, //订单总金额趋势
       // 交易方式  下拉选择
       opt: [
         { value: 10, label: '线上交易' },
@@ -366,7 +346,7 @@ export default {
   },
   mounted() {
     this.inittransaction(4)
-    this.time = "最近一周"
+    this.time = '最近一周'
     this.changeReq(1)
   },
   methods: {
@@ -397,8 +377,11 @@ export default {
     },
     // 页面加载发起的数据请求  分页列表请求
     async getOrderList() {
-      console.log("查看list", this.queryInfo)
-      const { data: res } = await this.$http.post('order/admin/order', this.queryInfo)
+      console.log('查看list', this.queryInfo)
+      const { data: res } = await this.$http.post(
+        'order/admin/order',
+        this.queryInfo
+      )
       // console.log(res)
       if (res.code !== 200) {
         // 失败
@@ -428,13 +411,17 @@ export default {
     },
     // 渲染交易信息事件
     async inittransaction(type) {
-      let transEchart = echarts.init(document.getElementById('transactionMessage'))
-      const { data: res } = await this.$http.get(`user/admin/order/total/trend/${type}`)
+      let transEchart = echarts.init(
+        document.getElementById('transactionMessage')
+      )
+      const { data: res } = await this.$http.get(
+        `user/admin/order/total/trend/${type}`
+      )
       if (res.code != 200) {
         return this.$Message.error('查询失败')
       } else {
         this.orderAmountTrend = res.data
-        console.log("最大值" + this.orderTrend.max)
+        console.log('最大值' + this.orderTrend.max)
       }
 
       let option = {
@@ -523,12 +510,14 @@ export default {
     },
     // 时间选择器   这里发起请求
     async changeReq(type) {
-      const { data: res } = await this.$http.get(`user/admin/order/amount/trend/${type}`)
+      const { data: res } = await this.$http.get(
+        `user/admin/order/amount/trend/${type}`
+      )
       if (res.code != 200) {
         return this.$Message.error('查询失败')
       } else {
         this.orderTrend = res.data
-        console.log("最大值" + this.orderTrend.max)
+        console.log('最大值' + this.orderTrend.max)
         this.inittransMessage(type)
       }
     }

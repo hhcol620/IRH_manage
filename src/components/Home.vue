@@ -136,6 +136,26 @@ export default {
               authName: '订单管理',
               id: 4,
               path: 'Order'
+            },
+            {
+              authName: '公益基金申请',
+              id: 5,
+              path: 'commonweal_apply'
+            },
+            {
+              authName: '公益基金审核',
+              id: 6,
+              path: 'commonweal_check'
+            },
+            {
+              authName: '公益基金审批',
+              id: 7,
+              path: 'commonweal_approve'
+            },
+            {
+              authName: '审核记录',
+              id: 8,
+              path: 'mall_audit'
             }
           ],
           id: 2,
@@ -157,8 +177,13 @@ export default {
             },
             {
               authName: '文章标签',
-              id: 2,
+              id: 3,
               path: 'forum_list'
+            },
+            {
+              authName: '审核记录',
+              id: 4,
+              path: 'forum_audit'
             }
           ],
           id: 3,

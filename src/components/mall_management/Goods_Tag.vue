@@ -17,37 +17,49 @@
         </el-col>
       </el-row>
       <!-- 表格 -->
-
-      <tree-table :data="catelist"
-                  :columns="columns"
-                  :selection-type='false'
-                  :expand-type='false'
-                  show-index
-                  index-text='#'
+      <div class="tree_b">
+        <el-table :data="cate_list"
                   border
-                  :show-row-hover="false"
-                  :tree-type="true"
-                  children-prop="childs"
-                  class="treeTable">
+                  style="width: 50%">
+          <el-table-column fixed
+                           prop="tagname"
+                           label="标签名"
+                           width="300">
+          </el-table-column>
+          <el-table-column fixed="right"
+                           label="操作"
+                           width="200">
+            <template slot-scope="scope">
+              <el-button @click="handleClick(scope.row)"
+                         type="text"
+                         size="small">查看</el-button>
+              <el-button type="text"
+                         size="small">编辑</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-table :data="cate_list"
+                  border
+                  style="width: 50%">
+          <el-table-column fixed
+                           prop="tagname"
+                           label="标签名"
+                           width="300">
+          </el-table-column>
+          <el-table-column fixed="right"
+                           label="操作"
+                           width="200">
+            <template slot-scope="scope">
+              <el-button @click="handleClick(scope.row)"
+                         type="text"
+                         size="small">查看</el-button>
+              <el-button type="text"
+                         size="small">编辑</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
 
-        <template slot="order"
-                  slot-scope="scope">
-          <p>{{scope.row.desc}}</p>
-        </template>
-
-        <!-- 操作 -->
-        <template slot="opt"
-                  slot-scope="scope">
-          <el-button type="primary"
-                     plain
-                     size="mini"
-                     @click="click_edit_cate_by_id(scope.row.id)">编辑</el-button>
-          <el-button type="danger"
-                     plain
-                     size="mini"
-                     @click="click_delete_cate_by_id(scope.row.id)">删除</el-button>
-        </template>
-      </tree-table>
       <!-- 分页区域 -->
       <el-pagination @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
@@ -111,26 +123,16 @@ export default {
         pagesize: 10
       },
       // 商品分类的数据列表, 默认为空
-      catelist: [],
-      // 总数据条数
-      total: 0,
-      // 为table指定列的定义
-      columns: [
+      cate_list: [
         {
-          label: '分类名称',
-          prop: 'name'
+          tagname: '手机'
         },
         {
-          label: '描述',
-          type: 'template',
-          template: 'order'
-        },
-        {
-          label: '操作',
-          type: 'template',
-          template: 'opt'
+          tagname: '电脑'
         }
       ],
+      // 总数据条数
+      total: 0,
       // 控制添加分类对话框的显示与隐藏
       addCatDialogVisable: false,
       // 添加分类的表单数据对象
@@ -175,7 +177,7 @@ export default {
   methods: {
     // 获取商品分类列表
     async getCateList() {
-      console.log("查看分类信息")
+      console.log('查看分类信息')
       const { data: res } = await this.$http.get('user/admin/goods/category')
       console.log(res)
       if (res.code !== 200) {
@@ -259,7 +261,9 @@ export default {
       // 根据传过来的id值请求数据,做下一步的渲染
       console.log(id)
       // 立刻发起请求,根据id获取商品分类的信息
-      const { data: res } = await this.$http.get(`user/admin/goods/category/{id}`)
+      const { data: res } = await this.$http.get(
+        `user/admin/goods/category/{id}`
+      )
       console.log(res)
     },
     // 监听分类的删除按钮
@@ -308,5 +312,8 @@ export default {
 }
 .el-cascader {
   width: 100%;
+}
+.tree_b {
+  display: flex;
 }
 </style>
