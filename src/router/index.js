@@ -19,6 +19,15 @@ import Interest_tag from '../components/interest_tag/interest_tag.vue'
 // 
 import Reports from '../components/report/report.vue'
 import Report_detail from '../components/report/report_detail.vue'
+
+import Goods_Tag from '../components/mall_management/Goods_Tag.vue'
+import commonweal_apply from '../components/mall_management/commonweal_apply.vue'
+import commonweal_approve from '../components/mall_management/commonweal_approve.vue'
+import commonweal_check from '../components/mall_management/commonweal_check.vue'
+import mall_audit from '../components/mall_management/mall_audit.vue'
+import forum_audit from '../components/forum/forum_audit.vue'
+
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -78,6 +87,10 @@ const router = new VueRouter({
        component:Forum_cate
      },
      {
+      path: '/forum_audit',
+      component:forum_audit
+     },
+     {
       path: '/Goods',
       component:Goods
      },
@@ -85,14 +98,40 @@ const router = new VueRouter({
       path: '/Goods_Cate',
       component:Goods_Cate
      },
-     /*{
+     {
        path: '/Goods_Tag',
        component:Goods_Tag
-     },*/
+     },
+     {
+      path: '/commonweal_apply',
+      component:commonweal_apply
+     },
+     {
+      path: '/commonweal_approve',
+      component:commonweal_approve
+     },
+     {
+      path: '/commonweal_check',
+      component:commonweal_check
+     },
+     {
+      path: '/mall_audit',
+      component:mall_audit
+     },
+
     {
       path: '/Order',
       component:Order
+    },
+    {
+      path: '/Users',
+      component:Users
+    },
+    {
+      path: '/Demand',
+      component:Demand
     }
+
    ]
   }
  ]
