@@ -100,7 +100,7 @@ export default {
               path: 'admin_report'
             },
             {
-              authName: '实名认证',
+              authName: '实名审核记录',
               id: '16',
               path: 'real_name'
             }

@@ -20,17 +20,6 @@
                     clearable>
           </el-input>
         </el-col>
-        <el-col :span="5">
-          <!--搜索框-->
-          <el-select v-model="queryInfo.searchCondition.oldDegree"
-                     placeholder="请选择希望新旧程度">
-            <el-option v-for="item in opt"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-        </el-col>
         <el-col :span="4">
           <el-button type="primary"
                      @click="getDemandsBySearchCondition">搜索</el-button>
@@ -38,45 +27,30 @@
                      @click="resetSearch">重置</el-button>
         </el-col>
       </el-row>
-      <div class="container">
-        <div class="container_box"
-             v-for="item in demand_List_Obj"
-             :key="item.id">
-          <el-row>
-            <el-col :span="2"
-                    class="main_img_box">
-              <!-- 这是主图 -->
-              <img src="http://img11.360buyimg.com//n12/jfs/t1/99733/2/8261/174001/5e045083Ec79b2c6e/fac2d957b511c1da.jpg"
-                   alt=""
-                   class="main_img">
-            </el-col>
-            <el-col :span="22"
-                    class="goods_message_box">
-              <!-- 商品信息 -->
-              <el-row :gutter="20">
-                <el-col :span="19"><span class="demand">
-                    <h2>{{item.topic}}</h2>
-                  </span></el-col>
-                <el-col :span="5"
-                        class="time"><span>发布时间: <i>{{item.createTime}}</i></span></el-col>
-              </el-row>
-
-              <el-row class="delete_btn">
-                <el-col :span="2">
-                  <el-dropdown trigger="click">
-                    <span class="el-dropdown-link">
-                      <i class="el-icon-more"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click="delete_btn(item.id)">删除</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </el-col>
-              </el-row>
-            </el-col>
-          </el-row>
-        </div>
-      </div>
+      <tree-table :data="donationList"
+                  :columns="columns"
+                  :selection-type='false'
+                  :expand-type='false'
+                  show-index
+                  index-text='#'
+                  border
+                  :show-row-hover="false"
+                  :tree-type="true"
+                  children-prop="childs"
+                  class="treeTable">
+        <!-- 操作 -->
+        <template slot="operate"
+                  slot-scope="scope">
+          <el-button type="danger"
+                     plain
+                     size="mini"
+                     @click="click_delete_article_by_id(scope.row.id)">审核</el-button>
+          <el-button type="primary"
+                     plain
+                     size="mini"
+                     @click="DonationDetailById(scope.row.id)">更多</el-button>
+        </template>
+      </tree-table>
       <!-- 分页区域 -->
       <el-pagination @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
@@ -94,46 +68,35 @@ export default {
   data() {
     return {
       // 需求商品新旧程度表   为下拉菜单提供
-      opt: [
+      columns: [
         {
-          value: '1',
-          label: '1成新'
+          label: '活动名称',
+          prop: 'title'
         },
         {
-          value: '2',
-          label: '2成新'
+          label: '申请人',
+          prop: 'applyUserId'
         },
         {
-          value: '3',
-          label: '3成新'
+          label: '申请金额',
+          prop: 'applyAmount'
         },
         {
-          value: '4',
-          label: '4成新'
+          label: '申请时间',
+          prop: 'createTime'
         },
         {
-          value: '5',
-          label: '5成新'
+          label: '赞成数量',
+          prop: 'userUpTotal'
         },
         {
-          value: '6',
-          label: '6成新'
+          label: '不赞成数量',
+          prop: 'userDownTotal'
         },
         {
-          value: '7',
-          label: '7成新'
-        },
-        {
-          value: '8',
-          label: '8成新'
-        },
-        {
-          value: '9',
-          label: '9成新'
-        },
-        {
-          value: '10',
-          label: '10成新'
+          label: '操作',
+          type: 'template',
+          template: 'operate'
         }
       ],
 
@@ -143,68 +106,64 @@ export default {
         currentPage: 1,
         pageSize: 10,
         searchCondition: {
-          // 分类的id
-          categoryId: '',
-          // 商品的id
-          id: '',
-          //标题
-          topic: '',
-          //发布者id
-          consumerId: ''
+          state: 4
         }
       },
       // 需求的记录数
       totalCount: 0,
       // 需求列表
-      demand_List_Obj: []
+      donationList: []
     }
   },
   created() {
-    this.getDemands()
+    this.getDonationList()
   },
   methods: {
     // 监听页面大小的变化
     handleSizeChange(newSize) {
       // console.log();
       this.queryInfo.pageSize = newSize
-      this.getGoods()
+      this.getDonationList()
     },
     // 监听当前页面的切换
     handleCurrentChange(newCurrentPage) {
       this.queryInfo.currentPage = newCurrentPage
-      this.getGoods()
+      this.getDonationList()
     },
     // 监听搜索按钮
     getDemandsBySearchCondition() {
-      this.getDemands()
+      this.getDonationList()
+    },
+
+    async DonationDetailById(id){
+      const { data: res } = await this.$http.get(
+              `order/donation/detail/2/${id}`
+      )
+      console.log(res)
     },
     // 监听重置按钮
     resetSearch() {
-      this.queryInfo.searchCondition.id = ''
-      this.queryInfo.searchCondition.productName = ''
-      this.queryInfo.searchCondition.oldDegree = ''
-      // 输入框重置之后,重新发起请求,获取列表
-      this.getDemands()
+      this.getDonationList()
     },
     // 请求服务器 得到列表数据
-    async getDemands() {
+    async getDonationList() {
       const { data: res } = await this.$http.post(
-        'goods/admin/demand',
+        'order/admin/donation/list',
         this.queryInfo
       )
       console.log(res)
       if (res.code !== 200) {
         // 获取商品数据失败
-        return this.$Message.error('加载需求列表失败')
+        return this.$Message.error('加载申请列表失败')
       } else {
-        this.demand_List_Obj = res.data.data
+        this.donationList = res.data.data
         console.log(this.demand_List_Obj)
         this.totalCount = res.data.totalCount
-        this.$Message.success('加载需求列表成功')
+        this.$Message.success('加载申请列表成功')
       }
     },
-    // 监听下架按钮
-    async delete_btn(id) {
+    // 监听审核按钮
+    async approve(id) {
       // console.log(id)
       // 弹框提示用户是否要删除
       const confimResult = await this.$confirm(
