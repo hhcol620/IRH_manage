@@ -93,16 +93,6 @@ export default {
               authName: '兴趣标签',
               id: '14',
               path: 'interest'
-            },
-            {
-              authName: '举报列表',
-              id: '15',
-              path: 'admin_report'
-            },
-            {
-              authName: '实名审核记录',
-              id: '16',
-              path: 'real_name'
             }
           ],
           id: 1,
@@ -151,11 +141,6 @@ export default {
               authName: '公益基金审批',
               id: 7,
               path: 'commonweal_approve'
-            },
-            {
-              authName: '审核记录',
-              id: 8,
-              path: 'mall_audit'
             }
           ],
           id: 2,
@@ -179,11 +164,6 @@ export default {
               authName: '文章标签',
               id: 3,
               path: 'forum_list'
-            },
-            {
-              authName: '审核记录',
-              id: 4,
-              path: 'forum_audit'
             }
           ],
           id: 3,
@@ -191,11 +171,32 @@ export default {
           path: 'forum_management'
         },
         {
-          authName: '个人中心',
-          children: [],
+          authName: '审核和举报',
+          children: [
+            {
+              authName: '举报列表',
+              id: '15',
+              path: 'admin_report'
+            },
+            {
+              authName: '实名审核记录',
+              id: '16',
+              path: 'real_name'
+            },
+            {
+              authName: '商品审核',
+              id: 8,
+              path: 'mall_audit'
+            },
+            {
+              authName: '论坛记录',
+              id: 4,
+              path: 'forum_audit'
+            }
+          ],
           id: 4,
           order: 4,
-          path: 'person_center'
+          path: 'audit_report'
         }
       ],
       // 是否折叠
