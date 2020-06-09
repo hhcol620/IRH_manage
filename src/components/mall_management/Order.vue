@@ -112,6 +112,18 @@
             </el-option>
           </el-select>
         </el-col>
+
+        <el-col :span="5">
+          <!--搜索框-->
+          <el-select v-model="queryInfo.searchCondition.state"
+                     placeholder="请选择订单状态">
+            <el-option v-for="item in orderState"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+        </el-col>
         <el-col :span="4">
           <el-button type="primary"
                      @click="getGoodsBySearchCondition">搜索</el-button>
@@ -147,9 +159,9 @@
         <el-table-column type="index"
                          hidden></el-table-column>
         <el-table-column prop="id"
-                         label="ID"></el-table-column>
+                         label="ID" width="40px"></el-table-column>
         <el-table-column prop="orderCode"
-                         label="订单编号"></el-table-column>
+                         label="订单编号" width="160px"></el-table-column>
         <el-table-column prop="salerId"
                          label="卖家id"></el-table-column>
         <el-table-column prop="buyerId"
@@ -171,6 +183,15 @@
 
         <el-table-column prop="updateTime"
                          label="最近更新时间">
+        </el-table-column>
+
+        <el-table-column
+                fixed="right"
+                label="操作"
+                width="100">
+          <template slot-scope="scope">
+            <el-button @click="moreOpenDialog(scope.row.id)" type="text" size="small">查看</el-button>
+          </template>
         </el-table-column>
       </el-table>
 
@@ -202,10 +223,6 @@
           </tr>
           <tr>
             <td>卖家ID: {{orderbyId.salerId}}</td>
-          </tr>
-          <tr>
-            <td>买家ID: {{orderbyId.buyerId}}</td>
-            <td>买家用户名: {{}}</td>
           </tr>
           <tr>
             <td colspan="2">
@@ -252,9 +269,13 @@ export default {
       orderAmountTrend: {},  //订单总金额趋势
       // 交易方式  下拉选择
       opt: [
-        { value: 10, label: '线上交易' },
-        { value: 20, label: '线下交易' },
-        { value: 30, label: '公益捐赠' }
+        { value: 10, label: '正常交易' },
+        { value: 20, label: '公益捐赠' },
+      ],
+      orderState:[
+        {value: 40, label:'等待支付'},
+        {value: 50, label:'交易成功'},
+        {value: 100, label:'金额已捐赠'},
       ],
       // 搜索条件
       queryInfo: {
@@ -267,7 +288,8 @@ export default {
           orderCode: '',
           // 买家用户名
           // 付款方式
-          tradeType: ''
+          tradeType: '',
+          state: ''
         }
       },
       // 总记录数
@@ -392,6 +414,7 @@ export default {
       this.queryInfo.searchCondition.id = ''
       this.queryInfo.searchCondition.orderCode = ''
       this.queryInfo.searchCondition.tradeType = ''
+      this.queryInfo.searchCondition.state = ''
       // 发起分页请求
       this.getOrderList()
     },

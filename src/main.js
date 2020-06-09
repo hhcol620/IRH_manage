@@ -106,9 +106,9 @@ Vue.filter('orderTradeType', function(type) {
   const ty = type
   switch (ty) {
     case 10:
-      return '线上交易'
+      return '正常交易'
     case 20:
-      return '线下交易'
+      return '公益捐赠'
     case 30:
       return '公益捐赠'
   }
@@ -126,7 +126,9 @@ Vue.filter('orderState', function(state) {
     case 40:
       return '等待支付'
     case 50:
-      return '交易成功';
+      return '交易成功'
+    case 100:
+      return '资金已捐赠';
   }
 })
 // 定义一个全局过滤器  切割时间   动态的添加一个p标签 

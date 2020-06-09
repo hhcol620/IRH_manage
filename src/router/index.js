@@ -85,10 +85,10 @@ const router = new VueRouter({
       path: '/Goods_Cate',
       component:Goods_Cate
      },
-     {
+     /*{
        path: '/Goods_Tag',
        component:Goods_Tag
-     },
+     },*/
     {
       path: '/Order',
       component:Order

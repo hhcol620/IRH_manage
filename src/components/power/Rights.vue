@@ -266,7 +266,7 @@ export default {
       // console.log(state, authId)
       // 获取到了最新的状态值,然后就可以发起请求了
       const { data: res } = await this.$http.delete(
-        `user/admin/auth/${row.id}/${row.state}`
+        `security/admin/auth/${row.id}/${row.state}`
       )
       // console.log(res)
       if (res.code !== 200) {
@@ -282,7 +282,7 @@ export default {
     // 打开权限编辑对话框 *************接口有部分内容缺失******
     async showEditDialog(authId) {
       // 先发起根据id发起请求
-      const { data: res } = await this.$http.get(`user/admin/auth/${authId}`)
+      const { data: res } = await this.$http.get(`security/admin/auth/${authId}`)
       // console.log(res)
       if (res.code !== 200) {
         return this.$Message.error('加载权限信息失败')
@@ -296,7 +296,7 @@ export default {
     // 提交修改后的权限信息
     async editDialogSubmit() {
       const { data: res } = await this.$http.put(
-        `user/admin/auth`,
+        `security/admin/auth`,
         this.editList
       )
       // console.log(res)

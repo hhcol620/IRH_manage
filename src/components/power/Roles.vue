@@ -328,7 +328,7 @@ export default {
         return this.$Message.info('您取消了删除')
       } else {
         const { data: res } = await this.$http.delete(
-          `user/role/${role.id}/rights/${rightId}`
+          `security/role/${role.id}/rights/${rightId}`
         )
         if (res.meta.status !== 200) {
           return this.$Message.error('删除权限成功')
@@ -342,7 +342,7 @@ export default {
       this.roleId = role.id
       // console.log(this.roleId)
       // 获取树形权限的数据
-      const { data: res } = await this.$http.get(`user/admin/role/tree/${role.id}`)
+      const { data: res } = await this.$http.get(`security/admin/role/tree/${role.id}`)
       console.log(res)
       if (res.code !== 200) {
         return this.$Message.error('获取列表失败')
@@ -389,7 +389,7 @@ export default {
       // console.log(keys)
       const idStr = keys.join(',')
       const roleId = this.roleId
-      const { data: res } = await this.$http.put('user/admin/role/editRoleAuth', {
+      const { data: res } = await this.$http.put('security/admin/role/editRoleAuth', {
         authId: idStr,
         // 分配权限的角色id
         roleId: roleId
@@ -405,7 +405,7 @@ export default {
     // 打开编辑对话框
     async editorRoleDialogVisible(id) {
       // console.log(id)
-      const { data: res } = await this.$http.get(`user/admin/role/${id}`)
+      const { data: res } = await this.$http.get(`security/admin/role/${id}`)
       if (res.code !== 200) {
         return this.$Message.error('获取数据失败')
       }
@@ -430,7 +430,7 @@ export default {
         if (!valid) return
         // 校验通过,发起表单的提交请求
         const { data: res } = await this.$http.post(
-          'user/admin/role/edit' + this.roleEditorDialogform.id,
+          'security/admin/role/edit' + this.roleEditorDialogform.id,
           {
             roleName: this.roleEditorDialogform.roleName,
             roleDesc: this.roleEditorDialogform.roleDesc
@@ -468,7 +468,7 @@ export default {
         return this.$Message.info('已经取消了删除')
       } else {
         // 确认了删除
-        const { data: res } = await this.$http.delete(`user/admin/role/${id}`)
+        const { data: res } = await this.$http.delete(`security/admin/role/${id}`)
         console.log(res)
         if (res.code !== 200) {
           return this.$Message.error('删除失败!')
@@ -494,7 +494,7 @@ export default {
         if (!valid) return
         //表单预校验通过 发起提交请求
         const { data: res } = await this.$http.put(
-          'user/admin/role',
+          'security/admin/role',
           this.addRoleForm
         )
         console.log(res)

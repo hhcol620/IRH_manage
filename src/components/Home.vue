@@ -123,11 +123,6 @@ export default {
               path: 'Goods_Cate'
             },
             {
-              authName: '商品推荐标签',
-              id: 2,
-              path: 'Goods_Tag'
-            },
-            {
               authName: '需求管理',
               id: 3,
               path: 'Demand'
@@ -136,6 +131,11 @@ export default {
               authName: '订单管理',
               id: 4,
               path: 'Order'
+            },
+            {
+              authName: '商品推荐标签',
+              id: 5,
+              path: 'Goods_Tag'
             }
           ],
           id: 2,
