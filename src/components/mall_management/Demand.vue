@@ -186,7 +186,7 @@ export default {
     },
     // 请求服务器 得到列表数据
     async getDemands() {
-      const { data: res } = await this.$http.post('user/admin/goods/demand', this.queryInfo)
+      const { data: res } = await this.$http.post('goods/admin/demand', this.queryInfo)
       console.log(res)
       if (res.code !== 200) {
         // 获取商品数据失败

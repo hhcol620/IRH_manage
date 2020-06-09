@@ -398,7 +398,7 @@ export default {
     // 页面加载发起的数据请求  分页列表请求
     async getOrderList() {
       console.log("查看list", this.queryInfo)
-      const { data: res } = await this.$http.post('user/admin/order', this.queryInfo)
+      const { data: res } = await this.$http.post('order/admin/order', this.queryInfo)
       // console.log(res)
       if (res.code !== 200) {
         // 失败

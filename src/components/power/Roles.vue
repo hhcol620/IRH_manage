@@ -301,7 +301,7 @@ export default {
     // 获取所有角色的列表
     async getRolesList() {
       const { data: res } = await this.$http.post(
-        'user/admin/role/list',
+        'security/admin/role/list',
         this.queryInfo
       )
       console.log(res)

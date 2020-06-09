@@ -54,7 +54,7 @@
             <el-col :span="4"
                     class="main_img_box">
               <!-- 这是主图 -->
-              <img src="http://img11.360buyimg.com//n12/jfs/t1/99733/2/8261/174001/5e045083Ec79b2c6e/fac2d957b511c1da.jpg"
+              <img :src= "$store.state.ImgUrl + item.mainPicUrl"
                    alt=""
                    class="main_img">
             </el-col>
@@ -210,7 +210,7 @@ export default {
     },
     // 请求服务器 得到列表数据
     async getGoods() {
-      const { data: res } = await this.$http.post('user/admin/goods/es', this.queryInfo)
+      const { data: res } = await this.$http.post('goods/admin/es/list', this.queryInfo)
       console.log(res)
       if (res.code !== 200) {
         // 获取商品数据失败

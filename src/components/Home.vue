@@ -75,14 +75,9 @@ export default {
           authName: '系统管理',
           children: [
             {
-              authName: '管理员列表',
+              authName: '用户列表',
               id: '00',
               path: 'administrators'
-            },
-            {
-              authName: '用户列表',
-              id: '11',
-              path: 'users'
             },
             {
               authName: '角色列表',
@@ -128,6 +123,11 @@ export default {
               path: 'Goods_Cate'
             },
             {
+              authName: '商品推荐标签',
+              id: 2,
+              path: 'Goods_Tag'
+            },
+            {
               authName: '需求管理',
               id: 3,
               path: 'Demand'
@@ -154,6 +154,11 @@ export default {
               authName: '帖子分类',
               id: 2,
               path: 'forum_cate'
+            },
+            {
+              authName: '文章标签',
+              id: 2,
+              path: 'forum_list'
             }
           ],
           id: 3,

@@ -10,8 +10,8 @@ module.exports = {
         // target: 'https://easydoc.xyz/mock/pKab1hUJ/',
         // target: 'http://yapi.demo.qunar.com/mock/79824/',
         // target: 'http://106.13.141.241/mock/7/',
-        target: 'http://localhost:10010/api',
-        secure: false, // false为http访问，true为https访问
+        target: 'https://www.imuster.top:10900/api',
+        secure: true, // false为http访问，true为https访问
         changeOrigin: true, // 跨域访问设置，true代表跨域
         ws: true,   //  如果要代理 websockets，配置这个参数
         pathRewrite: { // 路径改写规则

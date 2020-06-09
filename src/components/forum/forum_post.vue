@@ -18,8 +18,14 @@
                     clearable></el-input>
         </el-col>
         <el-col :span="4">
-          <el-input v-model="queryInfo.searchCondition.name"
+          <el-input v-model="queryInfo.searchCondition.title"
                     placeholder="帖子名称"
+                    clearable></el-input>
+        </el-col>
+
+        <el-col :span="4">
+          <el-input v-model="queryInfo.searchCondition.userId"
+                    placeholder="作者id"
                     clearable></el-input>
         </el-col>
         <el-col :span="4">
@@ -101,7 +107,8 @@ export default {
           // 帖子的id
           id: '',
           // 帖子的名称
-          title: ''
+          title: '',
+          userId: ''
         }
       },
       // 文章信息的数据列表, 默认为空
@@ -143,8 +150,9 @@ export default {
   methods: {
     // 获取帖子列表
     async getArticleList() {
+      this.articleList = []
       const { data: res } = await this.$http.post(
-        'user/admin/forum/article',
+        'life/admin/article/list',
         this.queryInfo
       )
       console.log(res)
@@ -174,7 +182,8 @@ export default {
     reset_Search() {
       //  先重置输入框  再发起数据请求,获取最新的列表
       this.queryInfo.searchCondition.id = ''
-      this.queryInfo.searchCondition.name = ''
+      this.queryInfo.searchCondition.title = ''
+      this.queryInfo.searchCondition.userId =''
       this.getArticleList()
     },
     // 监听删除文章

@@ -175,8 +175,7 @@ export default {
   methods: {
     // 获取商品分类列表
     async getCateList() {
-      console.log("查看分类信息")
-      const { data: res } = await this.$http.get('user/admin/goods/category')
+      const { data: res } = await this.$http.get('goods/admin/category/tree')
       console.log(res)
       if (res.code !== 200) {
         return this.$Message.error('获取商品分类失败')

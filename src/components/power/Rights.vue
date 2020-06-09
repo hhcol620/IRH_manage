@@ -224,7 +224,7 @@ export default {
         this.queryInfo.searchCondition.searchEndTime = ss[1]
       }
       // 解构赋值
-      const { data: res } = await this.$http.post('user/admin/auth/list', {
+      const { data: res } = await this.$http.post('security/admin/auth/list', {
         params: this.queryInfo
       })
       console.log(res)

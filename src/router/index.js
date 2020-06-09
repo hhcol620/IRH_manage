@@ -43,10 +43,6 @@ const router = new VueRouter({
        component:Administrators
      },
     {
-     path: '/users',
-     component: Users
-    },
-    {
      path: '/rights',
      component: Rights
     },
@@ -73,6 +69,9 @@ const router = new VueRouter({
      {
        path: '/forum_post',
        component:Forum_post
+     },{
+       path: '/forum_list',
+       component:Forum_post
      },
      {
        path: '/forum_cate',
@@ -87,8 +86,8 @@ const router = new VueRouter({
       component:Goods_Cate
      },
      {
-       path: '/Demand',
-       component:Demand
+       path: '/Goods_Tag',
+       component:Goods_Tag
      },
     {
       path: '/Order',
