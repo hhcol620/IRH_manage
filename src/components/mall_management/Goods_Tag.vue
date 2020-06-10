@@ -18,11 +18,10 @@
       </el-row>
       <!-- 表格 -->
       <div class="tree_b">
-        <el-table :data="cate_list"
+        <el-table :data="leftList"
                   border
                   style="width: 50%">
           <el-table-column fixed
-                           prop="tagname"
                            label="标签名"
                            width="300">
           </el-table-column>
@@ -32,13 +31,13 @@
             <template slot-scope="scope">
               <el-button @click="handleClick(scope.row)"
                          type="text"
-                         size="small">查看</el-button>
-              <el-button type="text"
                          size="small">编辑</el-button>
+              <el-button type="text"
+                         size="small">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
-        <el-table :data="cate_list"
+        <el-table :data="rightList"
                   border
                   style="width: 50%">
           <el-table-column fixed
@@ -50,11 +49,11 @@
                            label="操作"
                            width="200">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)"
-                         type="text"
-                         size="small">查看</el-button>
               <el-button type="text"
                          size="small">编辑</el-button>
+              <el-button @click="handleClick(scope.row)"
+                         type="text"
+                         size="small">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -63,9 +62,9 @@
       <!-- 分页区域 -->
       <el-pagination @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
-                     :current-page="querInfo.pagenum"
+                     :current-page="queryInfo.currentPage"
                      :page-sizes="[10, 30, 50, 100]"
-                     :page-size="querInfo.pagesize"
+                     :page-size="queryInfo.pageSize"
                      layout="total, sizes, prev, pager, next, jumper"
                      :total="total">
       </el-pagination>
@@ -117,20 +116,15 @@
 export default {
   data() {
     return {
-      querInfo: {
+      queryInfo: {
         type: 3,
-        pagenum: 1,
-        pagesize: 10
+        pageSize: 10,
+        currentPage: 1
       },
       // 商品分类的数据列表, 默认为空
-      cate_list: [
-        {
-          tagname: '手机'
-        },
-        {
-          tagname: '电脑'
-        }
-      ],
+      cateList: [],
+      leftList:[],
+      rightList:[],
       // 总数据条数
       total: 0,
       // 控制添加分类对话框的显示与隐藏
@@ -177,34 +171,35 @@ export default {
   methods: {
     // 获取商品分类列表
     async getCateList() {
-      console.log('查看分类信息')
-      const { data: res } = await this.$http.get('user/admin/goods/category')
+      const { data: res } = await this.$http.get(`goods/admin/category/tag/list/${this.queryInfo.pageSize}/${this.queryInfo.currentPage}`)
       console.log(res)
       if (res.code !== 200) {
         return this.$Message.error('获取商品分类失败')
       }
       // 把数据列表,赋值给catelist
-      this.catelist = res.data
+      this.cateList = res.data.data
+      this.total = res.data.totalCount
       // 为总数据条数赋值
-      this.total = res.data.length
+      const tempIndex = Math.ceil(this.total / 2)
+      this.leftList = this.cateList.slice(0, tempIndex)
+      this.rightList = this.cateList.slice(tempIndex, this.total)
+      console.log(this.leftList)
     },
     // 监听pagesize改变
     handleSizeChange(newSize) {
       this.querInfo.pagesize = newSize
       this.getCateList()
     },
-    // 监听pagenum改变
+
     handleCurrentChange(newPage) {
-      this.querInfo.pagenum = newPage
+      this.querInfo.currentPage = newPage
       this.getCateList()
     },
-    // 点击按钮打开对话框  将对话框的addCatDialogVisable 的属性值设置为true
     showAddCatDialog() {
       // 先获取父级分类的数据列表   在展示出对话框
       this.getParentCateList()
       this.addCatDialogVisable = true
     },
-    // 获取父级分类的数据类表    在添加分类的对话框打开之后,立刻获取父级分类数据列表,在添加分类的时候,可以选择父级分类
     async getParentCateList() {
       const { data: res } = await this.$http.get('user/admin/goods/category')
       if (res.code !== 200) {

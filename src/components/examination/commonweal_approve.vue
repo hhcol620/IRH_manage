@@ -5,7 +5,7 @@
     <el-breadcrumb separator="/">
       <el-breadcrumb-item><a href="/">首页</a></el-breadcrumb-item>
       <el-breadcrumb-item>商城管理</el-breadcrumb-item>
-      <el-breadcrumb-item>公益基金审核</el-breadcrumb-item>
+      <el-breadcrumb-item>公益基金审批</el-breadcrumb-item>
     </el-breadcrumb>
 
     <!-- 商品列表区域 -->
@@ -20,9 +20,6 @@
                     clearable>
           </el-input>
         </el-col>
-        <el-col :span="5">
-          <!--搜索框-->
-        </el-col>
         <el-col :span="4">
           <el-button type="primary"
                      @click="getDemandsBySearchCondition">搜索</el-button>
@@ -30,9 +27,7 @@
                      @click="resetSearch">重置</el-button>
         </el-col>
       </el-row>
-
-
-      <tree-table :data="donationApplyList"
+      <tree-table :data="donationApproveList"
                   :columns="columns"
                   :selection-type='false'
                   :expand-type='false'
@@ -49,7 +44,7 @@
           <el-button type="danger"
                      plain
                      size="mini"
-                     @click="click_delete_article_by_id(scope.row.id)">审核</el-button>
+                     @click="click_delete_article_by_id(scope.row.id)">发放资金</el-button>
           <el-button type="primary"
                      plain
                      size="mini"
@@ -72,14 +67,15 @@
 export default {
   data() {
     return {
+      // 需求商品新旧程度表   为下拉菜单提供
       columns: [
         {
           label: '活动名称',
           prop: 'title'
         },
         {
-          label: '申请人',
-          prop: 'applyUserId'
+          label: '申请金额',
+          prop: 'applyAmount'
         },
         {
           label: '申请时间',
@@ -94,69 +90,80 @@ export default {
           prop: 'userDownTotal'
         },
         {
+          label: '审核备注',
+          prop: 'remark'
+        },
+        {
           label: '操作',
           type: 'template',
           template: 'operate'
         }
       ],
+
       // 分页查询商品信息
       queryInfo: {
         // 当前页
         currentPage: 1,
         pageSize: 10,
         searchCondition: {
-          state: 2
+          state: 4
         }
       },
       // 需求的记录数
       totalCount: 0,
       // 需求列表
-      donationApplyList: []
+      donationApproveList: []
     }
   },
   created() {
-    this.getDonationApplyList()
+    this.getDonationApproveList()
   },
   methods: {
     // 监听页面大小的变化
     handleSizeChange(newSize) {
       // console.log();
       this.queryInfo.pageSize = newSize
-      this.getDonationApplyList()
+      this.getDonationApproveList()
     },
     // 监听当前页面的切换
     handleCurrentChange(newCurrentPage) {
       this.queryInfo.currentPage = newCurrentPage
-      this.getDonationApplyList()
+      this.getDonationApproveList()
     },
     // 监听搜索按钮
     getDemandsBySearchCondition() {
-      this.getDonationApplyList()
+      this.getDonationApproveList()
+    },
+
+    async DonationDetailById(id){
+      const { data: res } = await this.$http.get(
+              `order/donation/detail/2/${id}`
+      )
+      console.log(res)
     },
     // 监听重置按钮
     resetSearch() {
-      // 输入框重置之后,重新发起请求,获取列表
-      this.getDonationApplyList()
+      this.getDonationApproveList()
     },
     // 请求服务器 得到列表数据
-    async getDonationApplyList() {
+    async getDonationApproveList() {
       const { data: res } = await this.$http.post(
-        'order/admin/donation/list',
+        'order/admin/donation/approve/list',
         this.queryInfo
       )
       console.log(res)
       if (res.code !== 200) {
         // 获取商品数据失败
-        return this.$Message.error('加载申请列表失败')
+        return this.$Message.error('加载列表失败')
       } else {
-        this.donationApplyList = res.data.data
-        console.log(this.donationApplyList)
+        this.donationApproveList = res.data.data
+        console.log(this.donationApproveList)
         this.totalCount = res.data.totalCount
-        this.$Message.success('加载申请列表成功')
+        this.$Message.success('加载列表成功')
       }
     },
-    // 监听下架按钮
-    async delete_btn(id) {
+    // 监听审核按钮
+    async approve(id) {
       // console.log(id)
       // 弹框提示用户是否要删除
       const confimResult = await this.$confirm(

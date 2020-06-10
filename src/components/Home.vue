@@ -126,21 +126,6 @@ export default {
               authName: '订单管理',
               id: 4,
               path: 'Order'
-            },
-            {
-              authName: '公益基金申请',
-              id: 5,
-              path: 'commonweal_apply'
-            },
-            {
-              authName: '公益基金审核',
-              id: 6,
-              path: 'commonweal_check'
-            },
-            {
-              authName: '公益基金审批',
-              id: 7,
-              path: 'commonweal_approve'
             }
           ],
           id: 2,
@@ -171,7 +156,7 @@ export default {
           path: 'forum_management'
         },
         {
-          authName: '审核和举报',
+          authName: '反馈及审核',
           children: [
             {
               authName: '举报列表',
@@ -181,17 +166,22 @@ export default {
             {
               authName: '实名审核记录',
               id: '16',
-              path: 'real_name'
+              path: 'realnameExamination'
             },
             {
-              authName: '商品审核',
-              id: 8,
-              path: 'mall_audit'
+              authName: '信息发布审核',
+              id: 5,
+              path: 'ReleaseInfoExamination'
             },
             {
-              authName: '论坛记录',
-              id: 4,
-              path: 'forum_audit'
+              authName: '公益基金审核',
+              id: 6,
+              path: 'commonweal_apply'
+            },
+            {
+              authName: '公益基金审批',
+              id: 7,
+              path: 'commonweal_approve'
             }
           ],
           id: 4,

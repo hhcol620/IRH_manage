@@ -16,16 +16,17 @@ import Order from '../components/mall_management/Order.vue'
 import Forum_post from '../components/forum/forum_post.vue'
 import Forum_cate from '../components/forum/forum_cate.vue'
 import Interest_tag from '../components/interest_tag/interest_tag.vue'
+import ReleaseInfoExamination from '../components/examination/ReleaseInfoExamination.vue'
 // 
-import Reports from '../components/report/report.vue'
-import Report_detail from '../components/report/report_detail.vue'
+import Reports from '../components/examination/report.vue'
+import Report_detail from '../components/examination/report_detail.vue'
 
 import Goods_Tag from '../components/mall_management/Goods_Tag.vue'
-import commonweal_apply from '../components/mall_management/commonweal_apply.vue'
-import commonweal_approve from '../components/mall_management/commonweal_approve.vue'
-import commonweal_check from '../components/mall_management/commonweal_check.vue'
-import mall_audit from '../components/mall_management/mall_audit.vue'
-import forum_audit from '../components/forum/forum_audit.vue'
+import commonweal_apply from '../components/examination/commonweal_apply.vue'
+import commonweal_approve from '../components/examination/commonweal_approve.vue'
+import mall_audit from '../components/examination/mall_audit.vue'
+import forum_audit from '../components/examination/ReleaseInfoExamination.vue'
+import realnameExamination from '../components/examination/realnameExamination.vue'
 
 
 Vue.use(VueRouter)
@@ -111,10 +112,6 @@ const router = new VueRouter({
       component:commonweal_approve
      },
      {
-      path: '/commonweal_check',
-      component:commonweal_check
-     },
-     {
       path: '/mall_audit',
       component:mall_audit
      },
@@ -123,6 +120,10 @@ const router = new VueRouter({
       path: '/Order',
       component:Order
     },
+     {
+       path: '/ReleaseInfoExamination',
+       component:ReleaseInfoExamination
+     },
     {
       path: '/Users',
       component:Users
@@ -130,7 +131,11 @@ const router = new VueRouter({
     {
       path: '/Demand',
       component:Demand
-    }
+    },
+     {
+       path: '/realnameExamination',
+       component:realnameExamination
+     }
 
    ]
   }
