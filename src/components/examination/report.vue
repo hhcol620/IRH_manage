@@ -208,7 +208,7 @@ export default {
     async getReportsBySearchCondition() {
       console.log(this.queryInfo)
       const { data: res } = await this.$http.post(
-        'user/admin/report',
+        'user/report/admin',
         this.queryInfo
       )
       // console.log(res)
@@ -247,7 +247,9 @@ export default {
     // 跳转到举报的详情页面 把id传过来
     jumpPage(id) {
       //
-      this.$router.push(`/report_detail?targetId=${id}&type=${this.queryInfo.searchCondition.type}`)
+      this.$router.push(
+        `/report_detail?targetId=${id}&type=${this.queryInfo.searchCondition.type}`
+      )
     }
   }
 }

@@ -22,6 +22,7 @@
                   border
                   style="width: 50%">
           <el-table-column fixed
+                           prop="tagname"
                            label="标签名"
                            width="300">
           </el-table-column>
@@ -123,8 +124,8 @@ export default {
       },
       // 商品分类的数据列表, 默认为空
       cateList: [],
-      leftList:[],
-      rightList:[],
+      leftList: [],
+      rightList: [],
       // 总数据条数
       total: 0,
       // 控制添加分类对话框的显示与隐藏
@@ -171,7 +172,9 @@ export default {
   methods: {
     // 获取商品分类列表
     async getCateList() {
-      const { data: res } = await this.$http.get(`goods/admin/category/tag/list/${this.queryInfo.pageSize}/${this.queryInfo.currentPage}`)
+      const { data: res } = await this.$http.get(
+        `goods/admin/category/tag/list/${this.queryInfo.pageSize}/${this.queryInfo.currentPage}`
+      )
       console.log(res)
       if (res.code !== 200) {
         return this.$Message.error('获取商品分类失败')
@@ -179,11 +182,16 @@ export default {
       // 把数据列表,赋值给catelist
       this.cateList = res.data.data
       this.total = res.data.totalCount
+      let arr = []
+      this.cateList.forEach((v, i) => {
+        arr.push({ tagname: v })
+      })
       // 为总数据条数赋值
-      const tempIndex = Math.ceil(this.total / 2)
-      this.leftList = this.cateList.slice(0, tempIndex)
-      this.rightList = this.cateList.slice(tempIndex, this.total)
+      const tempIndex = Math.ceil(this.cateList.length / 2)
+      this.leftList = arr.slice(0, tempIndex)
+      this.rightList = arr.slice(tempIndex, this.cateList.length)
       console.log(this.leftList)
+      console.log(this.rightList)
     },
     // 监听pagesize改变
     handleSizeChange(newSize) {

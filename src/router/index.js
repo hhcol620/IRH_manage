@@ -19,7 +19,6 @@ import Interest_tag from '../components/interest_tag/interest_tag.vue'
 import ReleaseInfoExamination from '../components/examination/ReleaseInfoExamination.vue'
 // 
 import Reports from '../components/examination/report.vue'
-import Report_detail from '../components/examination/report_detail.vue'
 
 import Goods_Tag from '../components/mall_management/Goods_Tag.vue'
 import commonweal_apply from '../components/examination/commonweal_apply.vue'
@@ -27,6 +26,15 @@ import commonweal_approve from '../components/examination/commonweal_approve.vue
 import mall_audit from '../components/examination/mall_audit.vue'
 import forum_audit from '../components/examination/ReleaseInfoExamination.vue'
 import realnameExamination from '../components/examination/realnameExamination.vue'
+
+// 以下是反馈和审核页面的详细页面
+import Report_detail from '../components/examination/children/report_detail.vue'
+import commonweal_apply_detail from '../components/examination/children/commonweal_apply_detail.vue'
+import commonweal_approve_detail from '../components/examination/children/commonweal_approve_detail.vue'
+import mall_audit_detail from '../components/examination/children/mall_audit_detail.vue'
+import realnameExamination_detail from '../components/examination/children/realnameExamination_detail.vue'
+import ReleaseInfoExamination_detail from '../components/examination/children/ReleaseInfoExamination_detail.vue'
+
 
 
 Vue.use(VueRouter)
@@ -115,7 +123,6 @@ const router = new VueRouter({
       path: '/mall_audit',
       component:mall_audit
      },
-
     {
       path: '/Order',
       component:Order
@@ -135,8 +142,27 @@ const router = new VueRouter({
      {
        path: '/realnameExamination',
        component:realnameExamination
+     },
+     {
+      path: '/commonweal_apply_detail',
+      component:commonweal_apply_detail
+     },
+     {
+      path: '/commonweal_approve_detail',
+      component:commonweal_approve_detail
+     },
+     {
+      path: '/mall_audit_detail',
+      component:mall_audit_detail
+     },
+     {
+      path: '/realnameExamination_detail',
+      component:realnameExamination_detail
+     },
+     {
+      path: '/ReleaseInfoExamination_detail',
+      component:ReleaseInfoExamination_detail
      }
-
    ]
   }
  ]
