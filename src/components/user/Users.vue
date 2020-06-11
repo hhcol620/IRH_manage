@@ -337,7 +337,6 @@ export default {
     },
     // 展示要编辑的用户 的对话框
     async showEditDialog(id) {
-      // console.log(id);
       const { data: res } = await this.$http.get('users/' + id)
       if (res.meta.status !== 200) {
         return this.$Message.error('查询用户信息失败')
