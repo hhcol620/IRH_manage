@@ -22,9 +22,9 @@
         </el-col>
         <el-col :span="5">
           <!--搜索框-->
-          <el-input placeholder="请输入反馈备注"
+          <el-input placeholder="请输入目标id"
                     class="input-with-select"
-                    v-model="queryInfo.searchCondition.remark"
+                    v-model="queryInfo.searchCondition.targetId"
                     clearable>
           </el-input>
         </el-col>
@@ -42,7 +42,7 @@
         </el-col>
         <el-col :span="4">
           <el-button type="primary"
-                     @click="getReportsBySearch_num">搜索</el-button>
+                     @click="getReportsBySearchCondition">搜索</el-button>
           <el-button class="primary"
                      @click="resetSearch">重置</el-button>
         </el-col>
@@ -62,9 +62,9 @@
                 <el-col :span="20"
                         class="list_content">
                   <el-row class="content_box">
-                    <p>ID为{{item.id}}的
+                    <p>ID为{{item.customerId}}的用户举报 ID为{{item.targetId}}的
                       <span>{{item.type|report_type_format}} </span>举报信息:
-                      <i>{{item.remark}}可能涉嫌某种违规</i>
+                      <i>{{item.reason}}</i>
                     </p>
                   </el-row>
                   <el-row class="stateBtn">
@@ -164,7 +164,7 @@ export default {
           // 举报反馈表的id
           id: '',
           // 反馈备注
-          remark: '',
+          targetId: '',
           // 举报的类型     1-商品举报 2-留言举报 3-评价举报 4-帖子举报
           type: 1,
           // 处理结果    1-举报失败 2-处理中 3-警告并删除相关内容 4-冻结账号
@@ -228,7 +228,7 @@ export default {
     },
     // 搜索框 点击搜索  使用高级搜索
     async getReportsBySearch_num() {
-      const res = await this.$http.post('/admin/report/statisic')
+      const res = await this.$http.post('/report/admin/statisic')
       console.log(res)
       if (res.data.code !== 200) {
         return this.$Message.error('搜索失败')

@@ -12,7 +12,7 @@
     </el-breadcrumb>
     <el-row class="header">
       <el-col class="container">
-        <div class="container_box">这里放从服务器传过来的代码 文章商品详情 模板 v-html="" </div>
+        <div class="container_box" v-html="$store.state.ImgUrl + articleInfo.detailPage">这里放从服务器传过来的代码 文章商品详情 模板 v-html="" </div>
       </el-col>
     </el-row>
     <!-- 主体区域   举报内容 -->
@@ -93,6 +93,7 @@ export default {
         { value: 3, label: '警告并删除' },
         { value: 4, label: '冻结账号' }
       ],
+      articleInfo:'',
       // result
       result: '',
       // 备注
@@ -106,11 +107,9 @@ export default {
       // js的slice方法
       var id = location.href.slice(location.href.indexOf('?targetId=') + 10, location.href.indexOf('&type='))
       var targetIdType = location.href.slice(location.href.indexOf('&type=') + 6)
-
-      console.log("id----" + id)
-      console.log("type----" + targetIdType)
+      this.getArticleInfo(id);
       const { data: res } = await this.$http.get(
-        `user/admin/report/detail/${id}/${targetIdType}`
+        `user/report/admin/detail/${id}/${targetIdType}`
       )
       console.log(res)
       if (res.code !== 200) {
@@ -119,7 +118,6 @@ export default {
         // 请求数据成功
         this.$Message.success('加载成功')
         var list = res.data
-        console.log('list---' + list)
         list.forEach(async item => {
           item.customerId = await this.getUserName(item.customerId)
           this.reportList.push(item)
@@ -128,6 +126,19 @@ export default {
         console.log(this.reportList)
       }
     },
+
+    async getArticleInfo(id){
+      const { data: res } = await this.$http.get(
+              `life/forum/article//brief/${id}`
+      )
+      if(res.code !== 200){
+        return;
+      }
+      console.log("文章信息")
+      console.log(res)
+      this.articleInfo = res.data
+    },
+
     async processReport() {
       var targetId = location.href.slice(
               location.href.indexOf('?id=') + 4,
@@ -136,7 +147,7 @@ export default {
 
       var targetIdType = location.href.slice('&type=' + 6);
       const { data: res } = await this.$http.get(
-              `user/admin/report/detail/${targetId}/${targetIdType}`
+              `user/report/admin/detail/${targetId}/${targetIdType}`
       )
       this.processResult.targetId = targetId;
       this.processResult.remark = this.remark_input;

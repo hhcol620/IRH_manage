@@ -25,7 +25,7 @@
           <!--搜索框-->
           <el-input placeholder="请输入审核人ID"
                     class="input-with-select"
-                    v-model="queryInfo.searchCondition.approveId"
+                    v-model="queryInfo.searchCondition.title"
                     clearable>
           </el-input>
         </el-col>
@@ -151,7 +151,9 @@
           // 查询条件
           searchCondition: {
             type: 1,
-            state: 2
+            state: 2,
+            title: '',
+            releaseUserId:''
           }
         },
         // 分页查询返回的数据
@@ -204,32 +206,31 @@
           console.log(this.examinationList)
         }
       },
-      // 搜索框 点击搜索  使用高级搜索
+
       async getReportsBySearch_num() {
         const res = await this.$http.post('user/admin/examine')
         console.log(res)
         if (res.data.code !== 200) {
           return this.$Message.error('搜索失败')
         }
-        this.examinationList = res.data.data.result
+        this.examinationList = res.data.data
         this.totalCount = res.data.data.totalCount
       },
       // 搜索重置
       resetSearch() {
         // 搜索框的重置
-        this.queryInfo.searchCondition.customerId = ''
-        this.queryInfo.searchCondition.remark = ''
+        this.queryInfo.searchCondition.title = ''
+        this.queryInfo.searchCondition.releaseUserId = ''
+        this.queryInfo.searchCondition.state = ''
         // tab栏的重置
         this.value_type = 1 + ''
         // 下拉框的内容重置
-        this.queryInfo.searchCondition.result = ''
         // 重置之后，重新获取列表
         this.getExaminationList()
       },
       // 跳转到举报的详情页面 把id传过来
       jumpPage(id) {
-        //
-        this.$router.push(`/report_detail?targetId=${id}&type=${this.queryInfo.searchCondition.type}`)
+        this.$router.push(`/ReleaseInfoExamination_detail?targetId=${id}&type=${this.queryInfo.searchCondition.type}`)
       }
     }
   }
