@@ -144,6 +144,27 @@ Vue.filter('timeSplit', function(time,i) {
   }
 })
 
+// 定义一个全局过滤器 实名审核 获取认证类型 
+Vue.filter('certificationType', function(type) {
+  if (type == 1) {
+    return '一卡通认证'
+  } else if (type == 2) {
+    return '身份证认证'
+  } else {
+    return '其他'
+  }
+})
+
+// 定义一个全局过滤器 实名审核 获取认证状态
+Vue.filter('certificationState', function(state) {
+  if (state == 1) {
+    return '认证中'
+  } else if (state == 2) {
+    return '认证成功'
+  } else {
+    return '认证失败'
+  }
+})
 
 // 全局注册树形table表格
 Vue.component('tree-table',TreeTable)

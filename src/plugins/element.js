@@ -47,7 +47,8 @@ import {
     Collapse,
     CollapseItem,
     DatePicker,
-    Badge
+    Badge,
+    Image
 } from 'element-ui'
 /* import {Form,FormItem} from 'element-ui'
 import {Input} from 'element-ui'
@@ -93,6 +94,7 @@ Vue.use(Collapse)
 Vue.use(CollapseItem)
 Vue.use(DatePicker)
 Vue.use(Badge)
+Vue.use(Image)
 // 把Message挂载vue的原型对象上,都可以通过this访问$Message
 Vue.prototype.$Message = Message
 Vue.prototype.$confirm = MessageBox.confirm

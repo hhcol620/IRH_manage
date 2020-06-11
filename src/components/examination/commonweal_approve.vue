@@ -71,11 +71,13 @@ export default {
       columns: [
         {
           label: '活动名称',
-          prop: 'title'
+          prop: 'title',
+          width: '120'
         },
         {
           label: '申请金额',
-          prop: 'applyAmount'
+          prop: 'applyAmount',
+          width: '120'
         },
         {
           label: '申请时间',
@@ -83,11 +85,13 @@ export default {
         },
         {
           label: '赞成数量',
-          prop: 'userUpTotal'
+          prop: 'userUpTotal',
+          width: '100'
         },
         {
           label: '不赞成数量',
-          prop: 'userDownTotal'
+          prop: 'userDownTotal',
+          width: '100'
         },
         {
           label: '审核备注',
@@ -135,9 +139,9 @@ export default {
       this.getDonationApproveList()
     },
 
-    async DonationDetailById(id){
+    async DonationDetailById(id) {
       const { data: res } = await this.$http.get(
-              `order/donation/detail/2/${id}`
+        `order/donation/detail/2/${id}`
       )
       console.log(res)
     },
@@ -263,5 +267,17 @@ export default {
 }
 .el-dropdown-menu__item {
   line-height: 30px;
+}
+.treeTable {
+  margin-top: 20px;
+}
+.el-dialog {
+  .el-form {
+    display: flex;
+    flex-wrap: wrap;
+    .el-form-item {
+      width: 45%;
+    }
+  }
 }
 </style>
