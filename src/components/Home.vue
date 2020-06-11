@@ -81,22 +81,22 @@ export default {
             },
             {
               authName: '角色列表',
-              id: '12',
+              id: '02',
               path: 'roles'
             },
             {
               authName: '权限列表',
-              id: '13',
+              id: '03',
               path: 'rights'
             },
             {
               authName: '兴趣标签',
-              id: '14',
+              id: '04',
               path: 'interest'
             }
           ],
-          id: 1,
-          order: 1,
+          id: 0,
+          order: 0,
           path: 'users'
         },
         {
@@ -104,32 +104,32 @@ export default {
           children: [
             {
               authName: '商品管理',
-              id: 1,
+              id: 11,
               path: 'Goods'
             },
             {
               authName: '商品分类',
-              id: 2,
+              id: 12,
               path: 'Goods_Cate'
             },
             {
               authName: '商品推荐标签',
-              id: 2,
+              id: 13,
               path: 'Goods_Tag'
             },
             {
               authName: '需求管理',
-              id: 3,
+              id: 14,
               path: 'Demand'
             },
             {
               authName: '订单管理',
-              id: 4,
+              id: 15,
               path: 'Order'
             }
           ],
-          id: 2,
-          order: 2,
+          id: 1,
+          order: 1,
           path: 'mall_management'
         },
         {
@@ -137,22 +137,22 @@ export default {
           children: [
             {
               authName: '帖子管理',
-              id: 1,
+              id: 21,
               path: 'forum_post'
             },
             {
               authName: '帖子分类',
-              id: 2,
+              id: 22,
               path: 'forum_cate'
             },
             {
               authName: '文章标签',
-              id: 3,
+              id: 23,
               path: 'forum_list'
             }
           ],
-          id: 3,
-          order: 3,
+          id: 2,
+          order: 2,
           path: 'forum_management'
         },
         {
@@ -160,32 +160,32 @@ export default {
           children: [
             {
               authName: '举报列表',
-              id: '15',
+              id: 31,
               path: 'admin_report'
             },
             {
               authName: '实名审核记录',
-              id: '16',
+              id: 32,
               path: 'realnameExamination'
             },
             {
               authName: '信息发布审核',
-              id: 5,
+              id: 33,
               path: 'ReleaseInfoExamination'
             },
             {
               authName: '公益基金审核',
-              id: 6,
+              id: 34,
               path: 'commonweal_apply'
             },
             {
               authName: '公益基金审批',
-              id: 7,
+              id: 35,
               path: 'commonweal_approve'
             }
           ],
-          id: 4,
-          order: 4,
+          id: 3,
+          order: 3,
           path: 'audit_report'
         }
       ],
@@ -194,10 +194,10 @@ export default {
       activePath: '',
       // 图标对象
       iconObj: {
-        '1': 'iconfont icon-ziyuanxhdpi',
-        '2': 'iconfont icon-store_icon',
-        '3': 'iconfont icon-luntan',
-        '4': 'iconfont icon-xingming'
+        '0': 'iconfont icon-ziyuanxhdpi',
+        '1': 'iconfont icon-store_icon',
+        '2': 'iconfont icon-luntan',
+        '3': 'iconfont icon-xingming'
       }
     }
   },

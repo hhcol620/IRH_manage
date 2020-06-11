@@ -67,9 +67,11 @@ Vue.filter('report_type_format', function(type) {
     case 2:
       return '留言'
     case 3:
-      return '评论'
+      return '评价'
     case 4:
       return '帖子'
+    case 5:
+      return '需求'
   }
   
 })

@@ -117,6 +117,10 @@ export default {
         {
           value: '4',
           label: '帖子举报'
+        },
+        {
+          value: '5',
+          label: '需求举报'
         }
       ],
 
@@ -151,7 +155,7 @@ export default {
         currentPage: 1,
         // 页面大小
         pageSize: 10,
-        // result[0].type   1-商品举报 2-留言举报 3-评价举报 4-帖子举报
+        // result[0].type   1-商品举报 2-留言举报 3-评价举报 4-帖子举报  5-需求举报
         // result: [{ type: 1 }],
         // 查询条件
         searchCondition: {
@@ -246,9 +250,31 @@ export default {
     },
     // 跳转到举报的详情页面 把id传过来
     jumpPage(id) {
+      let type = this.queryInfo.searchCondition.type
+      let pathUrl
+      switch (type) {
+        case 1:
+          pathUrl = '/Report_comm'
+          break
+        case 2:
+          pathUrl = '/Report_lea_msg'
+          break
+        case 3:
+          pathUrl = '/report_evaluate'
+          break
+        case 4:
+          pathUrl = '/report_art_detail'
+          break
+        case 5:
+          pathUrl = '/report_demand_detail'
+          break
+        default:
+          break
+      }
+      // console.log(pathUrl)
       //
       this.$router.push(
-        `/report_detail?targetId=${id}&type=${this.queryInfo.searchCondition.type}`
+        `${pathUrl}?targetId=${id}&type=${this.queryInfo.searchCondition.type}`
       )
     }
   }

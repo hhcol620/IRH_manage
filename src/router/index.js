@@ -28,7 +28,12 @@ import forum_audit from '../components/examination/ReleaseInfoExamination.vue'
 import realnameExamination from '../components/examination/realnameExamination.vue'
 
 // 以下是反馈和审核页面的详细页面
-import Report_detail from '../components/examination/children/report_detail.vue'
+import Report_art_detail from '../components/examination/children/report_detail.vue'
+import Report_comm from '../components/examination/children/report_comm'
+import Report_lea_msg from '../components/examination/children/report_lea_msg'
+import report_evaluate from '../components/examination/children/report_evaluate'
+import report_demand_detail from '../components/examination/children/report_demand_detail'
+
 import commonweal_apply_detail from '../components/examination/children/commonweal_apply_detail.vue'
 import commonweal_approve_detail from '../components/examination/children/commonweal_approve_detail.vue'
 import mall_audit_detail from '../components/examination/children/mall_audit_detail.vue'
@@ -75,10 +80,6 @@ const router = new VueRouter({
      {
        path: '/admin_report',
        component:Reports
-     },
-     {
-      path: '/report_detail',
-      component:Report_detail
      },
      {
        path: '/administrators_Detail',
@@ -162,6 +163,26 @@ const router = new VueRouter({
      {
       path: '/ReleaseInfoExamination_detail',
       component:ReleaseInfoExamination_detail
+     },
+     {
+      path: '/Report_comm',
+      component:Report_comm
+     },
+     {
+      path: '/Report_lea_msg',
+      component:Report_lea_msg
+     },
+     {
+      path: '/report_evaluate',
+      component:report_evaluate
+     },
+     {
+      path: '/report_art_detail',
+      component:Report_art_detail
+     },
+     {
+      path: '/report_demand_detail',
+      component:report_demand_detail
      }
    ]
   }
