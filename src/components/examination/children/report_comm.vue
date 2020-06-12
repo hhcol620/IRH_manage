@@ -15,17 +15,22 @@
               class="scrollbar">
         <div class="left">
           <!-- 这是左边区域  展示商品详情  显示商品的介绍 商品的图片  -->
+          <div class="box">
+            <div class="createTime">发布时间: {{targetInfo.createTime}}</div>
+            <div class="authorId">作者ID: {{targetInfo.consumerId}}</div>
+            <div class="other_b">
+              <div class="item_o">浏览: {{targetInfo.browserTimes}}</div>
+              <div class="item_o">收藏: {{targetInfo.collectTotal}}</div>
+            </div>
+          </div>
           <div class="title">{{targetInfo.title}}</div>
-          <div class="title">{{targetInfo.createTime}}</div>
-          <div class="title">{{targetInfo.consumerId}}</div>
-          <div class="title">{{targetInfo.browserTimes}}</div>
-          <div class="title">{{targetInfo.collectTotal}}</div>
           <div class="desc_text">{{targetInfo.productDesc}}</div>
           <div class="desc_img">
             <img :src="$store.state.ImgUrl + targetInfo.mainPicUrl"
                  alt="">
           </div>
-          <div class="desc_img" v-for="item in targetInfo.otherImgUrl">
+          <div class="desc_img"
+               v-for="item in targetInfo.otherImgUrl">
             <img :src="$store.state.ImgUrl + item"
                  alt="">
           </div>
@@ -33,9 +38,11 @@
       </el-col>
       <el-col :span="8"
               class="scrollbar">
-        <div class="middle" v-for="it in reportList">
+        <div class="middle"
+             v-for="it in reportList">
           <!-- 这是中间区域  上面显示举报的信息 -->
-          <div class="reportItem" @click="showReportDetail(it)">
+          <div class="reportItem"
+               @click="showReportDetail(it)">
             <!-- 点击这个每一项 打开弹框 显示整条举报的详细信息 -->
             <!-- 每条举报的顶部 举报人举报时间 -->
             <div class="item_top">
@@ -86,7 +93,6 @@
       </el-col>
     </el-row>
 
-
     <!-- 修改用户对话框 -->
     <el-dialog title="审核"
                :visible.sync="showReportDetailVisible"
@@ -111,7 +117,8 @@
 
         <el-form-item label="证明材料"
                       prop="createTime">
-          <el-image style="width: 100px;"  v-for="it in reportDetail.picList"
+          <el-image style="width: 100px;"
+                    v-for="it in reportDetail.picList"
                     :src="$store.state.ImgUrl + it"
                     :preview-src-list="[$store.state.ImgUrl + it]">
           </el-image>
@@ -127,7 +134,7 @@
 <script>
 export default {
   created() {
-      this.getReportDetail()
+    this.getReportDetail()
   },
   data() {
     return {
@@ -147,67 +154,69 @@ export default {
           label: '冻结账号'
         }
       ],
-      targetId:'',
-      targetType:'',
+      targetId: '',
+      targetType: '',
       value: '',
       remark_input: '',
-      reportList:[],  //和该商品相关的所有举报信息
-      targetInfo:{},
-      imgList:{},
+      reportList: [], //和该商品相关的所有举报信息
+      targetInfo: {},
+      imgList: {},
       processResult: {
         result: '',
         remark: '',
-        targetId:'',
-        id:'',
+        targetId: '',
+        id: '',
         type: ''
       },
-      reportDetail:{}
+      reportDetail: {}
     }
   },
   methods: {
-      async getReportDetail(){
-        //获得商品的id和类型
-        let targetId = location.href.slice(location.href.indexOf('?targetId=') + 10, location.href.indexOf('&type='))
-        let type = location.href.slice(location.href.indexOf('&type=') + 6)
-        this.targetId = targetId;
-        this.targetType = type;
-        const { data: res } = await this.$http.get(
-                `user/report/admin/detail/${targetId}/${type}`
-        )
-        if(res.code !== 200){
-          return this.$Message.error('加载举报信息失败,请稍后重试')
-        }
-        this.reportList = res.data
+    async getReportDetail() {
+      //获得商品的id和类型
+      let targetId = location.href.slice(
+        location.href.indexOf('?targetId=') + 10,
+        location.href.indexOf('&type=')
+      )
+      let type = location.href.slice(location.href.indexOf('&type=') + 6)
+      this.targetId = targetId
+      this.targetType = type
+      const { data: res } = await this.$http.get(
+        `user/report/admin/detail/${targetId}/${type}`
+      )
+      if (res.code !== 200) {
+        return this.$Message.error('加载举报信息失败,请稍后重试')
+      }
+      this.reportList = res.data
 
-        const { data: info } = await this.$http.get(
-                `goods/goods/es/${targetId}`
-        )
-        if(info.code !== 200){
-          return this.$Message.error('加载对象信息失败,请稍后重试')
-        }
-        this.targetInfo = info.data
-      },
-
-      async processReport() {
-        this.processResult.targetId = this.targetId;
-        this.processResult.remark = this.remark_input;
-        this.processResult.result = this.result;
-        this.processResult.type = this.targetType;
-        const { data: processRes } = await this.$http.post(
-                `user/report/admin/process`, this.processResult
-        )
-        if (processRes.code !== 200) {
-          return this.$Message.error('处理失败,请稍后重试')
-        }
-        return this.$Message.error('处理成功')
+      const { data: info } = await this.$http.get(`goods/goods/es/${targetId}`)
+      if (info.code !== 200) {
+        return this.$Message.error('加载对象信息失败,请稍后重试')
+      }
+      this.targetInfo = info.data
     },
-    async showReportDetail(info){
-        this.reportDetail = info
-        if(info.pics !== null && info.pics !== undefined){
-          this.reportDetail.picList = info.pics.split(",");
-        }
+
+    async processReport() {
+      this.processResult.targetId = this.targetId
+      this.processResult.remark = this.remark_input
+      this.processResult.result = this.result
+      this.processResult.type = this.targetType
+      const { data: processRes } = await this.$http.post(
+        `user/report/admin/process`,
+        this.processResult
+      )
+      if (processRes.code !== 200) {
+        return this.$Message.error('处理失败,请稍后重试')
+      }
+      return this.$Message.error('处理成功')
+    },
+    async showReportDetail(info) {
+      this.reportDetail = info
+      if (info.pics !== null && info.pics !== undefined) {
+        this.reportDetail.picList = info.pics.split(',')
+      }
       console.log(info)
-        this.showReportDetailVisible = true
+      this.showReportDetailVisible = true
     }
   }
 }
@@ -230,6 +239,21 @@ export default {
         font-size: 16px;
         color: #333;
         line-height: 30px;
+      }
+      .box {
+        padding: 10px;
+        border: 1px solid #f9f9f9;
+        .createTime,
+        .authorId {
+          font-size: 14px;
+        }
+        .other_b {
+          display: flex;
+          font-size: 14px;
+          .item_o {
+            margin-right: 10px;
+          }
+        }
       }
       .desc_text {
         font-size: 14px;

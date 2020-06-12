@@ -16,10 +16,10 @@ import axios from 'axios'
 
 axios.defaults.baseURL = '/api'
 
-axios.interceptors.request.use(config=>{
- /* 给请求头里面添加一个属性 Authorization 并将其值设置为token令牌*/
+axios.interceptors.request.use(config => {
+  /* 给请求头里面添加一个属性 Authorization 并将其值设置为token令牌*/
   config.headers.Authorization = window.sessionStorage.getItem('token')
- return config
+  return config
 })
 
 
@@ -34,27 +34,27 @@ Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
 
-Vue.component('tree-table',TreeTable)
+Vue.component('tree-table', TreeTable)
 
 // 定义一个全局过滤器start   将后台传过来的身份数字转为对应的身份
 Vue.filter('admin_type_Format', function(type) {
   const ts = type
-      switch (ts) {
-        case 10:
-          // 代码块
-          return '普通会员'
-        case 20:
-          // 代码块
-          return '服务人员'
-        case 30:
-          return '校园组织'
-        case 35:
-          return '公益组织'
-        case 40:
-          return '校园社团'
-        case 50:
-          return '管理员'
-      }
+  switch (ts) {
+    case 10:
+      // 代码块
+      return '普通会员'
+    case 20:
+      // 代码块
+      return '服务人员'
+    case 30:
+      return '校园组织'
+    case 35:
+      return '公益组织'
+    case 40:
+      return '校园社团'
+    case 50:
+      return '管理员'
+  }
 })
 /* 身份的过滤器end */
 
@@ -73,7 +73,7 @@ Vue.filter('report_type_format', function(type) {
     case 5:
       return '需求'
   }
-  
+
 })
 // end
 
@@ -118,7 +118,7 @@ Vue.filter('orderTradeType', function(type) {
 /*10:订单超时 20:取消订单 30:删除订单 40:等待支付 50:交易成功 */
 Vue.filter('orderState', function(state) {
   const temp = state
-  switch(temp){
+  switch (temp) {
     case 10:
       return '订单超时'
     case 20:
@@ -134,7 +134,7 @@ Vue.filter('orderState', function(state) {
   }
 })
 // 定义一个全局过滤器  切割时间   动态的添加一个p标签 
-Vue.filter('timeSplit', function(time,i) {
+Vue.filter('timeSplit', function(time, i) {
   let t1 = time.split(' ')
   if (i === 'day') {
     return t1[0]
@@ -165,11 +165,29 @@ Vue.filter('certificationState', function(state) {
     return '认证失败'
   }
 })
+// 保留数字精度
+Vue.filter('savePrecision', function(x) {
+  var f = parseFloat(x);
+  if (isNaN(f)) {
+    return false;
+  }
+  var f = Math.round(x * 100) / 100;
+  var s = f.toString();
+  var rs = s.indexOf('.');
+  if (rs < 0) {
+    rs = s.length;
+    s += '.';
+  }
+  while (s.length <= rs + 2) {
+    s += '0';
+  }
+  return s;
+})
 
 // 全局注册树形table表格
-Vue.component('tree-table',TreeTable)
+Vue.component('tree-table', TreeTable)
 new Vue({
- router,
- store,
- render: h => h(App)
+  router,
+  store,
+  render: h => h(App)
 }).$mount('#app')

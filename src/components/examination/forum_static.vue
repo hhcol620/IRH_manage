@@ -33,7 +33,7 @@ export default {
       const oIframe = document.getElementById('show-iframe')
       // const deviceWidth = document.documentElement.clientWidth
       const deviceHeight = document.documentElement.clientHeight
-      oIframe.style.height = Number(deviceHeight) + 80 + 'px' //数字是页面布局高度差，其中的100可以根据自己的界面进行调整
+      oIframe.style.height = Number(deviceHeight) + 'px' //数字是页面布局高度差，其中的100可以根据自己的界面进行调整
     }
   },
   mounted() {}
