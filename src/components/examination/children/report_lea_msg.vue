@@ -8,7 +8,7 @@
         系统管理
       </el-breadcrumb-item>
       <el-breadcrumb-item>举报列表</el-breadcrumb-item>
-      <el-breadcrumb-item>商品举报</el-breadcrumb-item>
+      <el-breadcrumb-item>留言举报</el-breadcrumb-item>
     </el-breadcrumb>
     <el-row class="container">
       <el-col :span="8"
@@ -151,7 +151,7 @@
         targetType:'',
         value: '',
         remark_input: '',
-        reportList:[],  //和该商品相关的所有举报信息
+        reportList:[],
         targetInfo:{},
         imgList:{},
         processResult: {
@@ -179,13 +179,22 @@
         }
         this.reportList = res.data
 
-        const { data: info } = await this.$http.get(
-                `goods/goods/es/${targetId}`
-        )
-        if(info.code !== 200){
-          return this.$Message.error('加载对象信息失败,请稍后重试')
+        if(this.type === 5){
+          const { data: info } = await this.$http.get(
+                  `lief/forum/review/detail/${targetId}`
+          )
+          this.targetInfo = info.data
+          return
         }
-        this.targetInfo = info.data
+
+        if(this.type === 2){
+          const { data: info } = await this.$http.get(
+                  `goods/goods/msg/detail/${targetId}`
+          )
+          this.targetInfo = info.data
+        }
+
+        console.log(this.targetInfo)
       },
 
       async processReport() {
