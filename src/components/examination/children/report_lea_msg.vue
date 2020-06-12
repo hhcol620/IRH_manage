@@ -8,63 +8,44 @@
         系统管理
       </el-breadcrumb-item>
       <el-breadcrumb-item>举报列表</el-breadcrumb-item>
-      <el-breadcrumb-item>留言举报</el-breadcrumb-item>
+      <el-breadcrumb-item>商品举报</el-breadcrumb-item>
     </el-breadcrumb>
     <el-row class="container">
       <el-col :span="8"
               class="scrollbar">
         <div class="left">
-          <!-- 这是显示留言  留言的作者头像昵称  留言的内容 留言的时间  -->
-          <div class="leftItem">
-            <div class="item_top">
-              <div class="userInfo">
-                <img src="https://image.suning.cn/uimg/ZR/share_order/158742573335722703.jpg"
-                     alt=""
-                     class="headerImg">
-                <div class="nickname">张三</div>
-              </div>
-              <div class="createTime">2020-11-09 10:00:00</div>
-            </div>
-            <div class="item_bottom">
-              这是回复的内容这是回复的内容
-              这是回复的内容这是回复的内容
-              这是回复的内容这是回复的内容
-              这是回复的内容这是回复的内容
-              这是回复的内容这是回复的内容
-              这是回复的内容这是回复的内容
-            </div>
+          <!-- 这是左边区域  展示商品详情  显示商品的介绍 商品的图片  -->
+          <div class="title">{{targetInfo.title}}</div>
+          <div class="title">{{targetInfo.createTime}}</div>
+          <div class="title">{{targetInfo.consumerId}}</div>
+          <div class="title">{{targetInfo.browserTimes}}</div>
+          <div class="title">{{targetInfo.collectTotal}}</div>
+          <div class="desc_text">{{targetInfo.productDesc}}</div>
+          <div class="desc_img">
+            <img :src="$store.state.ImgUrl + targetInfo.mainPicUrl"
+                 alt="">
+          </div>
+          <div class="desc_img" v-for="item in targetInfo.otherImgUrl">
+            <img :src="$store.state.ImgUrl + item"
+                 alt="">
           </div>
         </div>
       </el-col>
       <el-col :span="8"
               class="scrollbar">
-        <div class="middle">
+        <div class="middle" v-for="it in reportList">
           <!-- 这是中间区域  上面显示举报的信息 -->
-          <div class="reportItem">
+          <div class="reportItem" @click="showReportDetail(it)">
             <!-- 点击这个每一项 打开弹框 显示整条举报的详细信息 -->
             <!-- 每条举报的顶部 举报人举报时间 -->
             <div class="item_top">
-              <div class="top_l">举报人: 张三</div>
-              <div class="top_r"> 举报时间: 2020-06-11 18:00:00</div>
+              <div class="top_l">举报人Id: {{it.customerId}}</div>
+              <div class="top_r"> 举报时间: {{it.createTime}}</div>
             </div>
             <!-- 举报的描述内容 -->
             <div class="item_bottom">
               <div class="bottom_desc">
-                这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息
-              </div>
-            </div>
-          </div>
-          <div class="reportItem">
-            <!-- 点击这个每一项 打开弹框 显示整条举报的详细信息 -->
-            <!-- 每条举报的顶部 举报人举报时间 -->
-            <div class="item_top">
-              <div class="top_l">举报人: 张三</div>
-              <div class="top_r"> 举报时间: 2020-06-11 18:00:00</div>
-            </div>
-            <!-- 举报的描述内容 -->
-            <div class="item_bottom">
-              <div class="bottom_desc">
-                这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息这里是举报的备注信息
+                {{it.reason}}
               </div>
             </div>
           </div>
@@ -90,7 +71,7 @@
           <div class="remark">
             <div class="description">请输入备注: </div>
             <el-input type="textarea"
-                      placeholder="请输入备注"
+                      placeholder="请认真输入审核备注"
                       v-model="remark_input"
                       clearable
                       resize="none">
@@ -98,155 +79,236 @@
           </div>
           <!-- 提交 -->
           <div class="submit_btn">
-            <el-button plain>提交</el-button>
+            <el-button plain
+                       @click="processReport">提交</el-button>
           </div>
         </div>
       </el-col>
     </el-row>
+
+
+    <!-- 修改用户对话框 -->
+    <el-dialog title="审核"
+               :visible.sync="showReportDetailVisible"
+               width="65%">
+      <el-form :model="reportDetail"
+               ref="editFormRef"
+               label-width="150px">
+        <el-form-item label="举报人id">
+          <el-input v-model="reportDetail.customerId"
+                    disabled></el-input>
+        </el-form-item>
+        <el-form-item label="举报时间"
+                      prop="applyUserId">
+          <el-input v-model="reportDetail.createTime"
+                    disabled></el-input>
+        </el-form-item>
+        <el-form-item label="举报理由"
+                      prop="applyUserId">
+          <el-input v-model="reportDetail.reason"
+                    disabled></el-input>
+        </el-form-item>
+
+        <el-form-item label="证明材料"
+                      prop="createTime">
+          <el-image style="width: 100px;"  v-for="it in reportDetail.picList"
+                    :src="$store.state.ImgUrl + it"
+                    :preview-src-list="[$store.state.ImgUrl + it]">
+          </el-image>
+        </el-form-item>
+      </el-form>
+      <span slot="footer"
+            class="dialog-footer">
+        <el-button @click="editDialogVisible = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
-export default {
-  created() {},
-  data() {
-    return {
-      // 审核操作的下拉框
-      options: [
-        {
-          value: '选项1',
-          label: '黄金糕'
-        },
-        {
-          value: '选项2',
-          label: '双皮奶'
-        },
-        {
-          value: '选项3',
-          label: '蚵仔煎'
-        },
-        {
-          value: '选项4',
-          label: '龙须面'
-        },
-        {
-          value: '选项5',
-          label: '北京烤鸭'
-        }
-      ],
-      value: '',
-      remark_input: ''
-    }
-  },
-  methods: {}
-}
-</script>
-<style lang="less" scoped>
-.el-row.container {
-  margin-top: 20px;
-  background-color: #fff;
-  height: 700px;
-  // overflow: hidden;
-  > .el-col {
-    height: 100%;
-    overflow: auto;
-    .left {
-      div.leftItem {
-        padding: 10px;
-        div.item_top {
-          padding: 10px;
-          display: flex;
-          justify-content: space-between;
-          font-size: 14px;
-          color: #333;
-          font-weight: 500;
-          font-style: normal;
-
-          div.userInfo {
-            display: flex;
-
-            img.headerImg {
-              height: 36px;
-              width: 36px;
-              border-radius: 50%;
-            }
-            div.nickname {
-              margin-left: 10px;
-            }
+  export default {
+    created() {
+      this.getReportDetail()
+    },
+    data() {
+      return {
+        showReportDetailVisible: false,
+        // 审核操作的下拉框  1-举报失败 2-处理中 3-警告并删除相关内容 4-冻结账号
+        options: [
+          {
+            value: '1',
+            label: '未发现不良信息'
+          },
+          {
+            value: '3',
+            label: '警告并删除相关内容'
+          },
+          {
+            value: '4',
+            label: '冻结账号'
           }
-
-          div.createTime {
-            font-size: 12px;
-          }
-        }
-        div.item_bottom {
-          padding: 0 10px;
-          font-size: 14px;
-          color: #333;
-          font-weight: 500;
-          font-style: normal;
-          color: #4d4d4d;
-        }
+        ],
+        targetId:'',
+        targetType:'',
+        value: '',
+        remark_input: '',
+        reportList:[],  //和该商品相关的所有举报信息
+        targetInfo:{},
+        imgList:{},
+        processResult: {
+          result: '',
+          remark: '',
+          targetId:'',
+          id:'',
+          type: ''
+        },
+        reportDetail:{}
       }
-    }
-    .middle {
-      padding: 10px;
-      div.reportItem {
-        padding: 10px;
-        height: 66px;
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 500;
-        color: #4d4d4d;
-        line-height: 21px;
-        display: flex;
-        flex-direction: column;
-        border-bottom: 1px solid #d9d9d9;
-        cursor: pointer;
-        div.item_top {
-          display: flex;
-          justify-content: space-between;
-          div.top_l {
-            color: #333;
-          }
+    },
+    methods: {
+      async getReportDetail(){
+        //获得商品的id和类型
+        let targetId = location.href.slice(location.href.indexOf('?targetId=') + 10, location.href.indexOf('&type='))
+        let type = location.href.slice(location.href.indexOf('&type=') + 6)
+        this.targetId = targetId;
+        this.targetType = type;
+        const { data: res } = await this.$http.get(
+                `user/report/admin/detail/${targetId}/${type}`
+        )
+        if(res.code !== 200){
+          return this.$Message.error('加载举报信息失败,请稍后重试')
+        }
+        this.reportList = res.data
 
-          div.top_r {
-            font-size: 12px;
-          }
+        const { data: info } = await this.$http.get(
+                `goods/goods/es/${targetId}`
+        )
+        if(info.code !== 200){
+          return this.$Message.error('加载对象信息失败,请稍后重试')
         }
+        this.targetInfo = info.data
+      },
 
-        div.item_bottom {
-          div.bottom_desc {
-            display: -webkit-box;
-            overflow: hidden;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 2;
-          }
+      async processReport() {
+        this.processResult.targetId = this.targetId;
+        this.processResult.remark = this.remark_input;
+        this.processResult.result = this.result;
+        this.processResult.type = this.targetType;
+        const { data: processRes } = await this.$http.post(
+                `user/report/admin/process`, this.processResult
+        )
+        if (processRes.code !== 200) {
+          return this.$Message.error('处理失败,请稍后重试')
         }
-      }
-    }
-    .right {
-      height: 90%;
-      padding: 10px;
-      font-size: 14px;
-      color: #4d4d4d;
-      font-weight: 500;
-      font-style: normal;
-      line-height: 21px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      .remark {
-        margin-top: 10px;
-        > div.description {
-          padding: 10px 0;
+        return this.$Message.error('处理成功')
+      },
+      async showReportDetail(info){
+        this.reportDetail = info
+        if(info.pics !== null && info.pics !== undefined){
+          this.reportDetail.picList = info.pics.split(",");
         }
-      }
-      .submit_btn {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 20px;
+        console.log(info)
+        this.showReportDetailVisible = true
       }
     }
   }
-}
+</script>
+<style lang="less" scoped>
+  .el-row.container {
+    margin-top: 20px;
+    background-color: #fff;
+    height: 700px;
+    // overflow: hidden;
+    > .el-col {
+      height: 100%;
+      overflow: auto;
+      .left {
+        padding: 20px;
+        font-style: normal;
+        font-weight: 500;
+        color: #4d4d4d;
+        .title {
+          font-size: 16px;
+          color: #333;
+          line-height: 30px;
+        }
+        .desc_text {
+          font-size: 14px;
+          line-height: 21px;
+        }
+        .desc_img {
+          margin-top: 10px;
+          img {
+            width: 100%;
+            &:nth-child(1) {
+              border-top-left-radius: 10px;
+              border-top-right-radius: 10px;
+            }
+            &:last-child {
+              border-bottom-left-radius: 10px;
+              border-bottom-right-radius: 10px;
+            }
+          }
+        }
+      }
+      .middle {
+        padding: 10px;
+        div.reportItem {
+          padding: 10px;
+          height: 66px;
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 500;
+          color: #4d4d4d;
+          line-height: 21px;
+          display: flex;
+          flex-direction: column;
+          border-bottom: 1px solid #d9d9d9;
+          cursor: pointer;
+          div.item_top {
+            display: flex;
+            justify-content: space-between;
+            div.top_l {
+              color: #333;
+            }
+
+            div.top_r {
+              font-size: 12px;
+            }
+          }
+
+          div.item_bottom {
+            div.bottom_desc {
+              display: -webkit-box;
+              overflow: hidden;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+            }
+          }
+        }
+      }
+      .right {
+        height: 90%;
+        padding: 10px;
+        font-size: 14px;
+        color: #4d4d4d;
+        font-weight: 500;
+        font-style: normal;
+        line-height: 21px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        .remark {
+          margin-top: 10px;
+          > div.description {
+            padding: 10px 0;
+          }
+        }
+        .submit_btn {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 20px;
+        }
+      }
+    }
+  }
 </style>
