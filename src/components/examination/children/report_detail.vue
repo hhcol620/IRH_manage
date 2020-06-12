@@ -8,11 +8,17 @@
         系统管理
       </el-breadcrumb-item>
       <el-breadcrumb-item>举报列表</el-breadcrumb-item>
-      <el-breadcrumb-item>举报详情</el-breadcrumb-item>
+      <el-breadcrumb-item>帖子举报详情</el-breadcrumb-item>
     </el-breadcrumb>
     <el-row class="header">
       <el-col class="container">
-        <div class="container_box" v-html="$store.state.ImgUrl + articleInfo.detailPage">这里放从服务器传过来的代码 文章商品详情 模板 v-html="" </div>
+        <div class="container_box">
+          <!-- 文章的内容区域  通过后端传过来的数据 -->
+          <!-- <iframe src="https://www.baidu.com">
+          </iframe> -->
+          <!-- 把url传到这个组件里面 -->
+          <forumstatic :url.sync="$store.state.ImgUrl + articleInfo.detailPage"></forumstatic>
+        </div>
       </el-col>
     </el-row>
     <!-- 主体区域   举报内容 -->
@@ -75,7 +81,11 @@
   </div>
 </template>
 <script>
+import forumstatic from './forum_static.vue'
 export default {
+  components: {
+    forumstatic
+  },
   created() {
     this.getReportDetails()
   },
@@ -84,8 +94,8 @@ export default {
       processResult: {
         result: '',
         remark: '',
-        targetId:'',
-        id:'',
+        targetId: '',
+        id: '',
         type: ''
       },
       results_options: [
@@ -93,7 +103,7 @@ export default {
         { value: 3, label: '警告并删除' },
         { value: 4, label: '冻结账号' }
       ],
-      articleInfo:'',
+      articleInfo: '',
       // result
       result: '',
       // 备注
@@ -105,9 +115,14 @@ export default {
     // 获取管理员的id值
     async getReportDetails() {
       // js的slice方法
-      var id = location.href.slice(location.href.indexOf('?targetId=') + 10, location.href.indexOf('&type='))
-      var targetIdType = location.href.slice(location.href.indexOf('&type=') + 6)
-      this.getArticleInfo(id);
+      var id = location.href.slice(
+        location.href.indexOf('?targetId=') + 10,
+        location.href.indexOf('&type=')
+      )
+      var targetIdType = location.href.slice(
+        location.href.indexOf('&type=') + 6
+      )
+      this.getArticleInfo(id)
       const { data: res } = await this.$http.get(
         `user/report/admin/detail/${id}/${targetIdType}`
       )
@@ -127,35 +142,36 @@ export default {
       }
     },
 
-    async getArticleInfo(id){
+    async getArticleInfo(id) {
       const { data: res } = await this.$http.get(
-              `life/forum/article//brief/${id}`
+        `life/forum/article//brief/${id}`
       )
-      if(res.code !== 200){
-        return;
+      if (res.code !== 200) {
+        return
       }
-      console.log("文章信息")
+      console.log('文章信息')
       console.log(res)
       this.articleInfo = res.data
     },
 
     async processReport() {
       var targetId = location.href.slice(
-              location.href.indexOf('?id=') + 4,
-              location.href.indexOf('&type=')
+        location.href.indexOf('?id=') + 4,
+        location.href.indexOf('&type=')
       )
 
-      var targetIdType = location.href.slice('&type=' + 6);
+      var targetIdType = location.href.slice('&type=' + 6)
       const { data: res } = await this.$http.get(
-              `user/report/admin/detail/${targetId}/${targetIdType}`
+        `user/report/admin/detail/${targetId}/${targetIdType}`
       )
-      this.processResult.targetId = targetId;
-      this.processResult.remark = this.remark_input;
-      this.processResult.result = this.result;
-      this.processResult.type = targetIdType;
+      this.processResult.targetId = targetId
+      this.processResult.remark = this.remark_input
+      this.processResult.result = this.result
+      this.processResult.type = targetIdType
 
       const { data: processRes } = await this.$http.post(
-              `user/admin/report/process`, this.processResult
+        `user/admin/report/process`,
+        this.processResult
       )
       if (processRes.code !== 200) {
         return this.$Message.error('处理失败,请稍后重试')
