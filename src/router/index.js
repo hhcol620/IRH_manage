@@ -38,8 +38,9 @@ import commonweal_apply_detail from '../components/examination/children/commonwe
 import commonweal_approve_detail from '../components/examination/children/commonweal_approve_detail.vue'
 import mall_audit_detail from '../components/examination/children/mall_audit_detail.vue'
 import realnameExamination_detail from '../components/examination/children/realnameExamination_detail.vue'
-import ReleaseInfoExamination_detail from '../components/examination/children/ReleaseInfoExamination_detail.vue'
-
+import ReleaseCommInfoExamination_detail from '../components/examination/children/ReleaseCommInfoExamination_detail'
+import ReleaseDemandInfoExamination_detail from '../components/examination/children/ReleaseDemandInfoExamination_detail.vue'
+import ReleaseArtInfoExamination_detail from '../components/examination/children/ReleaseArtInfoExamination_detail.vue'
 
 
 Vue.use(VueRouter)
@@ -161,8 +162,16 @@ const router = new VueRouter({
       component:realnameExamination_detail
      },
      {
-      path: '/ReleaseInfoExamination_detail',
-      component:ReleaseInfoExamination_detail
+      path: '/ReleaseCommInfoExamination_detail',
+      component:ReleaseCommInfoExamination_detail
+     },
+     {
+      path: '/ReleaseDemandInfoExamination_detail',
+      component:ReleaseDemandInfoExamination_detail
+     },
+     {
+      path: '/ReleaseArtInfoExamination_detail',
+      component:ReleaseArtInfoExamination_detail
      },
      {
       path: '/Report_comm',
