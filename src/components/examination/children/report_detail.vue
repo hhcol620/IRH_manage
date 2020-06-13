@@ -81,7 +81,7 @@
   </div>
 </template>
 <script>
-import forumstatic from './forum_static.vue'
+import forumstatic from '../forum_static.vue'
 export default {
   components: {
     forumstatic
@@ -215,6 +215,11 @@ export default {
     overflow-y: scroll;
   }
 }
+/*.container_box {
+  // overflow-y: scroll;
+  overflow: hidden;
+}*/
+
 .main_list_left > ul > li {
   list-style: none;
   > div {
