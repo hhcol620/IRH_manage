@@ -15,15 +15,14 @@
       <el-col :span="8"
               class="scrollbar">
         <div class="left">
-          <div class="title">活动发起: 张三</div>
+          <div class="title">活动发起: {{targetInfo.applyUser.nickname}}</div>
           <div class="createTime">2020-11-09 19:00:00</div>
-          <div class="desc_text">这是描述这是描述这是描述这是描述这是描述这是描述这是描述这是描述</div>
+          <div class="desc_text">{{targetInfo.title}}</div>
+          <div class="desc_text">{{targetInfo.reason}}</div>
+          <div class="desc_text">{{targetInfo.witnessName}}</div>
+          <div class="desc_text">{{targetInfo.witnessPhone}}</div>
           <div class="desc_img">
-            <img src="https://image.suning.cn/uimg/ZR/share_order/158742571804805312.jpg"
-                 alt="">
-            <img src="https://image.suning.cn/uimg/ZR/share_order/158742571804805312.jpg"
-                 alt="">
-            <img src="https://image.suning.cn/uimg/ZR/share_order/158742571804805312.jpg"
+            <img :src="$store.state.ImgUrl + targetInfo.reasonPicUrl"
                  alt="">
           </div>
 
@@ -36,12 +35,12 @@
           <div class="search">
             <!-- 价格范围 -->
             <div class="priceRange">
-              <el-input v-model="input"
+              <el-input v-model="search.searchCondition.minMoney"
                         placeholder="最低价格"></el-input>
-              <el-input v-model="input"
+              <el-input v-model="search.searchCondition.maxMoney"
                         placeholder="最高价格"></el-input>
             </div>
-            <el-select v-model="value"
+            <el-select v-model="search.searchCondition.orderFieldType"
                        placeholder="价格排序">
               <el-option v-for="item in options"
                          :key="item.value"
@@ -105,37 +104,18 @@ import checked from '../../checked_slef/checked_self.vue'
 Vue.component('checkbox', checkbox)
 Vue.component('checked', checked)
 export default {
-  created() {},
+  created() {
+    this.getApplyInfo()
+    this.getDonationOrderList()
+  },
   data() {
     return {
+      targetId:'',
       // 订单 多选框数组
-      orderArr: [
-        {
-          orderCode: '1232342343',
-          price: 99.0,
-          id: 1
-        },
-        {
-          orderCode: '93499398398',
-          price: 11.0,
-          id: 2
-        },
-        {
-          orderCode: '23kdhs99999',
-          price: 22.5,
-          id: 3
-        },
-        {
-          orderCode: '43kdfh9293',
-          price: 33.0,
-          id: 4
-        },
-        {
-          orderCode: 'gs398778634',
-          price: 44.0,
-          id: 5
-        }
-      ],
+      orderArr: [],
+      targetInfo:{
+        applyUser:{}
+      },
       // 存总金额
       amount: 0.0,
       // 存用,分割的id字符串
@@ -144,28 +124,25 @@ export default {
       value: '',
       options: [
         {
-          value: '选项1',
-          label: '黄金糕'
+          value: 'DESC',
+          label: '价格降序'
         },
         {
-          value: '选项2',
-          label: '双皮奶'
-        },
-        {
-          value: '选项3',
-          label: '蚵仔煎'
-        },
-        {
-          value: '选项4',
-          label: '龙须面'
-        },
-        {
-          value: '选项5',
-          label: '北京烤鸭'
+          value: 'ASC',
+          label: '价格升序'
         }
       ],
       // 被选中数组项
-      checkedOrders: []
+      checkedOrders: [],
+      search:{
+        currentPage:1,
+        pageSize:10,
+        searchCondition:{
+          orderFieldType: '',
+          minMoney:'',
+          maxMoney:''
+        }
+      }
     }
   },
   methods: {
@@ -173,6 +150,32 @@ export default {
     get_Str(e) {
       // console.log(e)
       this.idStr = e
+    },
+    async getDonationOrderList(){
+      const { data: res } = await this.$http.post(`order/admin/donation/order/list`, this.search)
+      if(res.code !== 200){
+
+      }
+      this.orderArr = res.data.data
+      console.log(this.orderArr)
+    },
+    async getApplyInfo(){
+      let targetId = location.href.slice(location.href.indexOf('?targetId=') + 10)
+      this.targetId = targetId;
+      const { data: res } = await this.$http.get(`order/donation/detail/2/${targetId}`)
+      if(res.code !== 200){
+
+      }
+      this.targetInfo = res.data
+      let userId = res.data.applyUserId
+      let userInfo = this.getUserName(userId)
+      this.targetInfo.applyUser = userInfo
+    },
+    async getUserName(userId) {
+      const { data: res } = await this.$http.get(`user/user/${userId}`)
+      if (res.code !== 200) return
+      console.log(res)
+      return res.data
     }
   },
   watch: {

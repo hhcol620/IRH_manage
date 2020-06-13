@@ -189,8 +189,8 @@ export default {
       }
     },
     // 跳转到详情
-    toDetail() {
-      this.$router.push(`commonweal_approve_detail`)
+    toDetail(id) {
+      this.$router.push(`commonweal_approve_detail?targetId=${id}`)
     },
     // 更多
     reviewmore() {}

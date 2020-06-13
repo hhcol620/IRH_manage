@@ -142,7 +142,7 @@ export default {
 
     async getArticleInfo(id) {
       const { data: res } = await this.$http.get(
-        `life/forum/article//brief/${id}`
+        `life/forum/article/brief/${id}`
       )
       if (res.code !== 200) {
         return
