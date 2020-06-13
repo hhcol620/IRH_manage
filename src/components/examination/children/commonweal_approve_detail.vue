@@ -32,6 +32,24 @@
       <el-col :span="8"
               class="scrollbar">
         <div class="middle">
+
+          <div class="search">
+            <!-- 价格范围 -->
+            <div class="priceRange">
+              <el-input v-model="input"
+                        placeholder="最低价格"></el-input>
+              <el-input v-model="input"
+                        placeholder="最高价格"></el-input>
+            </div>
+            <el-select v-model="value"
+                       placeholder="价格排序">
+              <el-option v-for="item in options"
+                         :key="item.value"
+                         :label="item.label"
+                         :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
           <div class="orderItem">
             <!-- 显示 订单号 价格 -->
             <checkbox :arrList="orderArr"
@@ -44,6 +62,10 @@
       <el-col :span="8"
               class="scrollbar">
         <div class="right">
+          <div class="checkedOrders scrollbar">
+            <checked :arrList="checkedOrders"
+                     class="checkbox"></checked>
+          </div>
           <!--   下面放操作 -->
           <!-- 审核选择下拉框 -->
           <div class="amount">累计金额: {{amount|savePrecision}}</div>
@@ -79,7 +101,9 @@
 <script>
 import Vue from 'vue'
 import checkbox from '../../checkbox_self/checkbox_self.vue'
+import checked from '../../checked_slef/checked_self.vue'
 Vue.component('checkbox', checkbox)
+Vue.component('checked', checked)
 export default {
   created() {},
   data() {
@@ -139,7 +163,9 @@ export default {
           value: '选项5',
           label: '北京烤鸭'
         }
-      ]
+      ],
+      // 被选中数组项
+      checkedOrders: []
     }
   },
   methods: {
@@ -147,6 +173,21 @@ export default {
     get_Str(e) {
       // console.log(e)
       this.idStr = e
+    }
+  },
+  watch: {
+    idStr: function() {
+      this.checkedOrders = []
+      let str = this.idStr
+      let arr = str.split(',')
+      arr.forEach((v, i) => {
+        this.orderArr.forEach((p, q) => {
+          if (v == p.id) {
+            this.checkedOrders.push(p)
+          }
+        })
+      })
+      // console.log(this.checkedOrders)
     }
   }
 }
@@ -214,6 +255,9 @@ export default {
       line-height: 21px;
       display: flex;
       flex-direction: column;
+      .checkedOrders {
+        height: 260px;
+      }
       .remark {
         margin-top: 10px;
         > div.description {
@@ -234,5 +278,17 @@ export default {
 .amount {
   font-size: 36px;
   line-height: 100px;
+}
+.search {
+  display: flex;
+  .priceRange {
+    display: flex;
+    .el-input {
+      margin: 0 2px;
+    }
+  }
+  .el-select {
+    margin-left: 10px;
+  }
 }
 </style>

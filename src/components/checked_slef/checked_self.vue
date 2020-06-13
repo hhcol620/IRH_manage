@@ -2,7 +2,7 @@
   <div>
     <div v-for="item in arrList"
          :key="item.id"
-         class="Item_check"><input type="checkbox"
+         class="Item_check active"><input type="checkbox"
              name="checkOrder"
              :value="item.id"
              :id="item.id"
@@ -25,12 +25,15 @@ export default {
       arrl: []
     }
   },
-  created() {},
+  created() {
+    // console.log(this.$refs.checkbox)
+  },
   methods: {
-    checkBoxData(e) {
-      // console.log('ok')
+    checkBoxData() {
+      console.log('ok')
       // console.log(this.$refs.checkbox)
       let arr = this.$refs.checkbox
+      console.log(arr)
       let str = ''
       let arrl = []
       arr.map((v, i) => {
@@ -54,7 +57,7 @@ export default {
         })
       })
       this.arrl = arrl
-      // console.log(count)
+      console.log(count)
       this.$emit('input', count)
     }
   },
@@ -84,5 +87,8 @@ export default {
     display: flex;
     justify-content: space-between;
   }
+}
+.active {
+  border: 1px solid #3498db;
 }
 </style>

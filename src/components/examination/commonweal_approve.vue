@@ -110,7 +110,9 @@ export default {
         currentPage: 1,
         pageSize: 10,
         searchCondition: {
-          state: 4
+          state: 4,
+          orderField: '',
+          orderFieldType: ''
         }
       },
       // 需求的记录数
