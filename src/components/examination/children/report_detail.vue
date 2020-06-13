@@ -14,8 +14,6 @@
       <el-col class="container">
         <div class="container_box">
           <!-- 文章的内容区域  通过后端传过来的数据 -->
-          <!-- <iframe src="https://www.baidu.com">
-          </iframe> -->
           <!-- 把url传到这个组件里面 -->
           <forumstatic :url.sync="$store.state.ImgUrl + articleInfo.detailPage"></forumstatic>
         </div>
@@ -194,7 +192,10 @@ export default {
   border-radius: 2px;
 }
 .container_box {
-  overflow-y: scroll;
+  height: 300px;
+  padding: 20px;
+  overflow: auto;
+  cursor: pointer;
 }
 .main {
   margin-top: 10px;

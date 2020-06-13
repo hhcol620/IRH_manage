@@ -44,11 +44,11 @@
           <el-button type="danger"
                      plain
                      size="mini"
-                     @click="click_delete_article_by_id(scope.row.id)">发放资金</el-button>
+                     @click="toDetail(scope.row.id)">发放资金</el-button>
           <el-button type="primary"
                      plain
                      size="mini"
-                     @click="DonationDetailById(scope.row.id)">更多</el-button>
+                     @click="reviewmore(scope.row.id)">更多</el-button>
         </template>
       </tree-table>
       <!-- 分页区域 -->
@@ -110,7 +110,9 @@ export default {
         currentPage: 1,
         pageSize: 10,
         searchCondition: {
-          state: 4
+          state: 4,
+          orderField: '',
+          orderFieldType: ''
         }
       },
       // 需求的记录数
@@ -137,13 +139,6 @@ export default {
     // 监听搜索按钮
     getDemandsBySearchCondition() {
       this.getDonationApproveList()
-    },
-
-    async DonationDetailById(id) {
-      const { data: res } = await this.$http.get(
-        `order/donation/detail/2/${id}`
-      )
-      console.log(res)
     },
     // 监听重置按钮
     resetSearch() {
@@ -192,7 +187,13 @@ export default {
         this.$Message.success('删除成功!!!')
         this.getGoods()
       }
-    }
+    },
+    // 跳转到详情
+    toDetail() {
+      this.$router.push(`commonweal_approve_detail`)
+    },
+    // 更多
+    reviewmore() {}
   }
 }
 </script>
