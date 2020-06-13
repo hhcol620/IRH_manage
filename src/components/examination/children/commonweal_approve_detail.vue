@@ -110,11 +110,11 @@ export default {
   },
   data() {
     return {
-      targetId:'',
+      targetId: '',
       // 订单 多选框数组
       orderArr: [],
-      targetInfo:{
-        applyUser:{}
+      targetInfo: {
+        applyUser: {}
       },
       // 存总金额
       amount: 0.0,
@@ -134,13 +134,14 @@ export default {
       ],
       // 被选中数组项
       checkedOrders: [],
-      search:{
-        currentPage:1,
-        pageSize:10,
-        searchCondition:{
+      // 搜索条件
+      search: {
+        currentPage: 1,
+        pageSize: 10,
+        searchCondition: {
           orderFieldType: '',
-          minMoney:'',
-          maxMoney:''
+          minMoney: '',
+          maxMoney: ''
         }
       }
     }
@@ -151,20 +152,31 @@ export default {
       // console.log(e)
       this.idStr = e
     },
-    async getDonationOrderList(){
-      const { data: res } = await this.$http.post(`order/admin/donation/order/list`, this.search)
-      if(res.code !== 200){
-
+    async getDonationOrderList() {
+      const { data: res } = await this.$http.post(
+        `order/admin/donation/order/list`,
+        this.search
+      )
+      if (res.code !== 200) {
+        return
       }
-      this.orderArr = res.data.data
-      console.log(this.orderArr)
+      let arr = res.data.data
+      let list = arr.map((v, i) => {
+        v.price = v.paymentMoney
+        return v
+      })
+      this.orderArr = list
     },
-    async getApplyInfo(){
-      let targetId = location.href.slice(location.href.indexOf('?targetId=') + 10)
-      this.targetId = targetId;
-      const { data: res } = await this.$http.get(`order/donation/detail/2/${targetId}`)
-      if(res.code !== 200){
-
+    async getApplyInfo() {
+      let targetId = location.href.slice(
+        location.href.indexOf('?targetId=') + 10
+      )
+      this.targetId = targetId
+      const { data: res } = await this.$http.get(
+        `order/donation/detail/2/${targetId}`
+      )
+      if (res.code !== 200) {
+        return
       }
       this.targetInfo = res.data
       let userId = res.data.applyUserId
@@ -260,6 +272,9 @@ export default {
       flex-direction: column;
       .checkedOrders {
         height: 260px;
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 4px;
       }
       .remark {
         margin-top: 10px;
